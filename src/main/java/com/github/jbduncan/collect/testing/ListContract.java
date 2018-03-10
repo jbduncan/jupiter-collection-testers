@@ -26,7 +26,7 @@ public interface ListContract<E> extends CollectionContract<E> {
 
   @Override
   default Set<Feature<?>> features() {
-    return Feature.allFeatures(ListFeature.GENERAL_PURPOSE);
+    return Feature.allFeaturesRecursively(ListFeature.GENERAL_PURPOSE);
   }
 
   @TestFactory

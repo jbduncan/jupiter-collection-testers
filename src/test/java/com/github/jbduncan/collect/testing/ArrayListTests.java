@@ -12,7 +12,7 @@ final class ArrayListTests implements ListContract<String> {
 
   @Override
   public Set<Feature<?>> features() {
-    return Feature.allFeatures(
+    return Feature.allFeaturesRecursively(
         ListFeature.GENERAL_PURPOSE,
         CollectionFeature.SERIALIZABLE,
         CollectionFeature.ALLOWS_NULL_VALUES,

@@ -13,7 +13,7 @@ class ListContractTests {
   private static final List<String> ELEMENTS = Stream.of("a", "b", "c").collect(toList());
 
   @Nested
-  class WhenTestingAgainstArrayListsThat {
+  class WhenTestingAgainstArrayLists {
     private final ListContract<String> contract = new ArrayListTests();
     private final List<String> generatedList = contract.generator().create(ELEMENTS.toArray());
 

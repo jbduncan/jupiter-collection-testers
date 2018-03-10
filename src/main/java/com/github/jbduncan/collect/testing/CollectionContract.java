@@ -9,6 +9,6 @@ public interface CollectionContract<E> extends ContainerContract<Collection<E>, 
 
   @Override
   default Set<Feature<?>> features() {
-    return Feature.allFeatures(CollectionFeature.GENERAL_PURPOSE);
+    return Feature.allFeaturesRecursively(CollectionFeature.GENERAL_PURPOSE);
   }
 }

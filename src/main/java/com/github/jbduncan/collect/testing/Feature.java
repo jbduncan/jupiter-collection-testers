@@ -8,7 +8,7 @@ import java.util.Set;
 public interface Feature<T> {
   Set<Feature<? super T>> impliedFeatures();
 
-  static Set<Feature<?>> allFeatures(Feature<?>... features) {
+  static Set<Feature<?>> allFeaturesRecursively(Feature<?>... features) {
     Set<Feature<?>> expandedFeatures = Helpers.copyToMutableInsertionOrderSet(features);
     Queue<Feature<?>> queue = new ArrayDeque<>(expandedFeatures);
     while (!queue.isEmpty()) {

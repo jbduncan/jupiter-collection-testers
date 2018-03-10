@@ -10,6 +10,6 @@ public interface MapContract<K, V> extends ContainerContract<Map<K, V>, Entry<K,
   // TODO: Uncomment the following when MapFeature is written
   // @Override
   // default Set<Feature<?>> features() {
-  //   return Feature.allFeatures(MapFeature.GENERAL_PURPOSE);
+  //   return Feature.allFeaturesRecursively(MapFeature.GENERAL_PURPOSE);
   // }
 }
