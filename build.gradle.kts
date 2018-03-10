@@ -13,12 +13,15 @@ plugins {
 group = "com.github.jbduncan"
 version = "1.0-SNAPSHOT"
 
-configure<JavaPluginConvention> {
+java {
     sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+    if (name.endsWith("compileTestJava")) {
+        options.compilerArgs.addAll(listOf("-Xep:ClassCanBeStatic:OFF"))
+    }
 }
 
 repositories {
