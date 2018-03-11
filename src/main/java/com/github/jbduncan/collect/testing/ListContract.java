@@ -98,7 +98,8 @@ public interface ListContract<E> extends CollectionContract<E> {
 
             assertTrue(list.add(null), "Not true that list.add(null) returned true");
             List<E> expected =
-                append(Arrays.asList(newArrayWithNullElementInMiddle(samples, collectionSize)), null);
+                append(
+                    Arrays.asList(newArrayWithNullElementInMiddle(samples, collectionSize)), null);
             assertIterableEquals(expected, list, "Not true that list was appended with null");
           };
 
