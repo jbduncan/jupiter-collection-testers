@@ -35,73 +35,27 @@ public interface ListContract<E> extends CollectionContract<E> {
   default Iterable<DynamicTest> add() {
     TestListGenerator<E> generator = generator();
     SampleElements<E> samples = generator().samples();
-
-    // TODO: Move all ThrowingConsumers right next to their associated dynamic test streams
-    ThrowingConsumer<CollectionSize> supportsAddWithNewElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-          E e3 = samples.e3();
-
-          assertTrue(
-              list.add(e3),
-              () -> String.format("Not true that list.add(%s) returned true", quote(e3)));
-          List<E> expected = append(collectionSizeToElements(collectionSize, samples), e3);
-          assertIterableEquals(
-              expected,
-              list,
-              () -> String.format("Not true that list was appended with %s", quote(e3)));
-        };
-
-    ThrowingConsumer<CollectionSize> supportsAddWithExistingElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-          E e0 = samples.e0();
-
-          assertTrue(
-              list.add(e0),
-              () -> String.format("Not true that list.add(%s) returned true", quote(e0)));
-          List<E> expected = append(collectionSizeToElements(collectionSize, samples), e0);
-          assertIterableEquals(
-              expected,
-              list,
-              () -> String.format("Not true that list was appended with %s", quote(e0)));
-        };
-
-    ThrowingConsumer<CollectionSize> supportsAddWithNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator(), collectionSize);
-
-          assertTrue(list.add(null), "Not true that list.add(null) returned true");
-          List<E> expected =
-              append(Arrays.asList(newArrayWithNullElementInMiddle(samples, collectionSize)), null);
-          assertIterableEquals(expected, list, "Not true that list was appended with null");
-        };
-
-    ThrowingConsumer<CollectionSize> doesNotSupportAdd =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-          E e0 = samples.e0();
-
-          String message = "Not true that list.add(%s) threw UnsupportedOperationException";
-          assertThrows(
-              UnsupportedOperationException.class,
-              () -> list.add(e0),
-              () -> String.format(message, quote(e0)));
-          assertThrows(
-              UnsupportedOperationException.class,
-              () -> list.add(null),
-              () -> String.format(message, "null"));
-          assertIterableEquals(
-              collectionSizeToElements(collectionSize, samples),
-              list,
-              "Not true that list remained unchanged");
-        };
-
     Set<Feature<?>> allFeatures = features();
     Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(allFeatures);
+
     List<DynamicTest> tests = new ArrayList<>();
 
     if (allFeatures.contains(CollectionFeature.SUPPORTS_ADD)) {
+      ThrowingConsumer<CollectionSize> supportsAddWithNewElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            E e3 = samples.e3();
+
+            assertTrue(
+                list.add(e3),
+                () -> String.format("Not true that list.add(%s) returned true", quote(e3)));
+            List<E> expected = append(collectionSizeToElements(collectionSize, samples), e3);
+            assertIterableEquals(
+                expected,
+                list,
+                () -> String.format("Not true that list was appended with %s", quote(e3)));
+          };
+
       DynamicTest.stream(
               supportedCollectionSizes.iterator(),
               collectionSize ->
@@ -110,6 +64,21 @@ public interface ListContract<E> extends CollectionContract<E> {
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               supportsAddWithNewElement)
           .forEachOrdered(tests::add);
+
+      ThrowingConsumer<CollectionSize> supportsAddWithExistingElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            E e0 = samples.e0();
+
+            assertTrue(
+                list.add(e0),
+                () -> String.format("Not true that list.add(%s) returned true", quote(e0)));
+            List<E> expected = append(collectionSizeToElements(collectionSize, samples), e0);
+            assertIterableEquals(
+                expected,
+                list,
+                () -> String.format("Not true that list was appended with %s", quote(e0)));
+          };
 
       DynamicTest.stream(
               minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
@@ -123,6 +92,16 @@ public interface ListContract<E> extends CollectionContract<E> {
 
     if (allFeatures.containsAll(
         Arrays.asList(CollectionFeature.SUPPORTS_ADD, CollectionFeature.ALLOWS_NULL_VALUES))) {
+      ThrowingConsumer<CollectionSize> supportsAddWithNullElement =
+          collectionSize -> {
+            List<E> list = newListToTestWithNullElementInMiddle(generator(), collectionSize);
+
+            assertTrue(list.add(null), "Not true that list.add(null) returned true");
+            List<E> expected =
+                append(Arrays.asList(newArrayWithNullElementInMiddle(samples, collectionSize)), null);
+            assertIterableEquals(expected, list, "Not true that list was appended with null");
+          };
+
       DynamicTest.stream(
               supportedCollectionSizes.iterator(),
               collectionSize ->
@@ -135,6 +114,26 @@ public interface ListContract<E> extends CollectionContract<E> {
     }
 
     if (!allFeatures.contains(CollectionFeature.SUPPORTS_ADD)) {
+      ThrowingConsumer<CollectionSize> doesNotSupportAdd =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            E e0 = samples.e0();
+
+            String message = "Not true that list.add(%s) threw UnsupportedOperationException";
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(e0),
+                () -> String.format(message, quote(e0)));
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(null),
+                () -> String.format(message, "null"));
+            assertIterableEquals(
+                collectionSizeToElements(collectionSize, samples),
+                list,
+                "Not true that list remained unchanged");
+          };
+
       DynamicTest.stream(
               supportedCollectionSizes.iterator(),
               collectionSize ->
