@@ -21,6 +21,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
+// TODO: Use custom list implementations to test that each assertion passes & fails as expected
 public interface ListContract<E> extends CollectionContract<E> {
   @Override
   TestListGenerator<E> generator();
@@ -143,6 +144,126 @@ public interface ListContract<E> extends CollectionContract<E> {
               doesNotSupportAdd)
           .forEachOrdered(tests::add);
     }
-    return Collections.unmodifiableList(tests);
+
+    return tests;
+  }
+
+  @TestFactory
+  default Iterable<DynamicTest> addWithIndex() {
+    TestListGenerator<E> generator = generator();
+    SampleElements<E> samples = generator().samples();
+
+    Set<Feature<?>> allFeatures = features();
+    Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(allFeatures);
+    List<DynamicTest> tests = new ArrayList<>();
+
+    if (allFeatures.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+      ThrowingConsumer<CollectionSize> supportsAddWithIndexWithNewElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            E e3 = samples.e3();
+
+            list.add(0, e3);
+            assertTrue(
+                list.get(0).equals(e3),
+                () -> String.format("Not true that list.add(0, %s) returned true", quote(e3)));
+            List<E> expected = prepend(e3, collectionSizeToElements(collectionSize, samples));
+            assertIterableEquals(
+                expected,
+                list,
+                () -> String.format("Not true that list was prepended with %s", quote(e3)));
+          };
+
+      DynamicTest.stream(
+              supportedCollectionSizes.iterator(),
+              collectionSize ->
+                  String.format(
+                      "Supports List.add(int, E) with new element: size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              supportsAddWithIndexWithNewElement)
+          .forEachOrdered(tests::add);
+
+      ThrowingConsumer<CollectionSize> supportsAddWithIndexWithExistingElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            E e0 = samples.e0();
+
+            list.add(0, e0);
+            List<E> expected = prepend(e0, collectionSizeToElements(collectionSize, samples));
+            assertIterableEquals(
+                expected,
+                list,
+                () -> String.format("Not true that list was prepended with %s", quote(e0)));
+          };
+
+      DynamicTest.stream(
+              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+              collectionSize ->
+                  String.format(
+                      "Supports List.add(int, E) with existing element: size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              supportsAddWithIndexWithExistingElement)
+          .forEachOrdered(tests::add);
+    }
+
+    if (allFeatures.containsAll(
+        Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
+      ThrowingConsumer<CollectionSize> supportsAddWithIndexWithNullElement =
+          collectionSize -> {
+            List<E> list = newListToTestWithNullElementInMiddle(generator(), collectionSize);
+
+            list.add(0, null);
+            List<E> expected =
+                prepend(
+                    null, Arrays.asList(newArrayWithNullElementInMiddle(samples, collectionSize)));
+            assertIterableEquals(expected, list, "Not true that list was prepended with null");
+          };
+
+      DynamicTest.stream(
+              supportedCollectionSizes.iterator(),
+              collectionSize ->
+                  String.format(
+                      "Supports List.add(int, E) with null element: size: %s, elements: %s",
+                      collectionSize.size(),
+                      Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
+              supportsAddWithIndexWithNullElement)
+          .forEachOrdered(tests::add);
+    }
+
+    if (!allFeatures.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+      ThrowingConsumer<CollectionSize> doesNotSupportAddWithIndex =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            E e0 = samples.e0();
+
+            String message = "Not true that list.add(%s) threw UnsupportedOperationException";
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(0, e0),
+                () -> String.format(message, quote(e0)));
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(0, null),
+                () -> String.format(message, "null"));
+            assertIterableEquals(
+                collectionSizeToElements(collectionSize, samples),
+                list,
+                "Not true that list remained unchanged");
+          };
+
+      DynamicTest.stream(
+              supportedCollectionSizes.iterator(),
+              collectionSize ->
+                  String.format(
+                      "Does not support List.add(int, E): size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              doesNotSupportAddWithIndex)
+          .forEachOrdered(tests::add);
+    }
+
+    // TODO: Finish implementing this method
+    // TODO: Test this method
+
+    return tests;
   }
 }
