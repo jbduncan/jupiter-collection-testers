@@ -54,12 +54,14 @@ class ListContractTests {
       assertThat(contract.add())
           .comparingElementsUsing(Correspondences.DYNAMIC_TEST_TO_DISPLAY_NAME_CORRESPONDENCE)
           .containsExactly(
-              "Supports List.add(): size: 0, elements: []",
-              "Supports List.add(): size: 1, elements: [b]",
-              "Supports List.add(): size: 3, elements: [b, a, c]",
-              "Supports List.add() with null element: size: 0, elements: []",
-              "Supports List.add() with null element: size: 1, elements: [b]",
-              "Supports List.add() with null element: size: 3, elements: [b, a, c]");
+              "Supports List.add(E) with new element: size: 0, elements: []",
+              "Supports List.add(E) with new element: size: 1, elements: [a]",
+              "Supports List.add(E) with new element: size: 3, elements: [a, b, c]",
+              "Supports List.add(E) with existing element: size: 1, elements: [a]",
+              "Supports List.add(E) with existing element: size: 3, elements: [a, b, c]",
+              "Supports List.add(E) with null element: size: 0, elements: []",
+              "Supports List.add(E) with null element: size: 1, elements: [null]",
+              "Supports List.add(E) with null element: size: 3, elements: [a, null, c]");
     }
   }
 }

@@ -11,8 +11,11 @@ public final class SampleElements<E> implements Iterable<E> {
   }
 
   public static SampleElements<String> strings() {
-    // Elements aren't sorted, to better test collections with sorted orderings like NavigableSet.
-    // TODO: Implement contracts for NavigableSets
+    return SampleElements.of("a", "b", "c", "d", "e");
+  }
+
+  public static SampleElements<String> unsortedStrings() {
+    // TODO: Use these sample elements when implementing contract(s) for NavigableSets
     return SampleElements.of("b", "a", "c", "d", "e");
   }
 
@@ -42,10 +45,6 @@ public final class SampleElements<E> implements Iterable<E> {
     return e2;
   }
 
-  /**
-   * This element is never put into a collection for testing. It is used in tests that check that a
-   * given collection <i>does not</i> contain a certain element.
-   */
   public E e3() {
     return e3;
   }

@@ -3,12 +3,15 @@ package com.github.jbduncan.collect.testing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 // TODO: Unit test each and every single method here
 final class Helpers {
@@ -95,5 +98,23 @@ final class Helpers {
     }
     throw new IllegalStateException(
         String.format("'collectionSize' %s is unrecognized", collectionSize));
+  }
+
+  static <E> List<E> append(Collection<E> collection, E toAppend) {
+    return Stream.concat(collection.stream(), Stream.of(toAppend))
+        .collect(collectingAndThen(toCollection(ArrayList::new), Collections::unmodifiableList));
+  }
+
+  static <E> List<E> prepend(E toPrepend, Collection<E> collection) {
+    return Stream.concat(Stream.of(toPrepend), collection.stream())
+        .collect(collectingAndThen(toCollection(ArrayList::new), Collections::unmodifiableList));
+  }
+
+  static <E> Set<E> minus(Set<E> set, E toRemove) {
+    return set.stream().filter(element -> !element.equals(toRemove)).collect(toInsertionOrderSet());
+  }
+
+  static <E> String quote(E value) {
+    return '"' + value.toString() + '"';
   }
 }
