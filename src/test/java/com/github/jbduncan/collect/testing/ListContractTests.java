@@ -71,6 +71,7 @@ class ListContractTests {
       assertThat(contract.addWithIndex())
           .comparingElementsUsing(Correspondences.DYNAMIC_TEST_TO_DISPLAY_NAME_CORRESPONDENCE)
           .containsExactly(
+              // List.add(0, E)
               "Supports List.add(0, E) with new element: size: 0, elements: []",
               "Supports List.add(0, E) with new element: size: 1, elements: [a]",
               "Supports List.add(0, E) with new element: size: 3, elements: [a, b, c]",
@@ -81,6 +82,7 @@ class ListContractTests {
               "Supports List.add(0, E) with new null element: size: 3, elements: [a, b, c]",
               "Supports List.add(0, E) with existing null element: size: 1, elements: [null]",
               "Supports List.add(0, E) with existing null element: size: 3, elements: [a, null, c]",
+              // List.add(size(), E)
               "Supports List.add(size(), E) with new element: size: 0, elements: []",
               "Supports List.add(size(), E) with new element: size: 1, elements: [a]",
               "Supports List.add(size(), E) with new element: size: 3, elements: [a, b, c]",
@@ -90,7 +92,16 @@ class ListContractTests {
               "Supports List.add(size(), E) with new null element: size: 1, elements: [a]",
               "Supports List.add(size(), E) with new null element: size: 3, elements: [a, b, c]",
               "Supports List.add(size(), E) with existing null element: size: 1, elements: [null]",
-              "Supports List.add(size(), E) with existing null element: size: 3, elements: [a, null, c]");
+              "Supports List.add(size(), E) with existing null element: size: 3, elements: [a, null, c]",
+              // List.add(size() / 2, E)
+              "Supports List.add(size() / 2, E) with new element: size: 1, elements: [a]",
+              "Supports List.add(size() / 2, E) with new element: size: 3, elements: [a, b, c]",
+              "Supports List.add(size() / 2, E) with existing element: size: 1, elements: [a]",
+              "Supports List.add(size() / 2, E) with existing element: size: 3, elements: [a, b, c]",
+              "Supports List.add(size() / 2, E) with new null element: size: 1, elements: [a]",
+              "Supports List.add(size() / 2, E) with new null element: size: 3, elements: [a, b, c]",
+              "Supports List.add(size() / 2, E) with existing null element: size: 1, elements: [null]",
+              "Supports List.add(size() / 2, E) with existing null element: size: 3, elements: [a, null, c]");
     }
   }
 
