@@ -66,7 +66,32 @@ class ListContractTests {
               "Supports List.add(E) with existing null element: size: 3, elements: [a, null, c]");
     }
 
-    // TODO: Test the addWithIndex @TestFactory
+    @Test
+    void theAddWithIndexTestFactoryProducesTheExpectedTests() {
+      assertThat(contract.addWithIndex())
+          .comparingElementsUsing(Correspondences.DYNAMIC_TEST_TO_DISPLAY_NAME_CORRESPONDENCE)
+          .containsExactly(
+              "Supports List.add(0, E) with new element: size: 0, elements: []",
+              "Supports List.add(0, E) with new element: size: 1, elements: [a]",
+              "Supports List.add(0, E) with new element: size: 3, elements: [a, b, c]",
+              "Supports List.add(0, E) with existing element: size: 1, elements: [a]",
+              "Supports List.add(0, E) with existing element: size: 3, elements: [a, b, c]",
+              "Supports List.add(0, E) with new null element: size: 0, elements: []",
+              "Supports List.add(0, E) with new null element: size: 1, elements: [a]",
+              "Supports List.add(0, E) with new null element: size: 3, elements: [a, b, c]",
+              "Supports List.add(0, E) with existing null element: size: 1, elements: [null]",
+              "Supports List.add(0, E) with existing null element: size: 3, elements: [a, null, c]",
+              "Supports List.add(size(), E) with new element: size: 0, elements: []",
+              "Supports List.add(size(), E) with new element: size: 1, elements: [a]",
+              "Supports List.add(size(), E) with new element: size: 3, elements: [a, b, c]",
+              "Supports List.add(size(), E) with existing element: size: 1, elements: [a]",
+              "Supports List.add(size(), E) with existing element: size: 3, elements: [a, b, c]",
+              "Supports List.add(size(), E) with new null element: size: 0, elements: []",
+              "Supports List.add(size(), E) with new null element: size: 1, elements: [a]",
+              "Supports List.add(size(), E) with new null element: size: 3, elements: [a, b, c]",
+              "Supports List.add(size(), E) with existing null element: size: 1, elements: [null]",
+              "Supports List.add(size(), E) with existing null element: size: 3, elements: [a, null, c]");
+    }
   }
 
   // TODO: Test against Collections.emptyList() and Collections.singletonList()
