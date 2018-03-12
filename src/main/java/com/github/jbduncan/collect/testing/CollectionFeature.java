@@ -10,6 +10,7 @@ import java.util.SortedSet;
 import java.util.function.Predicate;
 
 // TODO: See how guava-testlib's testers cover the Collection interface's default methods
+// TODO: Test this class in a similar fashion to how ListFeatureTests tests ListFeature
 public enum CollectionFeature implements Feature<Collection<?>> {
   /**
    * Indicates that the collection must not throw {@code NullPointerException} on calls such as
