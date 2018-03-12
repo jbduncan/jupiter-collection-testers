@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 
-final class ArrayListTests implements ListContract<String> {
+class ArrayListTests implements ListContract<String> {
   @Override
   public TestListGenerator<String> generator() {
     return (TestStringListGenerator) elements -> new ArrayList<>(Arrays.asList(elements));

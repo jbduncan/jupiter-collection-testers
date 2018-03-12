@@ -33,15 +33,13 @@ final class Helpers {
       SampleElements<E> samples, CollectionSize collectionSize) {
     Object[] elements;
     switch (collectionSize) {
-      case SUPPORTS_ZERO:
-        elements = emptyArray();
-        break;
       case SUPPORTS_ONE:
         elements = new Object[] {null};
         break;
       case SUPPORTS_THREE:
         elements = new Object[] {samples.e0(), null, samples.e2()};
         break;
+      case SUPPORTS_ZERO:
       default:
         throw new IllegalStateException(
             String.format("'collectionSize' %s is unrecognized", collectionSize));

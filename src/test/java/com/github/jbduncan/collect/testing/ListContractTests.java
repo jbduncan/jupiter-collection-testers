@@ -59,9 +59,15 @@ class ListContractTests {
               "Supports List.add(E) with new element: size: 3, elements: [a, b, c]",
               "Supports List.add(E) with existing element: size: 1, elements: [a]",
               "Supports List.add(E) with existing element: size: 3, elements: [a, b, c]",
-              "Supports List.add(E) with null element: size: 0, elements: []",
-              "Supports List.add(E) with null element: size: 1, elements: [null]",
-              "Supports List.add(E) with null element: size: 3, elements: [a, null, c]");
+              "Supports List.add(E) with new null element: size: 0, elements: []",
+              "Supports List.add(E) with new null element: size: 1, elements: [a]",
+              "Supports List.add(E) with new null element: size: 3, elements: [a, b, c]",
+              "Supports List.add(E) with existing null element: size: 1, elements: [null]",
+              "Supports List.add(E) with existing null element: size: 3, elements: [a, null, c]");
     }
+
+    // TODO: Test the addWithIndex @TestFactory
   }
+
+  // TODO: Test against Collections.emptyList() and Collections.singletonList()
 }
