@@ -20,7 +20,9 @@ java {
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     if (name.endsWith("compileTestJava")) {
-        options.compilerArgs.addAll(listOf("-Xep:ClassCanBeStatic:OFF"))
+        options.compilerArgs.addAll(
+                // Produces false positives against JUnit Platform @Nested tests
+                listOf("-Xep:ClassCanBeStatic:OFF"))
     }
 }
 
