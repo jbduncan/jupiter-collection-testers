@@ -29,21 +29,19 @@ public interface ListContract<E> extends CollectionContract<E> {
   default Iterable<DynamicTest> add() {
     TestListGenerator<E> generator = generator();
     SampleElements<E> samples = generator().samples();
-    Set<Feature<?>> allFeatures = features();
-    Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(allFeatures);
+    Set<Feature<?>> features = features();
+    Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(features);
 
     List<DynamicTest> tests = new ArrayList<>();
 
-    if (allFeatures.contains(CollectionFeature.SUPPORTS_ADD)) {
+    if (features.contains(CollectionFeature.SUPPORTS_ADD)) {
       addSupportsAddTests(generator, samples, supportedCollectionSizes, tests);
     }
-
-    if (allFeatures.containsAll(
+    if (features.containsAll(
         Arrays.asList(CollectionFeature.SUPPORTS_ADD, CollectionFeature.ALLOWS_NULL_VALUES))) {
       addSupportsAddWithNullElementsTests(generator, samples, supportedCollectionSizes, tests);
     }
-
-    if (!allFeatures.contains(CollectionFeature.SUPPORTS_ADD)) {
+    if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
       addDoesNotSupportAddTests(generator, samples, supportedCollectionSizes, tests);
     }
 
@@ -54,22 +52,20 @@ public interface ListContract<E> extends CollectionContract<E> {
   default Iterable<DynamicTest> addWithIndex() {
     TestListGenerator<E> generator = generator();
     SampleElements<E> samples = generator().samples();
-    Set<Feature<?>> allFeatures = features();
-    Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(allFeatures);
+    Set<Feature<?>> features = features();
+    Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(features);
 
     List<DynamicTest> tests = new ArrayList<>();
 
-    if (allFeatures.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+    if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       addSupportsAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
     }
-
-    if (allFeatures.containsAll(
+    if (features.containsAll(
         Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
       addSupportsAddWithIndexWithNullElementsTests(
           generator, samples, supportedCollectionSizes, tests);
     }
-
-    if (!allFeatures.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+    if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       addDoesNotSupportAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
     }
 
@@ -78,4 +74,6 @@ public interface ListContract<E> extends CollectionContract<E> {
 
     return tests;
   }
+
+  // TODO: Add tests for all other methods of List interface
 }
