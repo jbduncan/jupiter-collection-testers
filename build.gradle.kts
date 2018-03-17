@@ -19,6 +19,8 @@ java {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+
+    // error-prone options
     if (name.endsWith("compileTestJava")) {
         options.compilerArgs.addAll(
                 // Produces false positives against JUnit Platform @Nested tests
