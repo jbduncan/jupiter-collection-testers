@@ -2,8 +2,8 @@ package com.github.jbduncan.collect.testing;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -61,16 +61,16 @@ final class Helpers {
         .stream()
         .filter(CollectionSize.class::isInstance)
         .map(CollectionSize.class::cast)
-        .filter(feature -> !feature.equals(CollectionSize.SUPPORTS_ANY_SIZE))
-        .collect(toInsertionOrderSet());
+        .filter(CollectionSize::isConcreteSize)
+        .collect(toUnmodifiableInsertionOrderSet());
   }
 
-  private static <T> Collector<T, ?, Set<T>> toInsertionOrderSet() {
+  private static <T> Collector<T, ?, Set<T>> toUnmodifiableInsertionOrderSet() {
     return collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet);
   }
 
   @SafeVarargs
-  static <E> Set<E> copyToInsertionOrderSet(E... elements) {
+  static <E> Set<E> copyToUnmodifiableInsertionOrderSet(E... elements) {
     return Collections.unmodifiableSet(copyToMutableInsertionOrderSet(elements));
   }
 
@@ -99,17 +99,21 @@ final class Helpers {
   }
 
   static <E> List<E> append(Collection<E> collection, E toAppend) {
-    return Stream.concat(collection.stream(), Stream.of(toAppend))
-        .collect(collectingAndThen(toCollection(ArrayList::new), Collections::unmodifiableList));
+    return Stream.concat(collection.stream(), Stream.of(toAppend)).collect(toUnmodifiableList());
   }
 
   static <E> List<E> prepend(E toPrepend, Collection<E> collection) {
-    return Stream.concat(Stream.of(toPrepend), collection.stream())
-        .collect(collectingAndThen(toCollection(ArrayList::new), Collections::unmodifiableList));
+    return Stream.concat(Stream.of(toPrepend), collection.stream()).collect(toUnmodifiableList());
+  }
+
+  private static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
+    return collectingAndThen(toList(), Collections::unmodifiableList);
   }
 
   static <E> Set<E> minus(Set<E> set, E toRemove) {
-    return set.stream().filter(element -> !element.equals(toRemove)).collect(toInsertionOrderSet());
+    return set.stream()
+        .filter(element -> !element.equals(toRemove))
+        .collect(toUnmodifiableInsertionOrderSet());
   }
 
   static <E> String quote(E value) {

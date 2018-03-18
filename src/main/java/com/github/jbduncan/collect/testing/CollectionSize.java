@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.OptionalInt;
 import java.util.Set;
 
+// TODO: Unit test all methods in this class
 public enum CollectionSize implements Feature<Collection<?>>, Comparable<CollectionSize> {
   SUPPORTS_ZERO(0),
   SUPPORTS_ONE(1),
@@ -14,7 +15,7 @@ public enum CollectionSize implements Feature<Collection<?>>, Comparable<Collect
   private final OptionalInt size;
   // We don't have access to Guava's immutable collections, so we're forced to use
   // Collections.unmodifiable* instead. Furthermore, we ensure that features are themselves
-  // immutable.
+  // effectively immutable.
   @SuppressWarnings("ImmutableEnumChecker")
   private final Set<Feature<? super Collection<?>>> impliedFeatures;
 
@@ -26,8 +27,7 @@ public enum CollectionSize implements Feature<Collection<?>>, Comparable<Collect
   @SafeVarargs
   CollectionSize(Feature<? super Collection<?>>... impliedSizes) {
     this.size = OptionalInt.empty();
-    this.impliedFeatures =
-        Collections.unmodifiableSet(Helpers.copyToInsertionOrderSet(impliedSizes));
+    this.impliedFeatures = Helpers.copyToUnmodifiableInsertionOrderSet(impliedSizes);
   }
 
   private int checkNonNegative(int size) {
@@ -48,5 +48,9 @@ public enum CollectionSize implements Feature<Collection<?>>, Comparable<Collect
   @Override
   public Set<Feature<? super Collection<?>>> impliedFeatures() {
     return impliedFeatures;
+  }
+
+  public boolean isConcreteSize() {
+    return this != CollectionSize.SUPPORTS_ANY_SIZE;
   }
 }

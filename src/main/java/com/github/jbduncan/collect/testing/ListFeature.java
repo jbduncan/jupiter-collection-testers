@@ -1,6 +1,5 @@
 package com.github.jbduncan.collect.testing;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -21,13 +20,13 @@ public enum ListFeature implements Feature<List<?>> {
 
   // We don't have access to Guava's immutable collections, so we're forced to use
   // Collections.unmodifiable* instead. Furthermore, we ensure that features are themselves
-  // immutable.
+  // effectively immutable.
   @SuppressWarnings("ImmutableEnumChecker")
   private final Set<Feature<? super List<?>>> implied;
 
   @SafeVarargs
   ListFeature(Feature<? super List<?>>... implied) {
-    this.implied = Collections.unmodifiableSet(Helpers.copyToInsertionOrderSet(implied));
+    this.implied = Helpers.copyToUnmodifiableInsertionOrderSet(implied);
   }
 
   @Override

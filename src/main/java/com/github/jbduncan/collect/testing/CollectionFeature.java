@@ -1,7 +1,6 @@
 package com.github.jbduncan.collect.testing;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -103,13 +102,13 @@ public enum CollectionFeature implements Feature<Collection<?>> {
 
   // We don't have access to Guava's immutable collections, so we're forced to use
   // Collections.unmodifiable* instead. Furthermore, we ensure that features are themselves
-  // immutable.
+  // effectively immutable.
   @SuppressWarnings("ImmutableEnumChecker")
   private final Set<Feature<? super Collection<?>>> implied;
 
   @SafeVarargs
   CollectionFeature(Feature<? super Collection<?>>... implied) {
-    this.implied = Collections.unmodifiableSet(Helpers.copyToInsertionOrderSet(implied));
+    this.implied = Helpers.copyToUnmodifiableInsertionOrderSet(implied);
   }
 
   @Override
