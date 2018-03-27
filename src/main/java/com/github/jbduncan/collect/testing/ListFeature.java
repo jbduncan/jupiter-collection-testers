@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 // TODO: See how guava-testlib's testers cover the List interface's default methods
+@SuppressWarnings("unchecked")
 public enum ListFeature implements Feature<List<?>> {
   SUPPORTS_SET,
   SUPPORTS_ADD_WITH_INDEX(CollectionFeature.SUPPORTS_ADD),
@@ -24,7 +25,6 @@ public enum ListFeature implements Feature<List<?>> {
   @SuppressWarnings("ImmutableEnumChecker")
   private final Set<Feature<? super List<?>>> implied;
 
-  @SafeVarargs
   ListFeature(Feature<? super List<?>>... implied) {
     this.implied = Helpers.copyToUnmodifiableInsertionOrderSet(implied);
   }

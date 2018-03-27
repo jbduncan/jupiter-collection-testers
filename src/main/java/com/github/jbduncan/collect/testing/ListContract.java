@@ -1,12 +1,12 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.addDoesNotSupportAddTests;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.addDoesNotSupportAddWithIndexTests;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.addSupportsAddTests;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.addSupportsAddWithIndexTests;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.addSupportsAddWithIndexWithNullElementsTests;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.addSupportsAddWithNullElementsTests;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.appendDoesNotSupportAddTests;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.appendDoesNotSupportAddWithIndexTests;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddTests;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddWithIndexTests;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddWithIndexWithNullElementsTests;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddWithNullElementsTests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,14 +35,14 @@ public interface ListContract<E> extends CollectionContract<E> {
     List<DynamicTest> tests = new ArrayList<>();
 
     if (features.contains(CollectionFeature.SUPPORTS_ADD)) {
-      addSupportsAddTests(generator, samples, supportedCollectionSizes, tests);
+      appendSupportsAddTests(generator, samples, supportedCollectionSizes, tests);
     }
     if (features.containsAll(
         Arrays.asList(CollectionFeature.SUPPORTS_ADD, CollectionFeature.ALLOWS_NULL_VALUES))) {
-      addSupportsAddWithNullElementsTests(generator, samples, supportedCollectionSizes, tests);
+      appendSupportsAddWithNullElementsTests(generator, samples, supportedCollectionSizes, tests);
     }
     if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
-      addDoesNotSupportAddTests(generator, samples, supportedCollectionSizes, tests);
+      appendDoesNotSupportAddTests(generator, samples, supportedCollectionSizes, tests);
     }
 
     return tests;
@@ -58,15 +58,15 @@ public interface ListContract<E> extends CollectionContract<E> {
     List<DynamicTest> tests = new ArrayList<>();
 
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      addSupportsAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
+      appendSupportsAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
     }
     if (features.containsAll(
         Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
-      addSupportsAddWithIndexWithNullElementsTests(
+      appendSupportsAddWithIndexWithNullElementsTests(
           generator, samples, supportedCollectionSizes, tests);
     }
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      addDoesNotSupportAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
+      appendDoesNotSupportAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
     }
 
     // TODO: Finish implementing this method

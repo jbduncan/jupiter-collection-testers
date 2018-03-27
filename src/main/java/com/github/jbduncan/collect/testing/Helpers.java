@@ -49,34 +49,39 @@ final class Helpers {
     return result;
   }
 
-  private static final Object[] EMPTY = new Object[0];
-
-  @SuppressWarnings("unchecked")
-  private static <E> E[] emptyArray() {
-    return (E[]) EMPTY;
-  }
-
   static Set<CollectionSize> extractConcreteSizes(Set<Feature<?>> features) {
     return features
         .stream()
         .filter(CollectionSize.class::isInstance)
         .map(CollectionSize.class::cast)
-        .filter(CollectionSize::isConcreteSize)
+        .filter(Helpers::isConcreteSize)
         .collect(toUnmodifiableInsertionOrderSet());
+  }
+
+  private static boolean isConcreteSize(CollectionSize collectionSize) {
+    return collectionSize != CollectionSize.SUPPORTS_ANY_SIZE;
   }
 
   private static <T> Collector<T, ?, Set<T>> toUnmodifiableInsertionOrderSet() {
     return collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet);
   }
 
-  @SafeVarargs
+  @SuppressWarnings("unchecked")
   static <E> Set<E> copyToUnmodifiableInsertionOrderSet(E... elements) {
+    return copyToUnmodifiableInsertionOrderSet(Arrays.asList(elements));
+  }
+
+  private static <E> Set<E> copyToUnmodifiableInsertionOrderSet(Collection<E> elements) {
     return Collections.unmodifiableSet(copyToMutableInsertionOrderSet(elements));
   }
 
-  @SafeVarargs
+  @SuppressWarnings("unchecked")
   static <E> Set<E> copyToMutableInsertionOrderSet(E... elements) {
-    return new LinkedHashSet<>(Arrays.asList(elements));
+    return copyToMutableInsertionOrderSet(Arrays.asList(elements));
+  }
+
+  private static <E> Set<E> copyToMutableInsertionOrderSet(Collection<E> elements) {
+    return new LinkedHashSet<>(elements);
   }
 
   static <E> List<E> collectionSizeToElements(

@@ -22,7 +22,9 @@ import org.junit.jupiter.api.function.ThrowingConsumer;
 final class ListContractHelpers {
   private ListContractHelpers() {}
 
-  static <E> void addSupportsAddTests(
+  // TODO: Add a `DynamicContainer` to `tests` instead of a group of `DynamicTest`s. Do same for
+  // all other helper methods in this class.
+  static <E> void appendSupportsAddTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
       Set<CollectionSize> supportedCollectionSizes,
@@ -78,7 +80,7 @@ final class ListContractHelpers {
         .forEachOrdered(tests::add);
   }
 
-  static <E> void addSupportsAddWithNullElementsTests(
+  static <E> void appendSupportsAddWithNullElementsTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
       Set<CollectionSize> supportedCollectionSizes,
@@ -123,7 +125,7 @@ final class ListContractHelpers {
         .forEachOrdered(testsToAddTo::add);
   }
 
-  static <E> void addDoesNotSupportAddTests(
+  static <E> void appendDoesNotSupportAddTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
       Set<CollectionSize> supportedCollectionSizes,
@@ -223,7 +225,7 @@ final class ListContractHelpers {
         .forEachOrdered(tests::add);
   }
 
-  static <E> void addSupportsAddWithIndexTests(
+  static <E> void appendSupportsAddWithIndexTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
       Set<CollectionSize> supportedCollectionSizes,
@@ -317,7 +319,7 @@ final class ListContractHelpers {
         .forEachOrdered(tests::add);
   }
 
-  static <E> void addSupportsAddWithIndexWithNullElementsTests(
+  static <E> void appendSupportsAddWithIndexWithNullElementsTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
       Set<CollectionSize> supportedCollectionSizes,
@@ -400,7 +402,7 @@ final class ListContractHelpers {
         .forEachOrdered(testsToAddTo::add);
   }
 
-  static <E> void addDoesNotSupportAddWithIndexTests(
+  static <E> void appendDoesNotSupportAddWithIndexTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
       Set<CollectionSize> supportedCollectionSizes,
