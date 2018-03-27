@@ -9,10 +9,9 @@ import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupp
 import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddWithNullElementsTests;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.TestFactory;
 
 // TODO: Use custom list implementations to test that each assertion passes & fails as expected
@@ -26,48 +25,33 @@ public interface ListContract<E> extends CollectionContract<E> {
   }
 
   @TestFactory
-  default Iterable<DynamicTest> add() {
+  default Iterable<DynamicContainer> add() {
     TestListGenerator<E> generator = generator();
     SampleElements<E> samples = generator().samples();
     Set<Feature<?>> features = features();
     Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(features);
 
-    List<DynamicTest> tests = new ArrayList<>();
-
-    if (features.contains(CollectionFeature.SUPPORTS_ADD)) {
-      appendSupportsAddTests(generator, samples, supportedCollectionSizes, tests);
-    }
-    if (features.containsAll(
-        Arrays.asList(CollectionFeature.SUPPORTS_ADD, CollectionFeature.ALLOWS_NULL_VALUES))) {
-      appendSupportsAddWithNullElementsTests(generator, samples, supportedCollectionSizes, tests);
-    }
-    if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
-      appendDoesNotSupportAddTests(generator, samples, supportedCollectionSizes, tests);
-    }
-
+    List<DynamicContainer> tests = new ArrayList<>();
+    appendSupportsAddTests(generator, samples, features, supportedCollectionSizes, tests);
+    appendSupportsAddWithNullElementsTests(
+        generator, samples, features, supportedCollectionSizes, tests);
+    appendDoesNotSupportAddTests(generator, samples, features, supportedCollectionSizes, tests);
     return tests;
   }
 
   @TestFactory
-  default Iterable<DynamicTest> addWithIndex() {
+  default Iterable<DynamicContainer> addWithIndex() {
     TestListGenerator<E> generator = generator();
     SampleElements<E> samples = generator().samples();
     Set<Feature<?>> features = features();
     Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(features);
 
-    List<DynamicTest> tests = new ArrayList<>();
-
-    if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      appendSupportsAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
-    }
-    if (features.containsAll(
-        Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
-      appendSupportsAddWithIndexWithNullElementsTests(
-          generator, samples, supportedCollectionSizes, tests);
-    }
-    if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      appendDoesNotSupportAddWithIndexTests(generator, samples, supportedCollectionSizes, tests);
-    }
+    List<DynamicContainer> tests = new ArrayList<>();
+    appendSupportsAddWithIndexTests(generator, samples, features, supportedCollectionSizes, tests);
+    appendSupportsAddWithIndexWithNullElementsTests(
+        generator, samples, features, supportedCollectionSizes, tests);
+    appendDoesNotSupportAddWithIndexTests(
+        generator, samples, features, supportedCollectionSizes, tests);
 
     // TODO: Finish implementing this method
     // TODO: Test this method
