@@ -10,15 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 // TODO: Unit test each and every single method here
 final class Helpers {
@@ -119,7 +115,8 @@ final class Helpers {
   }
 
   static <E> List<E> insert(Collection<E> collection, int index, E toInsert) {
-    List<E> result = new ArrayList<>(collection);
+    List<E> result = new ArrayList<>(collection.size() + 1);
+    result.addAll(collection);
     result.add(index, toInsert);
     return Collections.unmodifiableList(result);
   }
@@ -136,17 +133,5 @@ final class Helpers {
 
   static <E> String quote(E value) {
     return '"' + value.toString() + '"';
-  }
-
-  static <E> void assertIterableEqualsIgnoringOrder(
-      Iterable<E> expectedElements, Iterable<E> actualElements, Supplier<String> messageSupplier) {
-    Map<E, Integer> expectedElementsMultiset = toMultiset(expectedElements);
-    Map<E, Integer> actualElementsMultiset = toMultiset(actualElements);
-    assertEquals(expectedElementsMultiset, actualElementsMultiset, messageSupplier);
-  }
-
-  private static <E> Map<E, Integer> toMultiset(Iterable<E> elements) {
-    return StreamSupport.stream(elements.spliterator(), false)
-        .collect(toMap(e -> e, e -> 1, Integer::sum, HashMap::new));
   }
 }
