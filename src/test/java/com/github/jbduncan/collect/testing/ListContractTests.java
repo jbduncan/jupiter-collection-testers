@@ -5,8 +5,6 @@ import static java.util.stream.Collectors.toList;
 
 import com.google.common.collect.Streams;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -14,8 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class ListContractTests {
-  private static final List<String> ELEMENTS =
-      Collections.unmodifiableList(Arrays.asList("a", "b", "c"));
+  private static final List<String> ELEMENTS = SampleElements.strings().asList();
 
   @Nested
   class WhenTestingAgainstArrayLists {

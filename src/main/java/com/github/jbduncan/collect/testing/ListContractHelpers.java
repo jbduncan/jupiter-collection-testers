@@ -2,6 +2,7 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.collectionSizeToElements;
+import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newArrayWithNullElementInMiddle;
 import static com.github.jbduncan.collect.testing.Helpers.newListToTest;
@@ -309,6 +310,33 @@ final class ListContractHelpers {
               supportsAddAtEndWithNewElement)
           .forEachOrdered(tests::add);
 
+      ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            int middleIndex = list.size() / 2;
+
+            list.add(middleIndex, e3);
+            Iterable<E> expected =
+                insert(collectionSizeToElements(collectionSize, samples), middleIndex, e3);
+            assertIterableEquals(
+                expected,
+                list,
+                () ->
+                    String.format(
+                        "Not true that %s was inserted at index %s of list, or that elements in "
+                            + "list are in expected order",
+                        quote(e3), middleIndex));
+          };
+
+      DynamicTest.stream(
+              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+              collectionSize ->
+                  String.format(
+                      "Supports List.add(size() / 2, E) with new element: size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              supportsAddAtMiddleWithNewElement)
+          .forEachOrdered(tests::add);
+
       ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
@@ -349,6 +377,34 @@ final class ListContractHelpers {
                       "Supports List.add(size(), E) with existing element: size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               supportsAddAtEndWithExistingElement)
+          .forEachOrdered(tests::add);
+
+      ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            int middleIndex = list.size() / 2;
+
+            list.add(middleIndex, e0);
+            Iterable<E> expected =
+                insert(collectionSizeToElements(collectionSize, samples), middleIndex, e0);
+            assertIterableEquals(
+                expected,
+                list,
+                () ->
+                    String.format(
+                        "Not true that %s was inserted at index %s of list, or that elements in "
+                            + "list are in expected order",
+                        quote(e0), middleIndex));
+          };
+
+      DynamicTest.stream(
+              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+              collectionSize ->
+                  String.format(
+                      "Supports List.add(size() / 2, E) with existing element: "
+                          + "size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              supportsAddAtMiddleWithExistingElement)
           .forEachOrdered(tests::add);
 
       testsToAddTo.add(dynamicContainer("Supports List.add(int, E)", tests));
@@ -403,6 +459,34 @@ final class ListContractHelpers {
               supportsAddAtEndWithNewNullElement)
           .forEachOrdered(tests::add);
 
+      ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewNullElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+            int middleIndex = list.size() / 2;
+
+            list.add(middleIndex, null);
+            Iterable<E> expected =
+                insert(collectionSizeToElements(collectionSize, samples), middleIndex, null);
+            assertIterableEquals(
+                expected,
+                list,
+                () ->
+                    String.format(
+                        "Not true that %s was inserted at index %s of list, or that elements in "
+                            + "list are in expected order",
+                        quote("null"), middleIndex));
+          };
+
+      DynamicTest.stream(
+              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+              collectionSize ->
+                  String.format(
+                      "Supports List.add(size() / 2, E) with new null element: "
+                          + "size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              supportsAddAtMiddleWithNewNullElement)
+          .forEachOrdered(tests::add);
+
       ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingNullElement =
           collectionSize -> {
             List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
@@ -442,6 +526,38 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               supportsAddAtEndWithExistingNullElement)
+          .forEachOrdered(tests::add);
+
+      ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingNullElement =
+          collectionSize -> {
+            List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+            int middleIndex = list.size() / 2;
+
+            list.add(middleIndex, null);
+            Iterable<E> expected =
+                insert(
+                    Arrays.asList(newArrayWithNullElementInMiddle(samples, collectionSize)),
+                    middleIndex,
+                    null);
+            assertIterableEquals(
+                expected,
+                list,
+                () ->
+                    String.format(
+                        "Not true that %s was inserted at index %s of list, or that elements in "
+                            + "list are in expected order",
+                        quote("null"), middleIndex));
+          };
+
+      DynamicTest.stream(
+              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+              collectionSize ->
+                  String.format(
+                      "Supports List.add(size() / 2, E) with existing null element: "
+                          + "size: %s, elements: %s",
+                      collectionSize.size(),
+                      Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
+              supportsAddAtMiddleWithExistingNullElement)
           .forEachOrdered(tests::add);
 
       testsToAddTo.add(dynamicContainer("Supports List.add(int, E) with null element", tests));
@@ -511,7 +627,7 @@ final class ListContractHelpers {
               doesNotSupportAddAtStartWithExistingElement)
           .forEachOrdered(tests::add);
 
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNullElement =
+      ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNewNullElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
 
@@ -529,10 +645,10 @@ final class ListContractHelpers {
               supportedCollectionSizes.iterator(),
               collectionSize ->
                   String.format(
-                      "Does not support List.add(0, E) with new null element: size: "
-                          + "%s, elements: %s",
+                      "Does not support List.add(0, E) with new null element: "
+                          + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
-              doesNotSupportAddAtStartWithNullElement)
+              doesNotSupportAddAtStartWithNewNullElement)
           .forEachOrdered(tests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingNullElement =
@@ -608,7 +724,7 @@ final class ListContractHelpers {
               doesNotSupportAddAtEndWithExistingElement)
           .forEachOrdered(tests::add);
 
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNullElement =
+      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNewNullElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
 
@@ -629,7 +745,7 @@ final class ListContractHelpers {
                       "Does not support List.add(size(), E) with new null element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
-              doesNotSupportAddAtEndWithNullElement)
+              doesNotSupportAddAtEndWithNewNullElement)
           .forEachOrdered(tests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingNullElement =
@@ -705,7 +821,7 @@ final class ListContractHelpers {
               doesNotSupportAddAtMiddleWithExistingElement)
           .forEachOrdered(tests::add);
 
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNullElement =
+      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNewNullElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
 
@@ -726,7 +842,7 @@ final class ListContractHelpers {
                       "Does not support List.add(size() / 2, E) with new null element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
-              doesNotSupportAddAtMiddleWithNullElement)
+              doesNotSupportAddAtMiddleWithNewNullElement)
           .forEachOrdered(tests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingNullElement =
