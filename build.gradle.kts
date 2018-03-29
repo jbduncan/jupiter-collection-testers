@@ -1,5 +1,5 @@
 plugins {
-    java
+    `java-library`
     eclipse
     idea
 
@@ -31,12 +31,12 @@ val compileTestJava by tasks.getting(JavaCompile::class) {
             listOf("-Xep:ClassCanBeStatic:OFF"))
 }
 
-repositories {
-    jcenter()
-}
-
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+repositories {
+    jcenter()
 }
 
 val junit5Version by project.properties
