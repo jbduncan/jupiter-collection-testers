@@ -11,7 +11,7 @@ import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupp
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
 // TODO: Use custom list implementations to test that each assertion passes & fails as expected
@@ -25,13 +25,13 @@ public interface ListContract<E> extends CollectionContract<E> {
   }
 
   @TestFactory
-  default Iterable<DynamicContainer> add() {
+  default Iterable<DynamicNode> add() {
     TestListGenerator<E> generator = generator();
     SampleElements<E> samples = generator().samples();
     Set<Feature<?>> features = features();
     Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(features);
 
-    List<DynamicContainer> tests = new ArrayList<>();
+    List<DynamicNode> tests = new ArrayList<>();
     appendSupportsAddTests(generator, samples, features, supportedCollectionSizes, tests);
     appendSupportsAddWithNullElementsTests(
         generator, samples, features, supportedCollectionSizes, tests);
@@ -40,13 +40,13 @@ public interface ListContract<E> extends CollectionContract<E> {
   }
 
   @TestFactory
-  default Iterable<DynamicContainer> addWithIndex() {
+  default Iterable<DynamicNode> addWithIndex() {
     TestListGenerator<E> generator = generator();
     SampleElements<E> samples = generator().samples();
     Set<Feature<?>> features = features();
     Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(features);
 
-    List<DynamicContainer> tests = new ArrayList<>();
+    List<DynamicNode> tests = new ArrayList<>();
     appendSupportsAddWithIndexTests(generator, samples, features, supportedCollectionSizes, tests);
     appendSupportsAddWithIndexWithNullElementsTests(
         generator, samples, features, supportedCollectionSizes, tests);

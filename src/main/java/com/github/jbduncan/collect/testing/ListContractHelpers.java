@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
@@ -31,7 +31,7 @@ final class ListContractHelpers {
       SampleElements<E> samples,
       Set<Feature<?>> features,
       Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicContainer> testsToAddTo) {
+      List<DynamicNode> testsToAddTo) {
 
     if (features.contains(CollectionFeature.SUPPORTS_ADD)) {
 
@@ -96,7 +96,7 @@ final class ListContractHelpers {
       SampleElements<E> samples,
       Set<Feature<?>> features,
       Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicContainer> testsToAddTo) {
+      List<DynamicNode> testsToAddTo) {
 
     if (features.containsAll(
         Arrays.asList(CollectionFeature.SUPPORTS_ADD, CollectionFeature.ALLOWS_NULL_VALUES))) {
@@ -150,7 +150,7 @@ final class ListContractHelpers {
       SampleElements<E> samples,
       Set<Feature<?>> features,
       Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicContainer> testsToAddTo) {
+      List<DynamicNode> testsToAddTo) {
 
     if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
 
@@ -259,7 +259,7 @@ final class ListContractHelpers {
       SampleElements<E> samples,
       Set<Feature<?>> features,
       Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicContainer> testsToAddTo) {
+      List<DynamicNode> testsToAddTo) {
 
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
 
@@ -416,7 +416,7 @@ final class ListContractHelpers {
       SampleElements<E> samples,
       Set<Feature<?>> features,
       Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicContainer> testsToAddTo) {
+      List<DynamicNode> testsToAddTo) {
 
     if (features.containsAll(
         Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
@@ -564,12 +564,15 @@ final class ListContractHelpers {
     }
   }
 
+  // TODO: See if there is a way of refactoring this method to make it more compact. Maybe split
+  // into two methods: one for not supporting non-null elements, and one for not supporting null
+  // elements.
   static <E> void appendDoesNotSupportAddWithIndexTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
       Set<Feature<?>> features,
       Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicContainer> testsToAddTo) {
+      List<DynamicNode> testsToAddTo) {
 
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
 
