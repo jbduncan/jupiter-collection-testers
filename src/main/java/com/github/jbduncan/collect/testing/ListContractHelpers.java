@@ -5,8 +5,6 @@ import static com.github.jbduncan.collect.testing.Helpers.collectionSizeToElemen
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newArrayWithNullElementInMiddle;
-import static com.github.jbduncan.collect.testing.Helpers.newListToTest;
-import static com.github.jbduncan.collect.testing.Helpers.newListToTestWithNullElementInMiddle;
 import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static java.util.Arrays.asList;
@@ -986,6 +984,18 @@ final class ListContractHelpers {
       testsToAddTo.add(
           dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, tests));
     }
+  }
+
+  private static <E> List<E> newListToTest(
+      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
+    SampleElements<E> samples = listGenerator.samples();
+    return listGenerator.create(collectionSizeToElements(collectionSize, samples).toArray());
+  }
+
+  private static <E> List<E> newListToTestWithNullElementInMiddle(
+      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
+    Object[] elements = newArrayWithNullElementInMiddle(listGenerator.samples(), collectionSize);
+    return listGenerator.create(elements);
   }
 
   private static int middleIndex(List<?> list) {
