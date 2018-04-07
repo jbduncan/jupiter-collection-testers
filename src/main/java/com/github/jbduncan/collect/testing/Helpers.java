@@ -18,12 +18,14 @@ import java.util.stream.Stream;
 final class Helpers {
   private Helpers() {}
 
+  // TODO: Move this into ListContractHelpers
   static <E> List<E> newListToTest(
       TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
     SampleElements<E> samples = listGenerator.samples();
     return listGenerator.create(collectionSizeToElements(collectionSize, samples).toArray());
   }
 
+  // TODO: Move this into ListContractHelpers
   static <E> List<E> newListToTestWithNullElementInMiddle(
       TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
     Object[] elements = newArrayWithNullElementInMiddle(listGenerator.samples(), collectionSize);
