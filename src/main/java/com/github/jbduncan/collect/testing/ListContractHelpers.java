@@ -313,7 +313,7 @@ final class ListContractHelpers {
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
-            int middleIndex = list.size() / 2;
+            int middleIndex = middleIndex(list);
 
             list.add(middleIndex, e3);
             Iterable<E> expected =
@@ -332,7 +332,7 @@ final class ListContractHelpers {
               minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
               collectionSize ->
                   String.format(
-                      "Supports List.add(size() / 2, E) with new element: size: %s, elements: %s",
+                      "Supports List.add(middleIndex(), E) with new element: size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               supportsAddAtMiddleWithNewElement)
           .forEachOrdered(tests::add);
@@ -382,7 +382,7 @@ final class ListContractHelpers {
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
-            int middleIndex = list.size() / 2;
+            int middleIndex = middleIndex(list);
 
             list.add(middleIndex, e0);
             Iterable<E> expected =
@@ -401,7 +401,7 @@ final class ListContractHelpers {
               minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
               collectionSize ->
                   String.format(
-                      "Supports List.add(size() / 2, E) with existing element: "
+                      "Supports List.add(middleIndex(), E) with existing element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               supportsAddAtMiddleWithExistingElement)
@@ -462,7 +462,7 @@ final class ListContractHelpers {
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewNullElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
-            int middleIndex = list.size() / 2;
+            int middleIndex = middleIndex(list);
 
             list.add(middleIndex, null);
             Iterable<E> expected =
@@ -481,7 +481,7 @@ final class ListContractHelpers {
               minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
               collectionSize ->
                   String.format(
-                      "Supports List.add(size() / 2, E) with new null element: "
+                      "Supports List.add(middleIndex(), E) with new null element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               supportsAddAtMiddleWithNewNullElement)
@@ -531,7 +531,7 @@ final class ListContractHelpers {
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingNullElement =
           collectionSize -> {
             List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-            int middleIndex = list.size() / 2;
+            int middleIndex = middleIndex(list);
 
             list.add(middleIndex, null);
             Iterable<E> expected =
@@ -553,7 +553,7 @@ final class ListContractHelpers {
               minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
               collectionSize ->
                   String.format(
-                      "Supports List.add(size() / 2, E) with existing null element: "
+                      "Supports List.add(middleIndex(), E) with existing null element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
@@ -782,7 +782,7 @@ final class ListContractHelpers {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(list.size() / 2, e3),
+                () -> list.add(middleIndex(list), e3),
                 () -> String.format(message, quote(e3)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
@@ -794,7 +794,7 @@ final class ListContractHelpers {
               supportedCollectionSizes.iterator(),
               collectionSize ->
                   String.format(
-                      "Does not support List.add(size() / 2, E) with new element: "
+                      "Does not support List.add(middleIndex(), E) with new element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithNewElement)
@@ -806,7 +806,7 @@ final class ListContractHelpers {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(list.size() / 2, e0),
+                () -> list.add(middleIndex(list), e0),
                 () -> String.format(message, quote(e0)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
@@ -818,7 +818,7 @@ final class ListContractHelpers {
               minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
               collectionSize ->
                   String.format(
-                      "Does not support List.add(size() / 2, E) with existing element: "
+                      "Does not support List.add(middleIndex(), E) with existing element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithExistingElement)
@@ -830,7 +830,7 @@ final class ListContractHelpers {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(list.size() / 2, null),
+                () -> list.add(middleIndex(list), null),
                 () -> String.format(message, "null"));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
@@ -842,7 +842,7 @@ final class ListContractHelpers {
               supportedCollectionSizes.iterator(),
               collectionSize ->
                   String.format(
-                      "Does not support List.add(size() / 2, E) with new null element: "
+                      "Does not support List.add(middleIndex(), E) with new null element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithNewNullElement)
@@ -854,7 +854,7 @@ final class ListContractHelpers {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(list.size() / 2, null),
+                () -> list.add(middleIndex(list), null),
                 () -> String.format(message, "null"));
             assertIterableEquals(
                 asList(newArrayWithNullElementInMiddle(samples, collectionSize)),
@@ -866,7 +866,7 @@ final class ListContractHelpers {
               minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
               collectionSize ->
                   String.format(
-                      "Does not support List.add(size() / 2, E) with existing null element: "
+                      "Does not support List.add(middleIndex(), E) with existing null element: "
                           + "size: %s, elements: %s",
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
@@ -875,5 +875,9 @@ final class ListContractHelpers {
 
       testsToAddTo.add(dynamicContainer("Does not support List.add(int, E)", tests));
     }
+  }
+
+  private static int middleIndex(List<?> list) {
+    return list.size() / 2;
   }
 }
