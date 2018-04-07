@@ -3,6 +3,7 @@ package com.github.jbduncan.collect.testing;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.appendDoesNotSupportAddTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.appendDoesNotSupportAddWithIndexTests;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.appendDoesNotSupportAddWithIndexWithNullElementsTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddWithIndexTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.appendSupportsAddWithIndexWithNullElementsTests;
@@ -47,10 +48,14 @@ public interface ListContract<E> extends CollectionContract<E> {
     Set<CollectionSize> supportedCollectionSizes = extractConcreteSizes(features);
 
     List<DynamicNode> tests = new ArrayList<>();
+    // TODO: Turn these methods into an object-orientated form, e.g. in a `ListTester` class or
+    // separate `ListAddTester` and `ListAddWithIndexTester` classes.
     appendSupportsAddWithIndexTests(generator, samples, features, supportedCollectionSizes, tests);
     appendSupportsAddWithIndexWithNullElementsTests(
         generator, samples, features, supportedCollectionSizes, tests);
     appendDoesNotSupportAddWithIndexTests(
+        generator, samples, features, supportedCollectionSizes, tests);
+    appendDoesNotSupportAddWithIndexWithNullElementsTests(
         generator, samples, features, supportedCollectionSizes, tests);
 
     // TODO: Finish implementing this method

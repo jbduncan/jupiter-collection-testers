@@ -564,9 +564,6 @@ final class ListContractHelpers {
     }
   }
 
-  // TODO: See if there is a way of refactoring this method to make it more compact. Maybe split
-  // into two methods: one for not supporting non-null elements, and one for not supporting null
-  // elements.
   static <E> void appendDoesNotSupportAddWithIndexTests(
       TestListGenerator<E> generator,
       SampleElements<E> samples,
@@ -630,6 +627,119 @@ final class ListContractHelpers {
               doesNotSupportAddAtStartWithExistingElement)
           .forEachOrdered(tests::add);
 
+      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNewElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(list.size(), e3),
+                () -> String.format(message, quote(e3)));
+            assertIterableEquals(
+                collectionSizeToElements(collectionSize, samples),
+                list,
+                "Not true that list remained unchanged");
+          };
+
+      DynamicTest.stream(
+              supportedCollectionSizes.iterator(),
+              collectionSize ->
+                  String.format(
+                      "Does not support List.add(size(), E) with new element: "
+                          + "size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              doesNotSupportAddAtEndWithNewElement)
+          .forEachOrdered(tests::add);
+
+      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(list.size(), e0),
+                () -> String.format(message, quote(e0)));
+            assertIterableEquals(
+                collectionSizeToElements(collectionSize, samples),
+                list,
+                "Not true that list remained unchanged");
+          };
+
+      DynamicTest.stream(
+              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+              collectionSize ->
+                  String.format(
+                      "Does not support List.add(size(), E) with existing element: "
+                          + "size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              doesNotSupportAddAtEndWithExistingElement)
+          .forEachOrdered(tests::add);
+
+      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNewElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(middleIndex(list), e3),
+                () -> String.format(message, quote(e3)));
+            assertIterableEquals(
+                collectionSizeToElements(collectionSize, samples),
+                list,
+                "Not true that list remained unchanged");
+          };
+
+      DynamicTest.stream(
+              supportedCollectionSizes.iterator(),
+              collectionSize ->
+                  String.format(
+                      "Does not support List.add(middleIndex(), E) with new element: "
+                          + "size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              doesNotSupportAddAtMiddleWithNewElement)
+          .forEachOrdered(tests::add);
+
+      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(middleIndex(list), e0),
+                () -> String.format(message, quote(e0)));
+            assertIterableEquals(
+                collectionSizeToElements(collectionSize, samples),
+                list,
+                // TODO: Externalise this message, and other messages, into constants
+                "Not true that list remained unchanged");
+          };
+
+      DynamicTest.stream(
+              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+              collectionSize ->
+                  String.format(
+                      "Does not support List.add(middleIndex(), E) with existing element: "
+                          + "size: %s, elements: %s",
+                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
+              doesNotSupportAddAtMiddleWithExistingElement)
+          .forEachOrdered(tests::add);
+
+      testsToAddTo.add(dynamicContainer("Does not support List.add(int, E)", tests));
+    }
+  }
+
+  static <E> void appendDoesNotSupportAddWithIndexWithNullElementsTests(
+      TestListGenerator<E> generator,
+      SampleElements<E> samples,
+      Set<Feature<?>> features,
+      Set<CollectionSize> supportedCollectionSizes,
+      List<DynamicNode> testsToAddTo) {
+
+    if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+      String message = "Not true that list.add(%s) threw UnsupportedOperationException";
+
+      List<DynamicTest> tests = new ArrayList<>();
+
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNewNullElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
@@ -679,54 +789,6 @@ final class ListContractHelpers {
               doesNotSupportAddAtStartWithExistingNullElement)
           .forEachOrdered(tests::add);
 
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(list.size(), e3),
-                () -> String.format(message, quote(e3)));
-            assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
-                list,
-                "Not true that list remained unchanged");
-          };
-
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      "Does not support List.add(size(), E) with new element: "
-                          + "size: %s, elements: %s",
-                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
-              doesNotSupportAddAtEndWithNewElement)
-          .forEachOrdered(tests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(list.size(), e0),
-                () -> String.format(message, quote(e0)));
-            assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
-                list,
-                "Not true that list remained unchanged");
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      "Does not support List.add(size(), E) with existing element: "
-                          + "size: %s, elements: %s",
-                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
-              doesNotSupportAddAtEndWithExistingElement)
-          .forEachOrdered(tests::add);
-
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNewNullElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
@@ -774,54 +836,6 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               doesNotSupportAddAtEndWithExistingNullElement)
-          .forEachOrdered(tests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(middleIndex(list), e3),
-                () -> String.format(message, quote(e3)));
-            assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
-                list,
-                "Not true that list remained unchanged");
-          };
-
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      "Does not support List.add(middleIndex(), E) with new element: "
-                          + "size: %s, elements: %s",
-                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
-              doesNotSupportAddAtMiddleWithNewElement)
-          .forEachOrdered(tests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(middleIndex(list), e0),
-                () -> String.format(message, quote(e0)));
-            assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
-                list,
-                "Not true that list remained unchanged");
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      "Does not support List.add(middleIndex(), E) with existing element: "
-                          + "size: %s, elements: %s",
-                      collectionSize.size(), collectionSizeToElements(collectionSize, samples)),
-              doesNotSupportAddAtMiddleWithExistingElement)
           .forEachOrdered(tests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNewNullElement =
