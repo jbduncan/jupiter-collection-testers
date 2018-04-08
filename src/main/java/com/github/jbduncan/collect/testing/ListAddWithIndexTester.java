@@ -2,39 +2,83 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.collectionSizeToElements;
+import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newArrayWithNullElementInMiddle;
 import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.middleIndex;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListContractHelpers {
-  private ListContractHelpers() {}
+final class ListAddWithIndexTester<E> {
+  private final TestListGenerator<E> generator;
+  private final SampleElements<E> samples;
+  private final Set<Feature<?>> features;
+  private final Set<CollectionSize> supportedCollectionSizes;
 
-  static <E> void appendSupportsAddWithIndexTests(
-      TestListGenerator<E> generator,
-      SampleElements<E> samples,
-      Set<Feature<?>> features,
-      Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicNode> testsToAddTo) {
+  private ListAddWithIndexTester(TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
+    this.generator = requireNonNull(testListGenerator, "testListGenerator");
+    this.samples = requireNonNull(testListGenerator.samples(), "samples");
+    this.features = requireNonNull(features, "features");
+    this.supportedCollectionSizes = extractConcreteSizes(features);
+  }
 
+  static <E> Builder<E> builder() {
+    return new Builder<>();
+  }
+
+  static class Builder<E> {
+    private Builder() {}
+
+    private TestListGenerator<E> testListGenerator;
+    private Set<Feature<?>> features;
+
+    Builder<E> testListGenerator(TestListGenerator<E> testListGenerator) {
+      this.testListGenerator = testListGenerator;
+      return this;
+    }
+
+    public Builder<E> features(Set<Feature<?>> features) {
+      this.features = features;
+      return this;
+    }
+
+    ListAddWithIndexTester<E> build() {
+      return new ListAddWithIndexTester<>(testListGenerator, features);
+    }
+  }
+
+  List<DynamicNode> dynamicTests() {
+    List<DynamicNode> tests = new ArrayList<>();
+    generateSupportsAddWithIndexTests(tests);
+    generateSupportsAddWithIndexWithNullElementsTests(tests);
+    generateDoesNotSupportAddWithIndexTests(tests);
+    generateDoesNotSupportAddWithIndexWithNullElementsTests(tests);
+    return Collections.unmodifiableList(tests);
+  }
+
+  private void generateSupportsAddWithIndexTests(List<DynamicNode> tests) {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       E e0 = samples.e0();
       E e3 = samples.e3();
 
-      List<DynamicTest> tests = new ArrayList<>();
+      List<DynamicTest> subTests = new ArrayList<>();
 
       ThrowingConsumer<CollectionSize> supportsAddAtStartWithNewElement =
           collectionSize -> {
@@ -58,7 +102,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtStartWithNewElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtEndWithNewElement =
           collectionSize -> {
@@ -82,7 +126,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtEndWithNewElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewElement =
           collectionSize -> {
@@ -112,7 +156,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtMiddleWithNewElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingElement =
           collectionSize -> {
@@ -136,7 +180,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtStartWithExistingElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtEndWithExistingElement =
           collectionSize -> {
@@ -160,7 +204,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtEndWithExistingElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingElement =
           collectionSize -> {
@@ -190,22 +234,16 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtMiddleWithExistingElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
-      testsToAddTo.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E, tests));
+      tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E, subTests));
     }
   }
 
-  static <E> void appendSupportsAddWithIndexWithNullElementsTests(
-      TestListGenerator<E> generator,
-      SampleElements<E> samples,
-      Set<Feature<?>> features,
-      Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicNode> testsToAddTo) {
-
+  private void generateSupportsAddWithIndexWithNullElementsTests(List<DynamicNode> tests) {
     if (features.containsAll(
         Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
-      List<DynamicTest> tests = new ArrayList<>();
+      List<DynamicTest> subTests = new ArrayList<>();
 
       ThrowingConsumer<CollectionSize> supportsAddAtStartWithNewNullElement =
           collectionSize -> {
@@ -225,7 +263,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtStartWithNewNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtEndWithNewNullElement =
           collectionSize -> {
@@ -245,7 +283,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtEndWithNewNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewNullElement =
           collectionSize -> {
@@ -275,7 +313,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               supportsAddAtMiddleWithNewNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingNullElement =
           collectionSize -> {
@@ -296,7 +334,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               supportsAddAtStartWithExistingNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtEndWithExistingNullElement =
           collectionSize -> {
@@ -318,7 +356,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               supportsAddAtEndWithExistingNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingNullElement =
           collectionSize -> {
@@ -351,25 +389,20 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               supportsAddAtMiddleWithExistingNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
-      testsToAddTo.add(
-          dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E_WITH_NULL_ELEMENT, tests));
+      tests.add(
+          dynamicContainer(
+              ListContractConstants.SUPPORTS_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
     }
   }
 
-  static <E> void appendDoesNotSupportAddWithIndexTests(
-      TestListGenerator<E> generator,
-      SampleElements<E> samples,
-      Set<Feature<?>> features,
-      Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicNode> testsToAddTo) {
-
+  private void generateDoesNotSupportAddWithIndexTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       E e0 = samples.e0();
       E e3 = samples.e3();
 
-      List<DynamicTest> tests = new ArrayList<>();
+      List<DynamicTest> subTests = new ArrayList<>();
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNewElement =
           collectionSize -> {
@@ -397,7 +430,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtStartWithNewElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingElement =
           collectionSize -> {
@@ -426,7 +459,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtStartWithExistingElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNewElement =
           collectionSize -> {
@@ -455,7 +488,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtEndWithNewElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingElement =
           collectionSize -> {
@@ -484,7 +517,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtEndWithExistingElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNewElement =
           collectionSize -> {
@@ -513,7 +546,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithNewElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingElement =
           collectionSize -> {
@@ -542,25 +575,22 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithExistingElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
-      testsToAddTo.add(
-          dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, tests));
+      // TODO: This `DynamicContainer` is duplicated in
+      // `generateDoesNotSupportAddWithIndexWithNullElementsTests`, so merge that method with this
+      // method again.
+      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, subTests));
     }
   }
 
-  static <E> void appendDoesNotSupportAddWithIndexWithNullElementsTests(
-      TestListGenerator<E> generator,
-      SampleElements<E> samples,
-      Set<Feature<?>> features,
-      Set<CollectionSize> supportedCollectionSizes,
-      List<DynamicNode> testsToAddTo) {
-
+  private void generateDoesNotSupportAddWithIndexWithNullElementsTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+      // TODO: Inline this message.
       String message =
           ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION;
 
-      List<DynamicTest> tests = new ArrayList<>();
+      List<DynamicTest> subTests = new ArrayList<>();
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNewNullElement =
           collectionSize -> {
@@ -585,7 +615,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtStartWithNewNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingNullElement =
           collectionSize -> {
@@ -610,7 +640,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               doesNotSupportAddAtStartWithExistingNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNewNullElement =
           collectionSize -> {
@@ -635,7 +665,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtEndWithNewNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingNullElement =
           collectionSize -> {
@@ -660,7 +690,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               doesNotSupportAddAtEndWithExistingNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNewNullElement =
           collectionSize -> {
@@ -685,7 +715,7 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       collectionSizeToElements(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithNewNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingNullElement =
           collectionSize -> {
@@ -710,26 +740,9 @@ final class ListContractHelpers {
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
               doesNotSupportAddAtMiddleWithExistingNullElement)
-          .forEachOrdered(tests::add);
+          .forEachOrdered(subTests::add);
 
-      testsToAddTo.add(
-          dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, tests));
+      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, subTests));
     }
-  }
-
-  static <E> List<E> newListToTest(
-      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    SampleElements<E> samples = listGenerator.samples();
-    return listGenerator.create(collectionSizeToElements(collectionSize, samples).toArray());
-  }
-
-  static <E> List<E> newListToTestWithNullElementInMiddle(
-      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    Object[] elements = newArrayWithNullElementInMiddle(listGenerator.samples(), collectionSize);
-    return listGenerator.create(elements);
-  }
-
-  static int middleIndex(List<?> list) {
-    return list.size() / 2;
   }
 }

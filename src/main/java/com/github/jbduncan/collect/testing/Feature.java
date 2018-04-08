@@ -11,6 +11,7 @@ public interface Feature<T> {
   static Set<Feature<?>> allFeaturesRecursively(Feature<?>... features) {
     Set<Feature<?>> expandedFeatures = Helpers.copyToMutableInsertionOrderSet(features);
     Queue<Feature<?>> queue = new ArrayDeque<>(expandedFeatures);
+    // Do a breadth-first traversal rooted at the input features.
     while (!queue.isEmpty()) {
       Feature<?> next = queue.remove();
       for (Feature<?> implied : next.impliedFeatures()) {
