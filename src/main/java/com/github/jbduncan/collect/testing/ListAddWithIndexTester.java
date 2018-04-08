@@ -586,10 +586,6 @@ final class ListAddWithIndexTester<E> {
 
   private void generateDoesNotSupportAddWithIndexWithNullElementsTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      // TODO: Inline this message.
-      String message =
-          ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION;
-
       List<DynamicTest> subTests = new ArrayList<>();
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNewNullElement =
@@ -599,7 +595,11 @@ final class ListAddWithIndexTester<E> {
             assertThrows(
                 UnsupportedOperationException.class,
                 () -> list.add(0, null),
-                () -> String.format(message, ListContractConstants.NULL));
+                () ->
+                    String.format(
+                        ListContractConstants
+                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                        ListContractConstants.NULL));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -624,7 +624,11 @@ final class ListAddWithIndexTester<E> {
             assertThrows(
                 UnsupportedOperationException.class,
                 () -> list.add(0, null),
-                () -> String.format(message, ListContractConstants.NULL));
+                () ->
+                    String.format(
+                        ListContractConstants
+                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                        ListContractConstants.NULL));
             assertIterableEquals(
                 asList(newArrayWithNullElementInMiddle(samples, collectionSize)),
                 list,
@@ -649,7 +653,11 @@ final class ListAddWithIndexTester<E> {
             assertThrows(
                 UnsupportedOperationException.class,
                 () -> list.add(list.size(), null),
-                () -> String.format(message, ListContractConstants.NULL));
+                () ->
+                    String.format(
+                        ListContractConstants
+                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                        ListContractConstants.NULL));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -674,7 +682,11 @@ final class ListAddWithIndexTester<E> {
             assertThrows(
                 UnsupportedOperationException.class,
                 () -> list.add(list.size(), null),
-                () -> String.format(message, ListContractConstants.NULL));
+                () ->
+                    String.format(
+                        ListContractConstants
+                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                        ListContractConstants.NULL));
             assertIterableEquals(
                 asList(newArrayWithNullElementInMiddle(samples, collectionSize)),
                 list,
@@ -699,7 +711,11 @@ final class ListAddWithIndexTester<E> {
             assertThrows(
                 UnsupportedOperationException.class,
                 () -> list.add(middleIndex(list), null),
-                () -> String.format(message, ListContractConstants.NULL));
+                () ->
+                    String.format(
+                        ListContractConstants
+                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                        ListContractConstants.NULL));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -724,7 +740,11 @@ final class ListAddWithIndexTester<E> {
             assertThrows(
                 UnsupportedOperationException.class,
                 () -> list.add(middleIndex(list), null),
-                () -> String.format(message, ListContractConstants.NULL));
+                () ->
+                    String.format(
+                        ListContractConstants
+                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                        ListContractConstants.NULL));
             assertIterableEquals(
                 asList(newArrayWithNullElementInMiddle(samples, collectionSize)),
                 list,
