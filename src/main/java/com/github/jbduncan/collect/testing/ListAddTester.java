@@ -65,6 +65,7 @@ final class ListAddTester<E> {
   List<DynamicNode> dynamicTests() {
     List<DynamicNode> tests = new ArrayList<>();
     generateSupportsAddTests(tests);
+    generateSupportsAddButNotOnNullElementsTests(tests);
     generateSupportsAddWithNullElementsTests(tests);
     generateDoesNotSupportAddTests(tests);
     generateDoesNotSupportAddWithNullElementsTests(tests);
@@ -138,6 +139,46 @@ final class ListAddTester<E> {
           .forEachOrdered(subTests::add);
 
       tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_E, subTests));
+    }
+  }
+
+  private void generateSupportsAddButNotOnNullElementsTests(List<DynamicNode> tests) {
+    if (features.contains(CollectionFeature.SUPPORTS_ADD)
+        && !features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
+      List<DynamicTest> subTests = new ArrayList<>();
+
+      ThrowingConsumer<CollectionSize> doesNotSupportAddWithNewNullElement =
+          collectionSize -> {
+            List<E> list = newListToTest(generator, collectionSize);
+
+            assertThrows(
+                UnsupportedOperationException.class,
+                () -> list.add(null),
+                () ->
+                    String.format(
+                        ListContractConstants
+                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                        ListContractConstants.NULL));
+            assertIterableEquals(
+                collectionSizeToElements(collectionSize, samples),
+                list,
+                ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+          };
+
+      DynamicTest.stream(
+              supportedCollectionSizes.iterator(),
+              collectionSize ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT,
+                      collectionSize.size(),
+                      collectionSizeToElements(collectionSize, samples)),
+              doesNotSupportAddWithNewNullElement)
+          .forEachOrdered(subTests::add);
+
+      tests.add(
+          dynamicContainer(
+              ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT, subTests));
     }
   }
 
@@ -259,6 +300,14 @@ final class ListAddTester<E> {
               doesNotSupportAddWithExistingElement)
           .forEachOrdered(subTests::add);
 
+      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E, subTests));
+    }
+  }
+
+  private void generateDoesNotSupportAddWithNullElementsTests(List<DynamicNode> tests) {
+    if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
+      List<DynamicTest> subTests = new ArrayList<>();
+
       ThrowingConsumer<CollectionSize> doesNotSupportAddWithNewNullElement =
           collectionSize -> {
             List<E> list = newListToTest(generator, collectionSize);
@@ -288,15 +337,7 @@ final class ListAddTester<E> {
               doesNotSupportAddWithNewNullElement)
           .forEachOrdered(subTests::add);
 
-      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E, subTests));
-    }
-  }
-
-  private void generateDoesNotSupportAddWithNullElementsTests(List<DynamicNode> tests) {
-    if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
-      List<DynamicTest> subTests = new ArrayList<>();
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingNullElement =
+      ThrowingConsumer<CollectionSize> doesNotSupportAddWithExistingNullElement =
           collectionSize -> {
             List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
 
@@ -322,7 +363,7 @@ final class ListAddTester<E> {
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
                       Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
-              doesNotSupportAddAtStartWithExistingNullElement)
+              doesNotSupportAddWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
       tests.add(

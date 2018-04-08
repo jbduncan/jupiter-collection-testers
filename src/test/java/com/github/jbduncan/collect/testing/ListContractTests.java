@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 class ListContractTests {
   private static final List<String> ELEMENTS = SampleElements.strings().asList();
 
-  // TODO: Consider renaming to just `AgainstArrayLists` or `ForArrayLists`
   @Nested
   class ForArrayLists {
     private final ListContract<String> contract = new ArrayListTests();
