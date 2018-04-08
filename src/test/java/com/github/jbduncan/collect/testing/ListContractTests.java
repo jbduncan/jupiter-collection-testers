@@ -23,7 +23,7 @@ class ListContractTests {
 
   // TODO: Consider renaming to just `AgainstArrayLists` or `ForArrayLists`
   @Nested
-  class WhenTestingAgainstArrayLists {
+  class ForArrayLists {
     private final ListContract<String> contract = new ArrayListTests();
     private final List<String> generatedList = contract.generator().create(ELEMENTS.toArray());
 
