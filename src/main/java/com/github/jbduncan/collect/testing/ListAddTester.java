@@ -67,6 +67,7 @@ final class ListAddTester<E> {
     generateSupportsAddTests(tests);
     generateSupportsAddWithNullElementsTests(tests);
     generateDoesNotSupportAddTests(tests);
+    generateDoesNotSupportAddWithNullElementsTests(tests);
     return Collections.unmodifiableList(tests);
   }
 
@@ -287,6 +288,14 @@ final class ListAddTester<E> {
               doesNotSupportAddWithNewNullElement)
           .forEachOrdered(subTests::add);
 
+      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E, subTests));
+    }
+  }
+
+  private void generateDoesNotSupportAddWithNullElementsTests(List<DynamicNode> tests) {
+    if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
+      List<DynamicTest> subTests = new ArrayList<>();
+
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingNullElement =
           collectionSize -> {
             List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
@@ -316,7 +325,9 @@ final class ListAddTester<E> {
               doesNotSupportAddAtStartWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
-      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E, subTests));
+      tests.add(
+          dynamicContainer(
+              ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NULL_ELEMENT, subTests));
     }
   }
 }

@@ -4,7 +4,11 @@ final class ListContractConstants {
   private ListContractConstants() {}
 
   static final String DOES_NOT_SUPPORT_LIST_ADD_E = "Does not support List.add(E)";
+  static final String DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NULL_ELEMENT =
+      "Does not support List.add(E) with null element";
   static final String DOES_NOT_SUPPORT_LIST_ADD_INT_E = "Does not support List.add(int, E)";
+  static final String DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT =
+      "Does not support List.add(int, E) with null element";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT =
       "Does not support List.add(0, E) with existing element: size: %s, elements: %s";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT =
