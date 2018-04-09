@@ -1,7 +1,7 @@
 package com.github.jbduncan.collect.testing;
 
-import static java.util.Arrays.asList;
-import static java.util.Arrays.copyOf;
+import static com.github.jbduncan.collect.testing.Helpers.stream;
+import static com.github.jbduncan.collect.testing.Helpers.toUnmodifiableList;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -10,7 +10,7 @@ class ArrayListTests implements ListContract<String> {
   @Override
   public TestListGenerator<String> generator() {
     return (TestStringListGenerator)
-        elements -> new ArrayList<>(asList(copyOf(elements, elements.length)));
+        elements -> new ArrayList<>(stream(elements).collect(toUnmodifiableList()));
   }
 
   @Override

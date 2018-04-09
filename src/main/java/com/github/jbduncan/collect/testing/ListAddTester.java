@@ -4,11 +4,10 @@ import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.collectionSizeToElements;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
-import static com.github.jbduncan.collect.testing.Helpers.newArrayWithNullElementInMiddle;
+import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullElementInMiddle;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -216,7 +215,7 @@ final class ListAddTester<E> {
             assertTrue(
                 list.add(null), ListContractConstants.NOT_TRUE_THAT_LIST_ADD_NULL_RETURNED_TRUE);
             List<E> expected =
-                append(asList(newArrayWithNullElementInMiddle(samples, collectionSize)), null);
+                append(newCollectionWithNullElementInMiddle(samples, collectionSize), null);
             assertIterableEquals(
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
           };
@@ -227,7 +226,7 @@ final class ListAddTester<E> {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
+                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
               supportsAddWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
@@ -350,7 +349,7 @@ final class ListAddTester<E> {
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
                         ListContractConstants.NULL));
             assertIterableEquals(
-                asList(newArrayWithNullElementInMiddle(samples, collectionSize)),
+                newCollectionWithNullElementInMiddle(samples, collectionSize),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -362,7 +361,7 @@ final class ListAddTester<E> {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      Arrays.toString(newArrayWithNullElementInMiddle(samples, collectionSize))),
+                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
               doesNotSupportAddWithExistingNullElement)
           .forEachOrdered(subTests::add);
 

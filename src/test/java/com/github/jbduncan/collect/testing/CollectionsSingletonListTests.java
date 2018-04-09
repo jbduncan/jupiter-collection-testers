@@ -6,7 +6,8 @@ import java.util.Set;
 public class CollectionsSingletonListTests implements ListContract<String> {
   @Override
   public TestListGenerator<String> generator() {
-    return (TestStringListGenerator) elements -> Collections.singletonList(elements[0]);
+    return (TestStringListGenerator)
+        elements -> Collections.singletonList(elements.iterator().next());
   }
 
   @Override

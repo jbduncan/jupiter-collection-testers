@@ -25,7 +25,7 @@ class ListContractTests {
   @Nested
   class ForArrayLists {
     private final ListContract<String> contract = new ArrayListTests();
-    private final List<String> generatedList = contract.generator().create(ELEMENTS.toArray());
+    private final List<String> generatedList = contract.generator().create(ELEMENTS);
 
     @Test
     void theClassOfTheGeneratedListIsAsExpected() {
@@ -136,7 +136,7 @@ class ListContractTests {
   @Nested
   class ForCollectionsEmptyList {
     private final ListContract<String> contract = new CollectionsEmptyListTests();
-    private final List<String> generatedList = contract.generator().create(ELEMENTS.toArray());
+    private final List<String> generatedList = contract.generator().create(ELEMENTS);
 
     @Test
     void theClassOfTheGeneratedListIsAsExpected() {
@@ -186,7 +186,7 @@ class ListContractTests {
   @Nested
   class ForCollectionsSingletonList {
     private final ListContract<String> contract = new CollectionsSingletonListTests();
-    private final List<String> generatedList = contract.generator().create(ELEMENTS.toArray());
+    private final List<String> generatedList = contract.generator().create(ELEMENTS);
 
     @Test
     void theClassOfTheGeneratedListIsAsExpected() {
@@ -249,6 +249,16 @@ class ListContractTests {
                   + "size: 1, elements: [null]"));
     }
   }
+
+  // TODO: Test the following list implementations:
+  // - ArraysAsList
+  // - LinkedList
+  // - UnmodifiableList
+  // - Vector
+  // - CheckedList
+  // - CopyOnWriteArrayList
+  // - AbstractList
+  // - AbstractSequentialList
 
   private void assertExpectedStructure(
       Supplier<Iterable<DynamicNode>> dynamicNodesSupplier,

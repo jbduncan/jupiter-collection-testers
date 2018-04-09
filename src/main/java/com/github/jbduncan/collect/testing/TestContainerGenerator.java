@@ -5,7 +5,7 @@ import java.util.List;
 public interface TestContainerGenerator<T, E> {
   SampleElements<E> samples();
 
-  T create(Object... elements);
+  T create(Iterable<E> elements);
 
   Iterable<E> order(List<E> insertionOrder);
 }

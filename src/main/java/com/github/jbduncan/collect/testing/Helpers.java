@@ -13,29 +13,30 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 // TODO: Unit test each and every single method here
 final class Helpers {
   private Helpers() {}
 
-  static <E> E[] newArrayWithNullElementInMiddle(
+  static <E> Collection<E> newCollectionWithNullElementInMiddle(
       SampleElements<E> samples, CollectionSize collectionSize) {
-    Object[] elements;
+    List<E> elements;
     switch (collectionSize) {
       case SUPPORTS_ONE:
-        elements = new Object[] {null};
+        elements = Collections.singletonList(null);
         break;
       case SUPPORTS_THREE:
-        elements = new Object[] {samples.e0(), null, samples.e2()};
+        elements = Arrays.asList(samples.e0(), null, samples.e2());
         break;
       case SUPPORTS_ZERO:
+        throw new IllegalStateException(
+            "Cannot create iterable that is both of size 0 and contains 'null'");
       default:
         throw new IllegalStateException(
             String.format("'collectionSize' %s is unrecognized", collectionSize));
     }
-    @SuppressWarnings("unchecked")
-    E[] result = (E[]) elements;
-    return result;
+    return elements;
   }
 
   static Set<CollectionSize> extractConcreteSizes(Set<Feature<?>> features) {
@@ -107,7 +108,7 @@ final class Helpers {
     return Collections.unmodifiableList(result);
   }
 
-  private static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
+  static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
     return collectingAndThen(toList(), Collections::unmodifiableList);
   }
 
@@ -115,6 +116,10 @@ final class Helpers {
     return set.stream()
         .filter(element -> !element.equals(toRemove))
         .collect(toUnmodifiableInsertionOrderSet());
+  }
+
+  static <E> Stream<E> stream(Iterable<E> iterable) {
+    return StreamSupport.stream(iterable.spliterator(), false);
   }
 
   static <E> String quote(E value) {
