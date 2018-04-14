@@ -8,6 +8,10 @@ class ListFeatureTests {
   @Test
   void supportsSetHasExpectedImpliedFeatures() {
     assertThat(ListFeature.SUPPORTS_SET.impliedFeatures()).isEmpty();
+  }
+
+  @Test
+  void supportsSetHasExpectedExpandedFeatures() {
     assertThat(Feature.allFeaturesRecursively(ListFeature.SUPPORTS_SET))
         .containsExactly(ListFeature.SUPPORTS_SET);
   }
@@ -16,6 +20,10 @@ class ListFeatureTests {
   void supportsAddWithIndexHasExpectedImpliedFeatures() {
     assertThat(ListFeature.SUPPORTS_ADD_WITH_INDEX.impliedFeatures())
         .containsExactly(CollectionFeature.SUPPORTS_ADD);
+  }
+
+  @Test
+  void supportsAddWithIndexHasExpectedExpandedFeatures() {
     assertThat(Feature.allFeaturesRecursively(ListFeature.SUPPORTS_ADD_WITH_INDEX))
         .containsExactly(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.SUPPORTS_ADD);
   }
@@ -24,6 +32,10 @@ class ListFeatureTests {
   void supportsRemoveWithIndexHasExpectedImpliedFeatures() {
     assertThat(ListFeature.SUPPORTS_REMOVE_WITH_INDEX.impliedFeatures())
         .containsExactly(CollectionFeature.SUPPORTS_REMOVE);
+  }
+
+  @Test
+  void supportsRemoveWithIndexHasExpectedExpandedFeatures() {
     assertThat(Feature.allFeaturesRecursively(ListFeature.SUPPORTS_REMOVE_WITH_INDEX))
         .containsExactly(ListFeature.SUPPORTS_REMOVE_WITH_INDEX, CollectionFeature.SUPPORTS_REMOVE);
   }
@@ -36,6 +48,10 @@ class ListFeatureTests {
             ListFeature.SUPPORTS_SET,
             ListFeature.SUPPORTS_ADD_WITH_INDEX,
             ListFeature.SUPPORTS_REMOVE_WITH_INDEX);
+  }
+
+  @Test
+  void generalPurposeHasExpectedExpandedFeatures() {
     assertThat(Feature.allFeaturesRecursively(ListFeature.GENERAL_PURPOSE))
         .containsExactly(
             ListFeature.GENERAL_PURPOSE,
@@ -53,6 +69,10 @@ class ListFeatureTests {
     assertThat(ListFeature.REMOVE_OPERATIONS.impliedFeatures())
         .containsExactly(
             CollectionFeature.REMOVE_OPERATIONS, ListFeature.SUPPORTS_REMOVE_WITH_INDEX);
+  }
+
+  @Test
+  void removeOperationsHasExpectedExpandedFeatures() {
     assertThat(Feature.allFeaturesRecursively(ListFeature.REMOVE_OPERATIONS))
         .containsExactly(
             ListFeature.REMOVE_OPERATIONS,

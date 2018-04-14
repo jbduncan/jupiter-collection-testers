@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -20,21 +22,33 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class ListContractTests {
-  private static final List<String> ELEMENTS = SampleElements.strings().asList();
+  private static List<String> elements;
+
+  @BeforeAll
+  static void beforeAll() {
+    elements = SampleElements.strings().asList();
+  }
 
   @Nested
   class ForArrayLists {
-    private final ListContract<String> contract = new ArrayListTests();
-    private final List<String> generatedList = contract.generator().create(ELEMENTS);
+    private ListContract<String> contract;
+    private List<String> generatedList;
+
+    @BeforeEach
+    void beforeEach() {
+      contract = new ArrayListTests();
+      generatedList = contract.generator().create(elements);
+    }
 
     @Test
+    @SuppressWarnings("PMD.LooseCoupling")
     void theClassOfTheGeneratedListIsAsExpected() {
       assertThat(generatedList.getClass()).isEqualTo(ArrayList.class);
     }
 
     @Test
     void theGeneratedListExactlyContainsGivenElementsInOrder() {
-      assertThat(generatedList).containsExactlyElementsIn(ELEMENTS).inOrder();
+      assertThat(generatedList).containsExactlyElementsIn(elements).inOrder();
     }
 
     @Test
@@ -135,8 +149,14 @@ class ListContractTests {
 
   @Nested
   class ForCollectionsEmptyList {
-    private final ListContract<String> contract = new CollectionsEmptyListTests();
-    private final List<String> generatedList = contract.generator().create(ELEMENTS);
+    private ListContract<String> contract;
+    private List<String> generatedList;
+
+    @BeforeEach
+    void beforeEach() {
+      contract = new CollectionsEmptyListTests();
+      generatedList = contract.generator().create(elements);
+    }
 
     @Test
     void theClassOfTheGeneratedListIsAsExpected() {
@@ -185,17 +205,24 @@ class ListContractTests {
 
   @Nested
   class ForCollectionsSingletonList {
-    private final ListContract<String> contract = new CollectionsSingletonListTests();
-    private final List<String> generatedList = contract.generator().create(ELEMENTS);
+    private ListContract<String> contract;
+    private List<String> generatedList;
+
+    @BeforeEach
+    void beforeEach() {
+      contract = new CollectionsSingletonListTests();
+      generatedList = contract.generator().create(elements);
+    }
 
     @Test
     void theClassOfTheGeneratedListIsAsExpected() {
-      assertThat(generatedList.getClass()).isEqualTo(Collections.singletonList(null).getClass());
+      assertThat(generatedList.getClass())
+          .isEqualTo(Collections.singletonList("sole element").getClass());
     }
 
     @Test
     void theGeneratedListIsEmpty() {
-      assertThat(generatedList).containsExactly(ELEMENTS.get(0));
+      assertThat(generatedList).containsExactly(elements.get(0));
     }
 
     @Test
@@ -250,7 +277,7 @@ class ListContractTests {
     }
   }
 
-  // TODO: Test the following list implementations:
+  // TODO: Consider testing the following list implementations:
   // - ArraysAsList
   // - LinkedList
   // - UnmodifiableList

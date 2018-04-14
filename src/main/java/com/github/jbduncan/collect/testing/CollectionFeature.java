@@ -1,7 +1,6 @@
 package com.github.jbduncan.collect.testing;
 
 import java.util.Collection;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -72,7 +71,7 @@ public enum CollectionFeature implements Feature<Collection<?>> {
   SUPPORTS_ITERATOR_REMOVE,
   /**
    * Indicates that the collection fails fast on concurrent modification, as described in {@link
-   * ConcurrentModificationException}.
+   * java.util.ConcurrentModificationException ConcurrentModificationException}.
    */
   FAILS_FAST_ON_CONCURRENT_MODIFICATION,
 

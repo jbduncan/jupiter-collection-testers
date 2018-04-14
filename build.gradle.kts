@@ -2,6 +2,7 @@ plugins {
     `java-library`
     eclipse
     idea
+    pmd
 
     id("com.diffplug.gradle.spotless") version("3.10.0")
     id("com.github.ben-manes.versions") version("0.17.0")
@@ -37,7 +38,6 @@ repositories {
 val junit5Version: String by project
 val guavaVersion: String by project
 val truthVersion: String by project
-val errorProneVersion: String by project
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter-api:$junit5Version")
@@ -49,7 +49,18 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
 }
 
+// Configuration for PMD
+val pmdVersion: String by project
+
+pmd {
+    toolVersion = pmdVersion
+    ruleSets = emptyList()
+    ruleSetConfig = resources.text.fromFile(file("$rootDir/config/pmd/ruleset.xml"), "UTF-8")
+}
+
 // Configuration for error-prone: https://github.com/tbroyer/gradle-errorprone-plugin
+val errorProneVersion: String by project
+
 dependencies {
     errorprone("com.google.errorprone:error_prone_core:$errorProneVersion")
     compileOnly("com.google.errorprone:error_prone_annotations:$errorProneVersion")

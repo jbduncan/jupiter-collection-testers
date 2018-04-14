@@ -88,9 +88,10 @@ final class Helpers {
         throw new IllegalArgumentException(
             "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "
                 + "it must be a specific size");
+      default:
+        throw new IllegalStateException(
+            String.format("'collectionSize' %s is unrecognized", collectionSize));
     }
-    throw new IllegalStateException(
-        String.format("'collectionSize' %s is unrecognized", collectionSize));
   }
 
   static <E> List<E> append(Collection<E> collection, E toAppend) {
