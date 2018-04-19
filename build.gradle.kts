@@ -159,8 +159,8 @@ tasks {
                     .reduce { acc, source -> acc + source }
     val nullDir = if (Os.isFamily(Os.FAMILY_WINDOWS)) "nul" else "/dev/null"
 
-    // FIXME: "refasterApply" and "refasterCheck" do not re-run if the contents of
-    // `refasterTemplatePath` changes. Fix that.
+    // FIXME: "refasterApply" and "refasterCheck" do not re-run if the output of
+    // "compileRefasterTemplate" changes. Fix that.
 
     // TODO: Consider redirecting all logging messages to a log file in the buildDir, as in
     // https://stackoverflow.com/a/27679230/2252930
@@ -180,6 +180,11 @@ tasks {
                         "-XepPatchChecks:refaster:$compiledRefasterTemplatePath",
                         "-XepPatchLocation:$nullDir")
         destinationDir = file("$refasterBuildDir/check/classes")
+
+        // TODO: This is a hack to forcefully disable UP-TO-DATE checking whilst we're waiting for
+        // "compileRefasterTemplate" to itself adopt UP-TO-DATE checking. Remove it when
+        // "compileRefasterTemplate" is fixed.
+        outputs.upToDateWhen { false }
     }
     tasks["check"].dependsOn("refasterCheck")
 
@@ -197,6 +202,11 @@ tasks {
                         "-XepPatchChecks:refaster:$compiledRefasterTemplatePath",
                         "-XepPatchLocation:IN_PLACE")
         destinationDir = file("$refasterBuildDir/apply/classes")
+
+        // TODO: This is a hack to forcefully disable UP-TO-DATE checking whilst we're waiting for
+        // "compileRefasterTemplate" to itself adopt UP-TO-DATE checking. Remove it when
+        // "compileRefasterTemplate" is fixed.
+        outputs.upToDateWhen { false }
     }
 }
 

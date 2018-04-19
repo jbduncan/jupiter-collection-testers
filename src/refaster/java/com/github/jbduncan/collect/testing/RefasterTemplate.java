@@ -135,7 +135,8 @@ public class RefasterTemplate {
   //    }
   //  }
 
-  // TODO: Introduce other sub-templates. See:
+  // TODO: Introduce other sub-templates. E.g.:
   // - https://github.com/google/guava/tree/master/refactorings
   // - http://errorprone.info/docs/refaster
+  // - `new LinkedList<>()` to `new ArrayDeque<>()`
 }
