@@ -5,8 +5,8 @@ import com.google.errorprone.refaster.annotation.AlsoNegation;
 import com.google.errorprone.refaster.annotation.BeforeTemplate;
 
 @SuppressWarnings("PMD")
-public class RefasterTemplate {
-  public static class StringIsEmpty {
+class RefasterTemplate {
+  static class StringIsEmpty {
     @BeforeTemplate
     boolean equalsEmptyString(String string) {
       return string.equals("");
@@ -26,7 +26,7 @@ public class RefasterTemplate {
 
   // TODO: Apparently, Refaster crashes if there is more than one sub-template inner class. Fix it.
 
-  //  public static class Utf8Length {
+  //  static class Utf8Length {
   //    @BeforeTemplate
   //    int toUtf8Length(String string) {
   //      return string.getBytes(StandardCharsets.UTF_8).length;
@@ -38,7 +38,7 @@ public class RefasterTemplate {
   //    }
   //  }
   //
-  //  public static class ListSwap<T> {
+  //  static class ListSwap<T> {
   //    @BeforeTemplate
   //    void manualSwap(List<T> list, int i, int j) {
   //      T tmp = list.get(i);
@@ -52,7 +52,7 @@ public class RefasterTemplate {
   //    }
   //  }
   //
-  //  class SortedFirst<T> {
+  //  static class SortedFirst<T> {
   //    @BeforeTemplate
   //    Optional<T> before(Stream<T> stream, Comparator<? super T> comparator) {
   //      return stream.sorted(comparator).findFirst();
@@ -64,7 +64,7 @@ public class RefasterTemplate {
   //    }
   //  }
   //
-  //  class AddAllArrayToBuilder<E> {
+  //  static class AddAllArrayToBuilder<E> {
   //    @BeforeTemplate
   //    ImmutableCollection.Builder<E> addAllAsList(
   //        ImmutableCollection.Builder<E> builder, E[] elements) {
@@ -81,7 +81,7 @@ public class RefasterTemplate {
   //    }
   //  }
   //
-  //  public abstract class ComputeIfAbsent<K, V> {
+  //  static abstract class ComputeIfAbsent<K, V> {
   //    @Placeholder
   //    abstract V function(K key);
   //
@@ -98,7 +98,7 @@ public class RefasterTemplate {
   //    }
   //  }
   //
-  //  public abstract class IfSetAdd<E> {
+  //  static abstract class IfSetAdd<E> {
   //    @Placeholder
   //    abstract void doAfterAdd(E element);
   //
@@ -118,7 +118,7 @@ public class RefasterTemplate {
   //    }
   //  }
   //
-  //  public abstract class MapEntryLoop<K, V> {
+  //  static abstract class MapEntryLoop<K, V> {
   //    @Placeholder
   //    abstract void doSomething(K k, V v);
   //
