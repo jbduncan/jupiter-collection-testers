@@ -1,6 +1,3 @@
-import net.ltgt.gradle.errorprone.ErrorProneToolChain
-import org.apache.tools.ant.taskdefs.condition.Os
-
 plugins {
     `java-library`
     eclipse
@@ -11,7 +8,7 @@ plugins {
     id("com.github.ben-manes.versions") version("0.17.0")
     // TODO: Consider swapping out for
     // https://github.com/tbroyer/gradle-errorprone-javacplugin-plugin
-    id("net.ltgt.errorprone") version("0.0.13")
+    id("net.ltgt.errorprone") // No version needed, as already imported in buildSrc/build.gradle
 
     // TODO: Add other static analysis and formal verification tools
 }
@@ -78,137 +75,7 @@ val compileTestJava by tasks.getting(JavaCompile::class) {
 }
 
 // Configuration for Refaster: http://errorprone.info/docs/refaster
-
-// TODO: Consider extracting this all into a plugin, and in doing so make
-// "compileRefasterTemplate" have UP-TO-DATE checking and possibly even be incremental.
-
-java {
-    sourceSets {
-        "refaster" {
-            java {
-                srcDir("src/refaster/java")
-            }
-        }
-    }
-}
-
-val refasterCompile by configurations.getting
-
-val refasterErrorProneVersion: String by project
-
-dependencies {
-    refasterCompile("com.google.guava:guava:$guavaVersion")
-    refasterCompile("com.google.errorprone:error_prone_core:$refasterErrorProneVersion")
-    refasterCompile("com.google.errorprone:error_prone_refaster:$refasterErrorProneVersion")
-}
-
-tasks {
-    val refasterBuildDir = "$buildDir/refaster"
-    val compiledRefasterTemplatePath = file("$refasterBuildDir/template/Refaster.refaster")
-
-    val refasterJarPath =
-            refasterCompile.files.single { it.getName().startsWith("error_prone_refaster") }
-    val errorproneJavacJarPath =
-            refasterCompile.files.single { it.name.matches("javac-.+.jar".toRegex()) }
-
-    val refasterTemplatePath =
-            java.sourceSets["refaster"].java.srcDirs.single()
-                    .walkTopDown().single { it.isFile && it.toString().endsWith(".java") }
-    val compiledRefasterClassesDir = "$refasterBuildDir/refaster/classes"
-
-    "compileRefasterTemplate"(JavaExec::class) {
-        doFirst {
-            // Require Java 8
-            val javaVersion = Integer.parseInt(JavaVersion.current().majorVersion)
-            if (javaVersion != 8) {
-                throw GradleException(
-                        "The task 'compileRefasterTemplate' requires Java 8. " +
-                                "Currently executing with Java " + javaVersion + ".")
-            }
-
-            mkdir(compiledRefasterTemplatePath.parent)
-        }
-        main = ""
-        args(
-                // TODO: Adjust these arguments so that they work for Java 9+ as well. See:
-                // http://errorprone.info/docs/installation -> "Java 9" for more information.
-                listOf(
-                        "-Xbootclasspath/p:" +
-                                "$refasterJarPath${File.pathSeparator}$errorproneJavacJarPath",
-                        "com.google.errorprone.refaster.RefasterRuleCompiler",
-                        refasterTemplatePath,
-                        "--out",
-                        compiledRefasterTemplatePath,
-                        "-d",
-                        compiledRefasterClassesDir))
-    }
-
-    val javaCompileTasks: List<JavaCompile> =
-            tasks.withType<JavaCompile>()
-                    .filter { it.name in listOf("compileJava", "compileTestJava") }
-                    .toList()
-    val refasterClasspath: FileCollection =
-            javaCompileTasks
-                    .asSequence()
-                    .map { it.classpath }
-                    .reduce { acc, classpath -> acc + classpath }
-    val refasterSource: FileTree =
-            javaCompileTasks
-                    .asSequence()
-                    .map { it.source }
-                    .reduce { acc, source -> acc + source }
-    val nullDir = if (Os.isFamily(Os.FAMILY_WINDOWS)) "nul" else "/dev/null"
-
-    // FIXME: "refasterApply" and "refasterCheck" do not re-run if the output of
-    // "compileRefasterTemplate" changes. Find a way of fixing it.
-
-    // TODO: Consider redirecting all logging messages to a log file in the buildDir, as in
-    // https://stackoverflow.com/a/27679230/2252930
-
-    "refasterCheck"(JavaCompile::class) {
-        dependsOn("compileRefasterTemplate")
-
-        group = "verification"
-        toolChain = ErrorProneToolChain.create(project)
-
-        classpath = refasterClasspath
-        source = refasterSource
-
-        options.compilerArgs =
-                listOf(
-                        "-Werror",
-                        "-XepPatchChecks:refaster:$compiledRefasterTemplatePath",
-                        "-XepPatchLocation:$nullDir")
-        destinationDir = file("$refasterBuildDir/check/classes")
-
-        // TODO: This is a hack to forcefully disable UP-TO-DATE checking whilst we're waiting for
-        // "compileRefasterTemplate" to itself adopt UP-TO-DATE checking. Remove it when
-        // "compileRefasterTemplate" is fixed.
-        outputs.upToDateWhen { false }
-    }
-    tasks["check"].dependsOn("refasterCheck")
-
-    "refasterApply"(JavaCompile::class) {
-        dependsOn("compileRefasterTemplate")
-        group = "verification"
-        toolChain = ErrorProneToolChain.create(project)
-
-        classpath = refasterClasspath
-        source = refasterSource
-
-        options.compilerArgs =
-                listOf(
-                        "-Xlint:none",
-                        "-XepPatchChecks:refaster:$compiledRefasterTemplatePath",
-                        "-XepPatchLocation:IN_PLACE")
-        destinationDir = file("$refasterBuildDir/apply/classes")
-
-        // TODO: This is a hack to forcefully disable UP-TO-DATE checking whilst we're waiting for
-        // "compileRefasterTemplate" to itself adopt UP-TO-DATE checking. Remove it when
-        // "compileRefasterTemplate" is fixed.
-        outputs.upToDateWhen { false }
-    }
-}
+apply { plugin("com.github.jbduncan.gradle.refaster") }
 
 // Configuration for Spotless: https://github.com/diffplug/spotless
 
@@ -241,11 +108,16 @@ spotless {
     }
     format("misc") {
         target(
-                "**/*.gradle",
-                "**/*.gitignore",
-                "**/*.properties",
-                "config/**/*.xml",
-                "src/**/*.xml")
+                fileTree(
+                        "$rootDir",
+                        {
+                            include("**/*.gradle",
+                                    "**/*.gitignore",
+                                    "**/*.properties",
+                                    "config/**/*.xml",
+                                    "src/**/*.xml")
+                            exclude("**/build/**", "**/.gradle/**")
+                        }))
         trimTrailingWhitespace()
         endWithNewline()
     }
