@@ -160,7 +160,7 @@ tasks {
     val nullDir = if (Os.isFamily(Os.FAMILY_WINDOWS)) "nul" else "/dev/null"
 
     // FIXME: "refasterApply" and "refasterCheck" do not re-run if the output of
-    // "compileRefasterTemplate" changes. Fix that.
+    // "compileRefasterTemplate" changes. Find a way of fixing it.
 
     // TODO: Consider redirecting all logging messages to a log file in the buildDir, as in
     // https://stackoverflow.com/a/27679230/2252930
@@ -230,7 +230,9 @@ spotless {
     java {
         googleJavaFormat(googleJavaFormatVersion)
         // TODO: Consider adding an "authorship" custom step that checks for @author tags on Java
-        // source files and fails if any are present.
+        // source files and fails if any are present. Alternatively, do it as a custom Checkstyle
+        // check as in
+        // https://github.com/danielb987/EmojicodeEditor/blob/master/checkstyle/emojicode_checks.xml
     }
     kotlinGradle {
         ktlint(ktlintVersion)
