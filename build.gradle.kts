@@ -229,6 +229,7 @@ dependencies {
 spotless {
     java {
         googleJavaFormat(googleJavaFormatVersion)
+        licenseHeaderFile(file("$rootDir/src/spotless/apache-license-2.0.java"))
         // TODO: Consider adding an "authorship" custom step that checks for @author tags on Java
         // source files and fails if any are present. Alternatively, do it as a custom Checkstyle
         // check as in
