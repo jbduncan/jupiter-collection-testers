@@ -1,1 +1,1 @@
-rootProject.name = "junit-jupiter-collection-testers"
+rootProject.name = "jupiter-collection-testers"
