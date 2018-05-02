@@ -11,6 +11,7 @@
     <exclude name="AccessorClassGeneration"/>
     <exclude name="AccessorMethodGeneration"/>
     <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+    <exclude name="UnusedImports"/> <!-- Covered by google-java-format through Spotless -->
   </rule>
 
   <!-- TODO: Consider applying "category/java/codestyle.xml", "category/java/design.xml",
