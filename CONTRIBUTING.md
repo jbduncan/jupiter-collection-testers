@@ -1,42 +1,9 @@
 Contributing
 ===
 
-Thank you very much for wanting to contribute to Jupiter Collection Testers! Here are a couple of
-important things to note before starting:
+Thank you very much for wanting to contribute to Jupiter Collection Testers!
 
-1. Pull requests are great for small fixes for bugs, documentation, etc.
-2. For anything else, please
-   [open an issue](https://github.com/jbduncan/jupiter-collection-testers/issues/new) first.
-
-Pull requests
-===
-
-Unless the change is trivial (with examples of what counts as trivial given below), it's generally
-best to start by opening a new issue describing the bug or feature you're intending to fix. Even if
-you think it's relatively minor, it's helpful to know what people are working on.
-
-Some examples of types of trivial pull requests that are immediately helpful:
-
-1. Fixing a minor bug.
-2. Fixing a documentation typo.
-3. Small improvements to Gradle configuration.
-
-Setting up your coding environment
-===
-
-1. Fork the project and clone it locally.
-2. Set things up in your IDE or text editor of choice. Instructions for IntelliJ IDEA are provided
-   below.
-
-Creating an IntelliJ IDEA project
----
-
-1. Use
-   [IntelliJ IDEA's support for importing Gradle projects](https://www.jetbrains.com/help/idea/gradle.html#gradle_import).
-1. Download
-   [Google's Java Code Style Scheme file for IntelliJ](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml),
-   import it (go to `Preferences` > `Editor` > `Code Style` > `Java`, click `Manage`, then `Import`)
-   and use it when working on jupiter-collection-testers' code.
+TODO: Check back later, will fill this hopefully sooner rather than later!
 
 Guidelines for any code contributions
 ===
@@ -80,4 +47,3 @@ Miscellaneous
 ---
 
 Text in `*.md` files should be wrapped at 100 characters whenever technically possible.
-

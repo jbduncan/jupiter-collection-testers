@@ -34,11 +34,18 @@ Getting Help
 If you have a question, or would like to request a new feature, or think you've found a bug, please
 [open a new issue](https://github.com/jbduncan/jupiter-collection-testers/issues/new).
 
+(I'd appreciate help with setting up a Gitter channel!)
+
 Versioning
 ===
 
 We use [SemVer](https://semver.org/) for versioning. For the versions available, see the
 [release tags](https://github.com/jbduncan/jupiter-collection-testers/releases).
+
+License
+===
+
+[Apache License, Version 2.0](https://github.com/jbduncan/jupiter-collection-testers/blob/master/LICENSE)
 
 Acknowledgements
 ===
