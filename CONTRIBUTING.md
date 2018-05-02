@@ -42,7 +42,7 @@ message.
 ```
 Resolves: #999
 ```
-   
+
 Miscellaneous
 ---
 
