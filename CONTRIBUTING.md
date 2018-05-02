@@ -40,7 +40,7 @@ Any commit that is related to an existing issue must reference the issue. For ex
 in a pull request addresses issue #999, it must contain the following at the bottom of the commit
 message.
 ```
-Resolves: #999
+Issue: #999
 ```
 
 Miscellaneous
