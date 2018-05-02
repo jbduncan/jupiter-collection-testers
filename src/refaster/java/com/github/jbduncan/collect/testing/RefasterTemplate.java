@@ -149,11 +149,4 @@ class RefasterTemplate {
   //      map.forEach((K key, V value) -> doSomething(key, value));
   //    }
   //  }
-
-  // TODO: Introduce other sub-templates. E.g.:
-  // - https://github.com/google/guava/tree/master/refactorings
-  // - http://errorprone.info/docs/refaster
-  // - See https://github.com/JnRouvignac/AutoRefactor for ideas
-  // - `new LinkedList<>()` & `new Stack<>()` to `new ArrayDeque<>()`
-  // - Wait for Google or other organisations to release more templates
 }
