@@ -19,6 +19,8 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import com.google.common.graph.SuccessorsFunction;
 import com.google.common.graph.Traverser;
@@ -109,6 +111,7 @@ class ListContractTests {
 
     @Test
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
+      // TODO: Consider refactoring to use a cartesian product set
       assertExpectedStructure(
           contract::addWithIndex,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
@@ -135,6 +138,12 @@ class ListContractTests {
               "Supports List.add(middleIndex(), E) with existing element: size: 1, elements: [a]",
               "Supports List.add(middleIndex(), E) with existing element: size: 3, elements: "
                   + "[a, b, c]",
+              // List.add(-1, E)
+              "Does not support List.add(-1, E) with new element: size: 0, elements: []",
+              "Does not support List.add(-1, E) with new element: size: 1, elements: [a]",
+              "Does not support List.add(-1, E) with new element: size: 3, elements: [a, b, c]",
+              "Does not support List.add(-1, E) with existing element: size: 1, elements: [a]",
+              "Does not support List.add(-1, E) with existing element: size: 3, elements: [a, b, c]",
               //
               // null element(s)
               //
@@ -158,7 +167,16 @@ class ListContractTests {
               "Supports List.add(middleIndex(), E) with existing null element: size: 1, elements: "
                   + "[null]",
               "Supports List.add(middleIndex(), E) with existing null element: size: 3, elements: "
-                  + "[a, null, c]"));
+                  + "[a, null, c]",
+              // List.add(-1, E)
+              "Does not support List.add(-1, E) with new null element: size: 0, elements: []",
+              "Does not support List.add(-1, E) with new null element: size: 1, elements: [a]",
+              "Does not support List.add(-1, E) with new null element: "
+                  + "size: 3, elements: [a, b, c]",
+              "Does not support List.add(-1, E) with existing null element: "
+                  + "size: 1, elements: [null]",
+              "Does not support List.add(-1, E) with existing null element: "
+                  + "size: 3, elements: [a, null, c]"));
     }
   }
 
@@ -202,19 +220,27 @@ class ListContractTests {
 
     @Test
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
+      String messageFormat = "Does not support List.add(%s, E) with %s: size: 0, elements: []";
+      ImmutableList<String> expectedDynamicTestNames =
+          Sets.cartesianProduct(
+                  ImmutableList.of(
+                      ImmutableSet.of("0", "size()", "middleIndex()", "-1"),
+                      ImmutableSet.of("new element", "new null element")))
+              .stream()
+              .map(
+                  list -> {
+                    String index = list.get(0);
+                    String elementType = list.get(1);
+                    return String.format(messageFormat, index, elementType);
+                  })
+              .collect(toImmutableList());
+
       assertExpectedStructure(
           contract::addWithIndex,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
               "Does not support List.add(int, E)",
               "Does not support List.add(int, E) with null element"),
-          /* expectedDynamicTestNames = */ ImmutableList.of(
-              "Does not support List.add(0, E) with new element: size: 0, elements: []",
-              "Does not support List.add(size(), E) with new element: size: 0, elements: []",
-              "Does not support List.add(middleIndex(), E) with new element: size: 0, elements: []",
-              "Does not support List.add(0, E) with new null element: size: 0, elements: []",
-              "Does not support List.add(size(), E) with new null element: size: 0, elements: []",
-              "Does not support List.add(middleIndex(), E) with new null element: "
-                  + "size: 0, elements: []"));
+          /* expectedDynamicTestNames = */ expectedDynamicTestNames);
     }
   }
 
@@ -260,35 +286,37 @@ class ListContractTests {
               "Does not support List.add(E) with new element: size: 1, elements: [a]",
               "Does not support List.add(E) with existing element: size: 1, elements: [a]",
               "Does not support List.add(E) with new null element: size: 1, elements: [a]",
-              "Does not support List.add(E) with existing null element: size: 1, elements: [null]"));
+              "Does not support List.add(E) with existing null element: "
+                  + "size: 1, elements: [null]"));
     }
 
     @Test
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
+      ImmutableList<String> expectedDynamicTestNames =
+          Sets.cartesianProduct(
+                  ImmutableList.of(
+                      ImmutableSet.of("0", "size()", "middleIndex()", "-1"),
+                      ImmutableSet.of(
+                          "new element: size: 1, elements: [a]",
+                          "existing element: size: 1, elements: [a]",
+                          "new null element: size: 1, elements: [a]",
+                          "existing null element: size: 1, elements: [null]")))
+              .stream()
+              .map(
+                  tuple -> {
+                    String index = tuple.get(0);
+                    String messageEnd = tuple.get(1);
+                    return String.format(
+                        "Does not support List.add(%s, E) with %s", index, messageEnd);
+                  })
+              .collect(toImmutableList());
+
       assertExpectedStructure(
           contract::addWithIndex,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
               "Does not support List.add(int, E)",
               "Does not support List.add(int, E) with null element"),
-          /* expectedDynamicTestNames = */ ImmutableList.of(
-              "Does not support List.add(0, E) with new element: size: 1, elements: [a]",
-              "Does not support List.add(0, E) with existing element: size: 1, elements: [a]",
-              "Does not support List.add(size(), E) with new element: size: 1, elements: [a]",
-              "Does not support List.add(size(), E) with existing element: size: 1, elements: [a]",
-              "Does not support List.add(middleIndex(), E) with new element: "
-                  + "size: 1, elements: [a]",
-              "Does not support List.add(middleIndex(), E) with existing element: "
-                  + "size: 1, elements: [a]",
-              "Does not support List.add(0, E) with new null element: size: 1, elements: [a]",
-              "Does not support List.add(0, E) with existing null element: "
-                  + "size: 1, elements: [null]",
-              "Does not support List.add(size(), E) with new null element: size: 1, elements: [a]",
-              "Does not support List.add(size(), E) with existing null element: "
-                  + "size: 1, elements: [null]",
-              "Does not support List.add(middleIndex(), E) with new null element: "
-                  + "size: 1, elements: [a]",
-              "Does not support List.add(middleIndex(), E) with existing null element: "
-                  + "size: 1, elements: [null]"));
+          /* expectedDynamicTestNames = */ expectedDynamicTestNames);
     }
   }
 

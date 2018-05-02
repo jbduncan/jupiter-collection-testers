@@ -251,6 +251,8 @@ final class ListAddWithIndexTester<E> {
               supportsAddAtMiddleWithExistingElement)
           .forEachOrdered(subTests::add);
 
+      createMinus1IndexTests(subTests, IndexOutOfBoundsException.class);
+
       tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E, subTests));
     }
   }
@@ -505,6 +507,8 @@ final class ListAddWithIndexTester<E> {
               supportsAddAtMiddleWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
+      createMinus1IndexWithNullElementTests(subTests, IndexOutOfBoundsException.class);
+
       tests.add(
           dynamicContainer(
               ListContractConstants.SUPPORTS_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
@@ -691,6 +695,8 @@ final class ListAddWithIndexTester<E> {
               doesNotSupportAddAtMiddleWithExistingElement)
           .forEachOrdered(subTests::add);
 
+      createMinus1IndexTests(subTests, UnsupportedOperationException.class);
+
       tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, subTests));
     }
   }
@@ -873,9 +879,137 @@ final class ListAddWithIndexTester<E> {
               doesNotSupportAddAtMiddleWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
+      createMinus1IndexWithNullElementTests(subTests, UnsupportedOperationException.class);
+
       tests.add(
           dynamicContainer(
               ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
     }
+  }
+
+  private void createMinus1IndexTests(
+      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndNewElement =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              expectedExceptionType,
+              () -> list.add(-1, samples.e3()),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
+                      samples.e3(),
+                      expectedExceptionType));
+          assertIterableEquals(
+              collectionSizeToElements(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants
+                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_ELEMENT,
+                    collectionSize.size(),
+                    collectionSizeToElements(collectionSize, samples)),
+            doesNotSupportAddWithMinus1IndexAndNewElement)
+        .forEachOrdered(subTests::add);
+
+    ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndExistingElement =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              expectedExceptionType,
+              () -> list.add(-1, samples.e0()),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
+                      samples.e0(),
+                      expectedExceptionType));
+          assertIterableEquals(
+              collectionSizeToElements(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    DynamicTest.stream(
+            minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants
+                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_ELEMENT,
+                    collectionSize.size(),
+                    collectionSizeToElements(collectionSize, samples)),
+            doesNotSupportAddWithMinus1IndexAndExistingElement)
+        .forEachOrdered(subTests::add);
+  }
+
+  private void createMinus1IndexWithNullElementTests(
+      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndNewNullElement =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              expectedExceptionType,
+              () -> list.add(-1, null),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
+                      ListContractConstants.NULL,
+                      expectedExceptionType));
+          assertIterableEquals(
+              collectionSizeToElements(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants
+                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT,
+                    collectionSize.size(),
+                    collectionSizeToElements(collectionSize, samples)),
+            doesNotSupportAddWithMinus1IndexAndNewNullElement)
+        .forEachOrdered(subTests::add);
+
+    ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndExistingNullElement =
+        collectionSize -> {
+          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+
+          assertThrows(
+              expectedExceptionType,
+              () -> list.add(-1, null),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
+                      ListContractConstants.NULL,
+                      expectedExceptionType));
+          assertIterableEquals(
+              newCollectionWithNullElementInMiddle(samples, collectionSize),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    DynamicTest.stream(
+            minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants
+                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
+                    collectionSize.size(),
+                    newCollectionWithNullElementInMiddle(samples, collectionSize)),
+            doesNotSupportAddWithMinus1IndexAndExistingNullElement)
+        .forEachOrdered(subTests::add);
   }
 }

@@ -52,6 +52,14 @@ final class ListContractConstants {
       "Does not support List.add(middleIndex(), E) with new element: size: %s, elements: %s";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT =
       "Does not support List.add(middleIndex(), E) with new null element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_ELEMENT =
+      "Does not support List.add(-1, E) with existing element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT =
+      "Does not support List.add(-1, E) with existing null element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_ELEMENT =
+      "Does not support List.add(-1, E) with new element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT =
+      "Does not support List.add(-1, E) with new null element: size: %s, elements: %s";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT =
       "Does not support List.add(size(), E) with existing element: size: %s, elements: %s";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT =
@@ -60,6 +68,8 @@ final class ListContractConstants {
       "Does not support List.add(size(), E) with new element: size: %s, elements: %s";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT =
       "Does not support List.add(size(), E) with new null element: size: %s, elements: %s";
+  static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE =
+      "Not true that list.add(-1, %s) threw exception of type %s";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE =
       "Not true that list.add(%s) returned true";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION =
