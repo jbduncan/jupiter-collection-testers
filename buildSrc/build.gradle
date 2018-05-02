@@ -1,0 +1,22 @@
+plugins {
+    id('java-gradle-plugin')
+}
+
+repositories {
+    gradlePluginPortal()
+}
+
+dependencies {
+    // TODO: Consider swapping out for
+    // https://github.com/tbroyer/gradle-errorprone-javacplugin-plugin
+    compile("net.ltgt.gradle:gradle-errorprone-plugin:0.0.13")
+}
+
+gradlePlugin {
+    plugins {
+        refasterPlugin {
+            id = 'com.github.jbduncan.gradle.refaster'
+            implementationClass = 'com.github.jbduncan.gradle.refaster.RefasterPlugin'
+        }
+    }
+}
