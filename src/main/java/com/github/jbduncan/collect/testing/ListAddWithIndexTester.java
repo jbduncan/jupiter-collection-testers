@@ -90,166 +90,41 @@ final class ListAddWithIndexTester<E> {
 
   private void generateSupportsAddWithIndexTests(List<DynamicNode> tests) {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      E e0 = samples.e0();
-      E e3 = samples.e3();
-
       List<DynamicTest> subTests = new ArrayList<>();
 
-      ThrowingConsumer<CollectionSize> supportsAddAtStartWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
+      E newElement = samples.e3();
+      appendAddAtStartTests(
+          subTests,
+          newElement,
+          supportedCollectionSizes,
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_ELEMENT);
+      appendAddAtEndTests(
+          subTests,
+          newElement,
+          supportedCollectionSizes,
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
+      appendAddAtMiddleTests(
+          subTests,
+          newElement,
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT);
 
-            list.add(0, e3);
-            List<E> expected = prepend(e3, collectionSizeToElements(collectionSize, samples));
-            assertIterableEquals(
-                expected,
-                list,
-                () ->
-                    String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED, quote(e3)));
-          };
-
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_ELEMENT,
-                      collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
-              supportsAddAtStartWithNewElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> supportsAddAtEndWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            list.add(list.size(), e3);
-            List<E> expected = append(collectionSizeToElements(collectionSize, samples), e3);
-            assertIterableEquals(
-                expected,
-                list,
-                () ->
-                    String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(e3)));
-          };
-
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT,
-                      collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
-              supportsAddAtEndWithNewElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-            int middleIndex = middleIndex(list);
-
-            list.add(middleIndex, e3);
-            Iterable<E> expected =
-                insert(collectionSizeToElements(collectionSize, samples), middleIndex, e3);
-            assertIterableEquals(
-                expected,
-                list,
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
-                        quote(e3),
-                        middleIndex));
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT,
-                      collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
-              supportsAddAtMiddleWithNewElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            list.add(0, e0);
-            List<E> expected = prepend(e0, collectionSizeToElements(collectionSize, samples));
-            assertIterableEquals(
-                expected,
-                list,
-                () ->
-                    String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED, quote(e0)));
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT,
-                      collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
-              supportsAddAtStartWithExistingElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> supportsAddAtEndWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            list.add(list.size(), e0);
-            List<E> expected = append(collectionSizeToElements(collectionSize, samples), e0);
-            assertIterableEquals(
-                expected,
-                list,
-                () ->
-                    String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(e0)));
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT,
-                      collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
-              supportsAddAtEndWithExistingElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-            int middleIndex = middleIndex(list);
-
-            list.add(middleIndex, e0);
-            Iterable<E> expected =
-                insert(collectionSizeToElements(collectionSize, samples), middleIndex, e0);
-            assertIterableEquals(
-                expected,
-                list,
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
-                        quote(e0),
-                        middleIndex));
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT,
-                      collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
-              supportsAddAtMiddleWithExistingElement)
-          .forEachOrdered(subTests::add);
+      E existingElement = samples.e0();
+      appendAddAtStartTests(
+          subTests,
+          existingElement,
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
+      appendAddAtEndTests(
+          subTests,
+          existingElement,
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
+      appendAddAtMiddleTests(
+          subTests,
+          existingElement,
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
 
       createMinus1IndexTests(subTests, IndexOutOfBoundsException.class);
 
@@ -885,6 +760,105 @@ final class ListAddWithIndexTester<E> {
           dynamicContainer(
               ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
     }
+  }
+
+  private void appendAddAtStartTests(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> supportsAddAtStartWithSampleElement =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          list.add(0, elementToAdd);
+          List<E> expected =
+              prepend(elementToAdd, collectionSizeToElements(collectionSize, samples));
+          assertIterableEquals(
+              expected,
+              list,
+              () ->
+                  String.format(
+                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED,
+                      quote(elementToAdd)));
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    displayNameFormat,
+                    collectionSize.size(),
+                    collectionSizeToElements(collectionSize, samples)),
+            supportsAddAtStartWithSampleElement)
+        .forEachOrdered(subTests::add);
+  }
+
+  private void appendAddAtEndTests(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> supportsAddAtEndWithSampleElement =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          list.add(list.size(), elementToAdd);
+          List<E> expected =
+              append(collectionSizeToElements(collectionSize, samples), elementToAdd);
+          assertIterableEquals(
+              expected,
+              list,
+              () ->
+                  String.format(
+                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
+                      quote(elementToAdd)));
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    displayNameFormat,
+                    collectionSize.size(),
+                    collectionSizeToElements(collectionSize, samples)),
+            supportsAddAtEndWithSampleElement)
+        .forEachOrdered(subTests::add);
+  }
+
+  private void appendAddAtMiddleTests(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithSampleElement =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+          int middleIndex = middleIndex(list);
+
+          list.add(middleIndex, elementToAdd);
+          Iterable<E> expected =
+              insert(collectionSizeToElements(collectionSize, samples), middleIndex, elementToAdd);
+          assertIterableEquals(
+              expected,
+              list,
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
+                      quote(elementToAdd),
+                      middleIndex));
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    displayNameFormat,
+                    collectionSize.size(),
+                    collectionSizeToElements(collectionSize, samples)),
+            supportsAddAtMiddleWithSampleElement)
+        .forEachOrdered(subTests::add);
   }
 
   private void createMinus1IndexTests(
