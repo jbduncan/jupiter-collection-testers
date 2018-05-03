@@ -42,14 +42,17 @@ import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddWithIndexTester<E> {
   private final TestListGenerator<E> generator;
-  // TODO: Consider extracting and replacing samples with samples.e0() and samples.e3()
   private final SampleElements<E> samples;
+  private final E newElement;
+  private final E existingElement;
   private final Set<Feature<?>> features;
   private final Set<CollectionSize> supportedCollectionSizes;
 
   private ListAddWithIndexTester(TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
     this.generator = requireNonNull(testListGenerator, "testListGenerator");
     this.samples = requireNonNull(testListGenerator.samples(), "samples");
+    this.newElement = samples.e3();
+    this.existingElement = samples.e0();
     this.features = requireNonNull(features, "features");
     this.supportedCollectionSizes = extractConcreteSizes(features);
   }
@@ -93,7 +96,6 @@ final class ListAddWithIndexTester<E> {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
 
-      E newElement = samples.e3();
       appendSupportsAddAtStartTests(
           subTests,
           newElement,
@@ -110,7 +112,6 @@ final class ListAddWithIndexTester<E> {
           minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
           ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT);
 
-      E existingElement = samples.e0();
       appendSupportsAddAtStartTests(
           subTests,
           existingElement,
@@ -309,9 +310,6 @@ final class ListAddWithIndexTester<E> {
 
   private void generateDoesNotSupportAddWithIndexTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      E e0 = samples.e0();
-      E e3 = samples.e3();
-
       List<DynamicTest> subTests = new ArrayList<>();
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNewElement =
@@ -320,12 +318,12 @@ final class ListAddWithIndexTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(0, e3),
+                () -> list.add(0, newElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e3)));
+                        quote(newElement)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -348,12 +346,12 @@ final class ListAddWithIndexTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(0, e0),
+                () -> list.add(0, existingElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e0)));
+                        quote(existingElement)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -377,12 +375,12 @@ final class ListAddWithIndexTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(list.size(), e3),
+                () -> list.add(list.size(), newElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e3)));
+                        quote(newElement)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -406,12 +404,12 @@ final class ListAddWithIndexTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(list.size(), e0),
+                () -> list.add(list.size(), existingElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e0)));
+                        quote(existingElement)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -435,12 +433,12 @@ final class ListAddWithIndexTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(middleIndex(list), e3),
+                () -> list.add(middleIndex(list), newElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e3)));
+                        quote(newElement)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -464,12 +462,12 @@ final class ListAddWithIndexTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(middleIndex(list), e0),
+                () -> list.add(middleIndex(list), existingElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e0)));
+                        quote(existingElement)));
             assertIterableEquals(
                 collectionSizeToElements(collectionSize, samples),
                 list,
@@ -699,7 +697,6 @@ final class ListAddWithIndexTester<E> {
 
   private void appendRejectsAddAtMinusOneTests(
       List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    E newElement = samples.e3();
     appendRejectsAddAtMinusOneTests(
         subTests,
         expectedExceptionType,
@@ -707,7 +704,6 @@ final class ListAddWithIndexTester<E> {
         supportedCollectionSizes,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_ELEMENT);
 
-    E existingElement = samples.e0();
     appendRejectsAddAtMinusOneTests(
         subTests,
         expectedExceptionType,
