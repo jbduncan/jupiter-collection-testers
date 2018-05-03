@@ -113,8 +113,8 @@ final class ListAddTester<E> {
                 list,
                 () ->
                     String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(
-                            newElement)));
+                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
+                        quote(newElement)));
           };
 
       DynamicTest.stream(
@@ -137,14 +137,15 @@ final class ListAddTester<E> {
                     String.format(
                         ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE,
                         quote(existingElement)));
-            List<E> expected = append(newCollectionOfSize(collectionSize, samples), existingElement);
+            List<E> expected =
+                append(newCollectionOfSize(collectionSize, samples), existingElement);
             assertIterableEquals(
                 expected,
                 list,
                 () ->
                     String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(
-                            existingElement)));
+                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
+                        quote(existingElement)));
           };
 
       DynamicTest.stream(

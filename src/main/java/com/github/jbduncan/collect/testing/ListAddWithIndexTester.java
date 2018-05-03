@@ -127,7 +127,7 @@ final class ListAddWithIndexTester<E> {
           existingElement,
           minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
           ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
-      appendRejectsAddAtMinusOneTests(subTests, IndexOutOfBoundsException.class);
+      appendDoesNotSupportAddAtMinusOneTests(subTests, IndexOutOfBoundsException.class);
 
       tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E, subTests));
     }
@@ -312,180 +312,38 @@ final class ListAddWithIndexTester<E> {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
 
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(0, newElement),
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(newElement)));
-            assertIterableEquals(
-                newCollectionOfSize(collectionSize, samples),
-                list,
-                ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-          };
-
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              doesNotSupportAddAtStartWithNewElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(0, existingElement),
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(existingElement)));
-            assertIterableEquals(
-                newCollectionOfSize(collectionSize, samples),
-                list,
-                ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              doesNotSupportAddAtStartWithExistingElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(list.size(), newElement),
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(newElement)));
-            assertIterableEquals(
-                newCollectionOfSize(collectionSize, samples),
-                list,
-                ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-          };
-
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              doesNotSupportAddAtEndWithNewElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(list.size(), existingElement),
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(existingElement)));
-            assertIterableEquals(
-                newCollectionOfSize(collectionSize, samples),
-                list,
-                ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              doesNotSupportAddAtEndWithExistingElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithNewElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(middleIndex(list), newElement),
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(newElement)));
-            assertIterableEquals(
-                newCollectionOfSize(collectionSize, samples),
-                list,
-                ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-          };
-
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              doesNotSupportAddAtMiddleWithNewElement)
-          .forEachOrdered(subTests::add);
-
-      ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingElement =
-          collectionSize -> {
-            List<E> list = newListToTest(generator, collectionSize);
-
-            assertThrows(
-                UnsupportedOperationException.class,
-                () -> list.add(middleIndex(list), existingElement),
-                () ->
-                    String.format(
-                        ListContractConstants
-                            .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(existingElement)));
-            assertIterableEquals(
-                newCollectionOfSize(collectionSize, samples),
-                list,
-                ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-          };
-
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              doesNotSupportAddAtMiddleWithExistingElement)
-          .forEachOrdered(subTests::add);
-
-      appendRejectsAddAtMinusOneTests(subTests, UnsupportedOperationException.class);
+      appendDoesNotSupportAddAtStartTests(
+          subTests,
+          newElement,
+          supportedCollectionSizes,
+          ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_ELEMENT);
+      appendDoesNotSupportAddAtStartTests(
+          subTests,
+          existingElement,
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
+      appendDoesNotSupportAddAtEndTests(
+          subTests,
+          newElement,
+          supportedCollectionSizes,
+          ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
+      appendDoesNotSupportAddAtEndTests(
+          subTests,
+          existingElement,
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
+      appendDoesNotSupportAddAtMiddleTests(
+          subTests,
+          newElement,
+          supportedCollectionSizes,
+          ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT);
+      appendDoesNotSupportAddAtMiddleTests(
+          subTests,
+          existingElement,
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants
+              .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
+      appendDoesNotSupportAddAtMinusOneTests(subTests, UnsupportedOperationException.class);
 
       tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, subTests));
     }
@@ -693,16 +551,16 @@ final class ListAddWithIndexTester<E> {
         .forEachOrdered(subTests::add);
   }
 
-  private void appendRejectsAddAtMinusOneTests(
+  private void appendDoesNotSupportAddAtMinusOneTests(
       List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    appendRejectsAddAtMinusOneTests(
+    appendDoesNotSupportAddAtMinusOneTests(
         subTests,
         expectedExceptionType,
         newElement,
         supportedCollectionSizes,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_ELEMENT);
 
-    appendRejectsAddAtMinusOneTests(
+    appendDoesNotSupportAddAtMinusOneTests(
         subTests,
         expectedExceptionType,
         existingElement,
@@ -710,7 +568,7 @@ final class ListAddWithIndexTester<E> {
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_ELEMENT);
   }
 
-  private void appendRejectsAddAtMinusOneTests(
+  private void appendDoesNotSupportAddAtMinusOneTests(
       List<DynamicTest> subTests,
       Class<? extends Throwable> expectedExceptionType,
       E elementToAdd,
@@ -899,6 +757,108 @@ final class ListAddWithIndexTester<E> {
                     collectionSize.size(),
                     newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddAtMiddleWithNewNullElement)
+        .forEachOrdered(subTests::add);
+  }
+
+  private void appendDoesNotSupportAddAtStartTests(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtStart =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              UnsupportedOperationException.class,
+              () -> list.add(0, elementToAdd),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                      quote(elementToAdd)));
+          assertIterableEquals(
+              newCollectionOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    displayNameFormat,
+                    collectionSize.size(),
+                    newCollectionOfSize(collectionSize, samples)),
+            doesNotSupportAddAtStart)
+        .forEachOrdered(subTests::add);
+  }
+
+  private void appendDoesNotSupportAddAtEndTests(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtEnd =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              UnsupportedOperationException.class,
+              () -> list.add(list.size(), elementToAdd),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                      quote(elementToAdd)));
+          assertIterableEquals(
+              newCollectionOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    displayNameFormat,
+                    collectionSize.size(),
+                    newCollectionOfSize(collectionSize, samples)),
+            doesNotSupportAddAtEnd)
+        .forEachOrdered(subTests::add);
+  }
+
+  private void appendDoesNotSupportAddAtMiddleTests(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddle =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              UnsupportedOperationException.class,
+              () -> list.add(middleIndex(list), elementToAdd),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                      quote(elementToAdd)));
+          assertIterableEquals(
+              newCollectionOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    displayNameFormat,
+                    collectionSize.size(),
+                    newCollectionOfSize(collectionSize, samples)),
+            doesNotSupportAddAtMiddle)
         .forEachOrdered(subTests::add);
   }
 }
