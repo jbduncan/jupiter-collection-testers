@@ -300,7 +300,7 @@ final class ListAddWithIndexTester<E> {
               supportsAddAtMiddleWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
-      createMinus1IndexWithNullElementTests(subTests, IndexOutOfBoundsException.class);
+      appendDoesNotSupportAddWithMinusOneIndexTests(subTests, IndexOutOfBoundsException.class);
 
       tests.add(
           dynamicContainer(
@@ -354,6 +354,8 @@ final class ListAddWithIndexTester<E> {
       List<DynamicTest> subTests = new ArrayList<>();
 
       appendDoesNotSupportAddAtStartWithNewNullElementTests(subTests);
+      appendDoesNotSupportAddAtEndWithNewNullElementTests(subTests);
+      appendDoesNotSupportAddAtMiddleWithNewNullElementTests(subTests);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingNullElement =
           collectionSize -> {
@@ -384,8 +386,6 @@ final class ListAddWithIndexTester<E> {
               doesNotSupportAddAtStartWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
-      appendDoesNotSupportAddAtEndWithNewNullElementTests(subTests);
-
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingNullElement =
           collectionSize -> {
             List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
@@ -414,8 +414,6 @@ final class ListAddWithIndexTester<E> {
                       newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
               doesNotSupportAddAtEndWithExistingNullElement)
           .forEachOrdered(subTests::add);
-
-      appendDoesNotSupportAddAtMiddleWithNewNullElementTests(subTests);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingNullElement =
           collectionSize -> {
@@ -446,7 +444,7 @@ final class ListAddWithIndexTester<E> {
               doesNotSupportAddAtMiddleWithExistingNullElement)
           .forEachOrdered(subTests::add);
 
-      createMinus1IndexWithNullElementTests(subTests, UnsupportedOperationException.class);
+      appendDoesNotSupportAddWithMinusOneIndexTests(subTests, UnsupportedOperationException.class);
 
       tests.add(
           dynamicContainer(
@@ -604,7 +602,7 @@ final class ListAddWithIndexTester<E> {
         .forEachOrdered(subTests::add);
   }
 
-  private void createMinus1IndexWithNullElementTests(
+  private void appendDoesNotSupportAddWithMinusOneIndexTests(
       List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndNewNullElement =
         collectionSize -> {
