@@ -138,7 +138,9 @@ final class ListAddWithIndexTester<E> {
       appendSupportsAddAtStartWithExistingNullElementTests(subTests);
       appendSupportsAddAtEndWithExistingNullElementTests(subTests);
       appendSupportsAddAtMiddleWithExistingNullElementTests(subTests);
-      appendDoesNotSupportAddAtMinusOneWithNullElementTests(
+      appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
+          subTests, IndexOutOfBoundsException.class);
+      appendDoesNotSupportAddAtMinusOneWithExistingNullElementTests(
           subTests, IndexOutOfBoundsException.class);
 
       tests.add(
@@ -173,7 +175,9 @@ final class ListAddWithIndexTester<E> {
       appendDoesNotSupportAddAtEndWithExistingNullElementTests(subTests);
       appendDoesNotSupportAddAtMiddleWithNewNullElementTests(subTests);
       appendDoesNotSupportAddAtMiddleWithExistingNullElementTests(subTests);
-      appendDoesNotSupportAddAtMinusOneWithNullElementTests(
+      appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
+          subTests, UnsupportedOperationException.class);
+      appendDoesNotSupportAddAtMinusOneWithExistingNullElementTests(
           subTests, UnsupportedOperationException.class);
 
       tests.add(
@@ -768,7 +772,7 @@ final class ListAddWithIndexTester<E> {
         supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMinusOne, subTests);
   }
 
-  private void appendDoesNotSupportAddAtMinusOneWithNullElementTests(
+  private void appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
       List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithNewNullElementt =
         collectionSize -> {
@@ -794,7 +798,10 @@ final class ListAddWithIndexTester<E> {
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT,
         doesNotSupportAddAtMinusOneWithNewNullElementt,
         subTests);
+  }
 
+  private void appendDoesNotSupportAddAtMinusOneWithExistingNullElementTests(
+      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithExistingNullElement =
         collectionSize -> {
           List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
