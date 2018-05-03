@@ -33,9 +33,11 @@ import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
@@ -164,15 +166,11 @@ final class ListAddWithIndexTester<E> {
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
           };
 
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              supportsAddAtStartWithNewNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTests(
+          supportedCollectionSizes,
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
+          supportsAddAtStartWithNewNullElement,
+          subTests);
 
       ThrowingConsumer<CollectionSize> supportsAddAtEndWithNewNullElement =
           collectionSize -> {
@@ -184,15 +182,11 @@ final class ListAddWithIndexTester<E> {
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
           };
 
-      DynamicTest.stream(
-              supportedCollectionSizes.iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              supportsAddAtEndWithNewNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTests(
+          supportedCollectionSizes,
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT,
+          supportsAddAtEndWithNewNullElement,
+          subTests);
 
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewNullElement =
           collectionSize -> {
@@ -213,16 +207,11 @@ final class ListAddWithIndexTester<E> {
                         middleIndex));
           };
 
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionOfSize(collectionSize, samples)),
-              supportsAddAtMiddleWithNewNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTests(
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
+          supportsAddAtMiddleWithNewNullElement,
+          subTests);
 
       ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingNullElement =
           collectionSize -> {
@@ -235,15 +224,11 @@ final class ListAddWithIndexTester<E> {
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
           };
 
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-              supportsAddAtStartWithExistingNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTestsWithNullElement(
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
+          supportsAddAtStartWithExistingNullElement,
+          subTests);
 
       ThrowingConsumer<CollectionSize> supportsAddAtEndWithExistingNullElement =
           collectionSize -> {
@@ -256,16 +241,11 @@ final class ListAddWithIndexTester<E> {
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
           };
 
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-              supportsAddAtEndWithExistingNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTestsWithNullElement(
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
+          supportsAddAtEndWithExistingNullElement,
+          subTests);
 
       ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingNullElement =
           collectionSize -> {
@@ -289,16 +269,11 @@ final class ListAddWithIndexTester<E> {
                         middleIndex));
           };
 
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-              supportsAddAtMiddleWithExistingNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTestsWithNullElement(
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
+          supportsAddAtMiddleWithExistingNullElement,
+          subTests);
 
       appendDoesNotSupportAddWithMinusOneIndexTests(subTests, IndexOutOfBoundsException.class);
 
@@ -375,16 +350,11 @@ final class ListAddWithIndexTester<E> {
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
 
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-              doesNotSupportAddAtStartWithExistingNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTestsWithNullElement(
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
+          doesNotSupportAddAtStartWithExistingNullElement,
+          subTests);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtEndWithExistingNullElement =
           collectionSize -> {
@@ -404,16 +374,11 @@ final class ListAddWithIndexTester<E> {
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
 
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-              doesNotSupportAddAtEndWithExistingNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTestsWithNullElement(
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
+          doesNotSupportAddAtEndWithExistingNullElement,
+          subTests);
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingNullElement =
           collectionSize -> {
@@ -433,16 +398,12 @@ final class ListAddWithIndexTester<E> {
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
 
-      DynamicTest.stream(
-              minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-              collectionSize ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
-                      collectionSize.size(),
-                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-              doesNotSupportAddAtMiddleWithExistingNullElement)
-          .forEachOrdered(subTests::add);
+      addDynamicSubTestsWithNullElement(
+          minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+          ListContractConstants
+              .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
+          doesNotSupportAddAtMiddleWithExistingNullElement,
+          subTests);
 
       appendDoesNotSupportAddWithMinusOneIndexTests(subTests, UnsupportedOperationException.class);
 
@@ -472,15 +433,7 @@ final class ListAddWithIndexTester<E> {
                       quote(elementToAdd)));
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            supportsAddAtStart)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtStart, subTests);
   }
 
   private void appendSupportsAddAtEndTests(
@@ -503,15 +456,7 @@ final class ListAddWithIndexTester<E> {
                       quote(elementToAdd)));
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            supportsAddAtEnd)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtEnd, subTests);
   }
 
   private void appendSupportsAddAtMiddleTests(
@@ -538,15 +483,7 @@ final class ListAddWithIndexTester<E> {
                       middleIndex));
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            supportsAddAtMiddle)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtMiddle, subTests);
   }
 
   private void appendDoesNotSupportAddAtMinusOneTests(
@@ -572,7 +509,7 @@ final class ListAddWithIndexTester<E> {
       E elementToAdd,
       Set<CollectionSize> supportedCollectionSizes,
       String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> rejectsAddAtMinusOne =
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOne =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
 
@@ -591,15 +528,8 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            rejectsAddAtMinusOne)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMinusOne, subTests);
   }
 
   private void appendDoesNotSupportAddWithMinusOneIndexTests(
@@ -623,16 +553,11 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    ListContractConstants
-                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddWithMinus1IndexAndNewNullElement)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT,
+        doesNotSupportAddWithMinus1IndexAndNewNullElement,
+        subTests);
 
     ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndExistingNullElement =
         collectionSize -> {
@@ -653,16 +578,11 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO).iterator(),
-            collectionSize ->
-                String.format(
-                    ListContractConstants
-                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
-                    collectionSize.size(),
-                    newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-            doesNotSupportAddWithMinus1IndexAndExistingNullElement)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTestsWithNullElement(
+        minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
+        doesNotSupportAddWithMinus1IndexAndExistingNullElement,
+        subTests);
   }
 
   private void appendDoesNotSupportAddAtStartWithNewNullElementTests(List<DynamicTest> subTests) {
@@ -684,16 +604,11 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    ListContractConstants
-                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtStartWithNewNullElement)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
+        doesNotSupportAddAtStartWithNewNullElement,
+        subTests);
   }
 
   private void appendDoesNotSupportAddAtEndWithNewNullElementTests(List<DynamicTest> subTests) {
@@ -715,16 +630,11 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    ListContractConstants
-                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtEndWithNewNullElement)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT,
+        doesNotSupportAddAtEndWithNewNullElement,
+        subTests);
   }
 
   private void appendDoesNotSupportAddAtMiddleWithNewNullElementTests(List<DynamicTest> subTests) {
@@ -746,16 +656,11 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    ListContractConstants
-                        .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtMiddleWithNewNullElement)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
+        doesNotSupportAddAtMiddleWithNewNullElement,
+        subTests);
   }
 
   private void appendDoesNotSupportAddAtStartTests(
@@ -781,15 +686,8 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtStart)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtStart, subTests);
   }
 
   private void appendDoesNotSupportAddAtEndTests(
@@ -815,15 +713,8 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtEnd)
-        .forEachOrdered(subTests::add);
+    addDynamicSubTests(
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtEnd, subTests);
   }
 
   private void appendDoesNotSupportAddAtMiddleTests(
@@ -849,14 +740,47 @@ final class ListAddWithIndexTester<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
+    addDynamicSubTests(
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMiddle, subTests);
+  }
+
+  private void addDynamicSubTests(
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat,
+      ThrowingConsumer<CollectionSize> testExecutor,
+      List<DynamicTest> subTests) {
+    addDynamicSubTestsImpl(
+        supportedCollectionSizes,
+        displayNameFormat,
+        Helpers::newCollectionOfSize,
+        testExecutor,
+        subTests);
+  }
+
+  private void addDynamicSubTestsWithNullElement(
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat,
+      ThrowingConsumer<CollectionSize> testExecutor,
+      List<DynamicTest> subTests) {
+    addDynamicSubTestsImpl(
+        supportedCollectionSizes,
+        displayNameFormat,
+        Helpers::newCollectionWithNullInMiddleOfSize,
+        testExecutor,
+        subTests);
+  }
+
+  private void addDynamicSubTestsImpl(
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat,
+      BiFunction<CollectionSize, SampleElements<E>, Collection<E>> sampleCollectionProvider,
+      ThrowingConsumer<CollectionSize> testExecutor,
+      List<DynamicTest> subTests) {
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
             collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtMiddle)
+                String.format(displayNameFormat, collectionSize.size(), sampleCollectionProvider),
+            testExecutor)
         .forEachOrdered(subTests::add);
   }
 }
