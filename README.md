@@ -10,7 +10,7 @@ This project is similar to [Guava](https://github.com/google/guava)'s
 for JUnit 4.
 
 Getting started
-===
+---
 
 This project is not production ready yet.
 
@@ -21,7 +21,7 @@ I'll write instructions on how to use Jupiter Collection Testers in your tests a
 being pushed to Maven Central.
 
 Contributing
-===
+---
 
 Contributions to Jupiter Collection Testers are both welcomed and appreciated! For specific
 guidelines regarding contributions, please see
@@ -29,7 +29,7 @@ guidelines regarding contributions, please see
 in the root directory of the project.
 
 Getting Help
-===
+---
 
 If you have a question, or would like to request a new feature, or think you've found a bug, please
 [open a new issue](https://github.com/jbduncan/jupiter-collection-testers/issues/new).
@@ -37,18 +37,18 @@ If you have a question, or would like to request a new feature, or think you've 
 (I'd appreciate help with setting up a Gitter channel!)
 
 Versioning
-===
+---
 
 We use [SemVer](https://semver.org/) for versioning. For the versions available, see the
 [release tags](https://github.com/jbduncan/jupiter-collection-testers/releases).
 
 License
-===
+---
 
 [Apache License, Version 2.0](https://github.com/jbduncan/jupiter-collection-testers/blob/master/LICENSE)
 
 Acknowledgements
-===
+---
 
 Thank you very much to all [contributors](https://github.com/jbduncan/jupiter-collection-testers)!
 

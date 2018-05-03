@@ -41,12 +41,16 @@ import org.junit.jupiter.api.function.ThrowingConsumer;
 final class ListAddTester<E> {
   private final TestListGenerator<E> generator;
   private final SampleElements<E> samples;
+  private final E newElement;
+  private final E existingElement;
   private final Set<Feature<?>> features;
   private final Set<CollectionSize> supportedCollectionSizes;
 
   private ListAddTester(TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
     this.generator = requireNonNull(testListGenerator, "testListGenerator");
     this.samples = requireNonNull(testListGenerator.samples(), "samples");
+    this.newElement = samples.e3();
+    this.existingElement = samples.e0();
     this.features = requireNonNull(features, "features");
     this.supportedCollectionSizes = extractConcreteSizes(features);
   }
@@ -90,9 +94,6 @@ final class ListAddTester<E> {
   // ListAddWithIndexTester can be refactored out into an abstract base class.
   private void generateSupportsAddTests(List<DynamicNode> tests) {
     if (features.contains(CollectionFeature.SUPPORTS_ADD)) {
-      E e0 = samples.e0();
-      E e3 = samples.e3();
-
       List<DynamicTest> subTests = new ArrayList<>();
 
       // TODO: Consider moving these ThrowingConsumers into their own methods.
@@ -101,18 +102,19 @@ final class ListAddTester<E> {
             List<E> list = newListToTest(generator, collectionSize);
 
             assertTrue(
-                list.add(e3),
+                list.add(newElement),
                 () ->
                     String.format(
                         ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE,
-                        quote(e3)));
-            List<E> expected = append(newCollectionOfSize(collectionSize, samples), e3);
+                        quote(newElement)));
+            List<E> expected = append(newCollectionOfSize(collectionSize, samples), newElement);
             assertIterableEquals(
                 expected,
                 list,
                 () ->
                     String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(e3)));
+                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(
+                            newElement)));
           };
 
       DynamicTest.stream(
@@ -130,18 +132,19 @@ final class ListAddTester<E> {
             List<E> list = newListToTest(generator, collectionSize);
 
             assertTrue(
-                list.add(e0),
+                list.add(existingElement),
                 () ->
                     String.format(
                         ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE,
-                        quote(e0)));
-            List<E> expected = append(newCollectionOfSize(collectionSize, samples), e0);
+                        quote(existingElement)));
+            List<E> expected = append(newCollectionOfSize(collectionSize, samples), existingElement);
             assertIterableEquals(
                 expected,
                 list,
                 () ->
                     String.format(
-                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(e0)));
+                        ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED, quote(
+                            existingElement)));
           };
 
       DynamicTest.stream(
@@ -254,9 +257,6 @@ final class ListAddTester<E> {
 
   private void generateDoesNotSupportAddTests(List<DynamicNode> tests) {
     if (!features.contains(CollectionFeature.SUPPORTS_ADD)) {
-      E e0 = samples.e0();
-      E e3 = samples.e3();
-
       List<DynamicTest> subTests = new ArrayList<>();
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddWithNewElement =
@@ -265,12 +265,12 @@ final class ListAddTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(e3),
+                () -> list.add(newElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e3)));
+                        quote(newElement)));
             assertIterableEquals(
                 newCollectionOfSize(collectionSize, samples),
                 list,
@@ -293,12 +293,12 @@ final class ListAddTester<E> {
 
             assertThrows(
                 UnsupportedOperationException.class,
-                () -> list.add(e0),
+                () -> list.add(existingElement),
                 () ->
                     String.format(
                         ListContractConstants
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                        quote(e0)));
+                        quote(existingElement)));
             assertIterableEquals(
                 newCollectionOfSize(collectionSize, samples),
                 list,

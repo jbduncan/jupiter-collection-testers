@@ -62,8 +62,10 @@ public class RefasterPlugin implements Plugin<Project> {
 
     Configuration refasterCompile =
         project.getConfigurations()
-            // TODO: Figure out why we need to retrieve an existing "refasterCompile" configuration
-            // here instead of creating a new one.
+            // The task "refasterCompile" is automatically created when the "refaster" source set
+            // above is created.
+            // TODO: "compile" tasks are deprecated. Find a way of migrating from "refasterCompile"
+            // to "refasterImplementation" or another task.
             .getByName("refasterCompile")
             .setVisible(false)
             .setDescription("The Refaster artifacts needed by this plugin.");
