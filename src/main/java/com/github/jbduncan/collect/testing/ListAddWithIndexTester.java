@@ -383,7 +383,6 @@ final class ListAddWithIndexTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
         supportsAddAtStartWithExistingNullElement,
         subTests);
@@ -402,7 +401,6 @@ final class ListAddWithIndexTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
         supportsAddAtEndWithExistingNullElement,
         subTests);
@@ -430,7 +428,6 @@ final class ListAddWithIndexTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
         supportsAddAtMiddleWithExistingNullElement,
         subTests);
@@ -532,7 +529,6 @@ final class ListAddWithIndexTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtStartWithExistingNullElement,
         subTests);
@@ -585,7 +581,6 @@ final class ListAddWithIndexTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtEndWithExistingNullElement,
         subTests);
@@ -638,7 +633,6 @@ final class ListAddWithIndexTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants
             .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtMiddleWithExistingNullElement,
@@ -822,7 +816,6 @@ final class ListAddWithIndexTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtMinusOneWithExistingNullElement,
         subTests);
@@ -845,12 +838,11 @@ final class ListAddWithIndexTester<E> {
   }
 
   private void addDynamicSubTestsForListWithNullElement(
-      Set<CollectionSize> supportedCollectionSizes,
       String displayNameFormat,
       ThrowingConsumer<CollectionSize> testExecutor,
       List<DynamicTest> subTests) {
     DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
+            allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
                 String.format(
                     displayNameFormat,
