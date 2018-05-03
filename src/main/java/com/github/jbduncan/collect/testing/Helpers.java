@@ -34,26 +34,6 @@ import java.util.stream.StreamSupport;
 final class Helpers {
   private Helpers() {}
 
-  static <E> Collection<E> newCollectionWithNullElementInMiddle(
-      SampleElements<E> samples, CollectionSize collectionSize) {
-    List<E> elements;
-    switch (collectionSize) {
-      case SUPPORTS_ONE:
-        elements = Collections.singletonList(null);
-        break;
-      case SUPPORTS_THREE:
-        elements = Arrays.asList(samples.e0(), null, samples.e2());
-        break;
-      case SUPPORTS_ZERO:
-        throw new IllegalStateException(
-            "Cannot create iterable that is both of size 0 and contains 'null'");
-      default:
-        throw new IllegalStateException(
-            String.format("'collectionSize' %s is unrecognized", collectionSize));
-    }
-    return elements;
-  }
-
   static Set<CollectionSize> extractConcreteSizes(Set<Feature<?>> features) {
     return features
         .stream()
@@ -89,7 +69,7 @@ final class Helpers {
     return new LinkedHashSet<>(elements);
   }
 
-  static <E> List<E> collectionSizeToElements(
+  static <E> Collection<E> newCollectionOfSize(
       CollectionSize collectionSize, SampleElements<E> sampleElements) {
     switch (collectionSize) {
       case SUPPORTS_ZERO:
@@ -99,6 +79,27 @@ final class Helpers {
       case SUPPORTS_THREE:
         return Collections.unmodifiableList(
             Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2()));
+      case SUPPORTS_ANY_SIZE:
+        throw new IllegalArgumentException(
+            "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "
+                + "it must be a specific size");
+      default:
+        throw new IllegalStateException(
+            String.format("'collectionSize' %s is unrecognized", collectionSize));
+    }
+  }
+
+  static <E> Collection<E> newCollectionWithNullInMiddleOfSize(
+      CollectionSize collectionSize, SampleElements<E> sampleElements) {
+    switch (collectionSize) {
+      case SUPPORTS_ZERO:
+        throw new IllegalArgumentException(
+            "Cannot create iterable that is both of size 0 and contains 'null'");
+      case SUPPORTS_ONE:
+        return Collections.singletonList(null);
+      case SUPPORTS_THREE:
+        return Collections.unmodifiableList(
+            Arrays.asList(sampleElements.e0(), null, sampleElements.e2()));
       case SUPPORTS_ANY_SIZE:
         throw new IllegalArgumentException(
             "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "

@@ -16,10 +16,10 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.append;
-import static com.github.jbduncan.collect.testing.Helpers.collectionSizeToElements;
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullElementInMiddle;
+import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -56,7 +56,7 @@ final class ListContractHelpers {
             List<E> list = newListToTest(generator, collectionSize);
 
             list.add(0, e3);
-            List<E> expected = prepend(e3, collectionSizeToElements(collectionSize, samples));
+            List<E> expected = prepend(e3, newCollectionOfSize(collectionSize, samples));
             assertIterableEquals(
                 expected,
                 list,
@@ -71,7 +71,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtStartWithNewElement)
           .forEachOrdered(tests::add);
 
@@ -80,7 +80,7 @@ final class ListContractHelpers {
             List<E> list = newListToTest(generator, collectionSize);
 
             list.add(list.size(), e3);
-            List<E> expected = append(collectionSizeToElements(collectionSize, samples), e3);
+            List<E> expected = append(newCollectionOfSize(collectionSize, samples), e3);
             assertIterableEquals(
                 expected,
                 list,
@@ -95,7 +95,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtEndWithNewElement)
           .forEachOrdered(tests::add);
 
@@ -106,7 +106,7 @@ final class ListContractHelpers {
 
             list.add(middleIndex, e3);
             Iterable<E> expected =
-                insert(collectionSizeToElements(collectionSize, samples), middleIndex, e3);
+                insert(newCollectionOfSize(collectionSize, samples), middleIndex, e3);
             assertIterableEquals(
                 expected,
                 list,
@@ -125,7 +125,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtMiddleWithNewElement)
           .forEachOrdered(tests::add);
 
@@ -134,7 +134,7 @@ final class ListContractHelpers {
             List<E> list = newListToTest(generator, collectionSize);
 
             list.add(0, e0);
-            List<E> expected = prepend(e0, collectionSizeToElements(collectionSize, samples));
+            List<E> expected = prepend(e0, newCollectionOfSize(collectionSize, samples));
             assertIterableEquals(
                 expected,
                 list,
@@ -149,7 +149,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtStartWithExistingElement)
           .forEachOrdered(tests::add);
 
@@ -158,7 +158,7 @@ final class ListContractHelpers {
             List<E> list = newListToTest(generator, collectionSize);
 
             list.add(list.size(), e0);
-            List<E> expected = append(collectionSizeToElements(collectionSize, samples), e0);
+            List<E> expected = append(newCollectionOfSize(collectionSize, samples), e0);
             assertIterableEquals(
                 expected,
                 list,
@@ -173,7 +173,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtEndWithExistingElement)
           .forEachOrdered(tests::add);
 
@@ -184,7 +184,7 @@ final class ListContractHelpers {
 
             list.add(middleIndex, e0);
             Iterable<E> expected =
-                insert(collectionSizeToElements(collectionSize, samples), middleIndex, e0);
+                insert(newCollectionOfSize(collectionSize, samples), middleIndex, e0);
             assertIterableEquals(
                 expected,
                 list,
@@ -203,7 +203,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtMiddleWithExistingElement)
           .forEachOrdered(tests::add);
 
@@ -227,7 +227,7 @@ final class ListContractHelpers {
             List<E> list = newListToTest(generator, collectionSize);
 
             list.add(0, null);
-            List<E> expected = prepend(null, collectionSizeToElements(collectionSize, samples));
+            List<E> expected = prepend(null, newCollectionOfSize(collectionSize, samples));
             assertIterableEquals(
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
           };
@@ -238,7 +238,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtStartWithNewNullElement)
           .forEachOrdered(tests::add);
 
@@ -247,7 +247,7 @@ final class ListContractHelpers {
             List<E> list = newListToTest(generator, collectionSize);
 
             list.add(list.size(), null);
-            List<E> expected = append(collectionSizeToElements(collectionSize, samples), null);
+            List<E> expected = append(newCollectionOfSize(collectionSize, samples), null);
             assertIterableEquals(
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
           };
@@ -258,7 +258,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtEndWithNewNullElement)
           .forEachOrdered(tests::add);
 
@@ -269,7 +269,7 @@ final class ListContractHelpers {
 
             list.add(middleIndex, null);
             Iterable<E> expected =
-                insert(collectionSizeToElements(collectionSize, samples), middleIndex, null);
+                insert(newCollectionOfSize(collectionSize, samples), middleIndex, null);
             assertIterableEquals(
                 expected,
                 list,
@@ -288,7 +288,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               supportsAddAtMiddleWithNewNullElement)
           .forEachOrdered(tests::add);
 
@@ -298,7 +298,7 @@ final class ListContractHelpers {
 
             list.add(0, null);
             List<E> expected =
-                prepend(null, newCollectionWithNullElementInMiddle(samples, collectionSize));
+                prepend(null, newCollectionWithNullInMiddleOfSize(collectionSize, samples));
             assertIterableEquals(
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
           };
@@ -309,7 +309,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
+                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
               supportsAddAtStartWithExistingNullElement)
           .forEachOrdered(tests::add);
 
@@ -319,7 +319,7 @@ final class ListContractHelpers {
 
             list.add(list.size(), null);
             List<E> expected =
-                append(newCollectionWithNullElementInMiddle(samples, collectionSize), null);
+                append(newCollectionWithNullInMiddleOfSize(collectionSize, samples), null);
             assertIterableEquals(
                 expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
           };
@@ -331,7 +331,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
+                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
               supportsAddAtEndWithExistingNullElement)
           .forEachOrdered(tests::add);
 
@@ -343,7 +343,7 @@ final class ListContractHelpers {
             list.add(middleIndex, null);
             Iterable<E> expected =
                 insert(
-                    newCollectionWithNullElementInMiddle(samples, collectionSize),
+                    newCollectionWithNullInMiddleOfSize(collectionSize, samples),
                     middleIndex,
                     null);
             assertIterableEquals(
@@ -364,7 +364,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
+                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
               supportsAddAtMiddleWithExistingNullElement)
           .forEachOrdered(tests::add);
 
@@ -399,7 +399,7 @@ final class ListContractHelpers {
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
                         quote(e3)));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -410,7 +410,7 @@ final class ListContractHelpers {
                   String.format(
                       ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtStartWithNewElement)
           .forEachOrdered(tests::add);
 
@@ -427,7 +427,7 @@ final class ListContractHelpers {
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
                         quote(e0)));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -439,7 +439,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtStartWithExistingElement)
           .forEachOrdered(tests::add);
 
@@ -456,7 +456,7 @@ final class ListContractHelpers {
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
                         quote(e3)));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -468,7 +468,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtEndWithNewElement)
           .forEachOrdered(tests::add);
 
@@ -485,7 +485,7 @@ final class ListContractHelpers {
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
                         quote(e0)));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -497,7 +497,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtEndWithExistingElement)
           .forEachOrdered(tests::add);
 
@@ -514,7 +514,7 @@ final class ListContractHelpers {
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
                         quote(e3)));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -526,7 +526,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithNewElement)
           .forEachOrdered(tests::add);
 
@@ -543,7 +543,7 @@ final class ListContractHelpers {
                             .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
                         quote(e0)));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -555,7 +555,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithExistingElement)
           .forEachOrdered(tests::add);
 
@@ -586,7 +586,7 @@ final class ListContractHelpers {
                 () -> list.add(0, null),
                 () -> String.format(message, ListContractConstants.NULL));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -598,7 +598,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtStartWithNewNullElement)
           .forEachOrdered(tests::add);
 
@@ -611,7 +611,7 @@ final class ListContractHelpers {
                 () -> list.add(0, null),
                 () -> String.format(message, ListContractConstants.NULL));
             assertIterableEquals(
-                newCollectionWithNullElementInMiddle(samples, collectionSize),
+                newCollectionWithNullInMiddleOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -623,7 +623,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
+                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
               doesNotSupportAddAtStartWithExistingNullElement)
           .forEachOrdered(tests::add);
 
@@ -636,7 +636,7 @@ final class ListContractHelpers {
                 () -> list.add(list.size(), null),
                 () -> String.format(message, ListContractConstants.NULL));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -648,7 +648,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtEndWithNewNullElement)
           .forEachOrdered(tests::add);
 
@@ -661,7 +661,7 @@ final class ListContractHelpers {
                 () -> list.add(list.size(), null),
                 () -> String.format(message, ListContractConstants.NULL));
             assertIterableEquals(
-                newCollectionWithNullElementInMiddle(samples, collectionSize),
+                newCollectionWithNullInMiddleOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -673,7 +673,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
+                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
               doesNotSupportAddAtEndWithExistingNullElement)
           .forEachOrdered(tests::add);
 
@@ -686,7 +686,7 @@ final class ListContractHelpers {
                 () -> list.add(middleIndex(list), null),
                 () -> String.format(message, ListContractConstants.NULL));
             assertIterableEquals(
-                collectionSizeToElements(collectionSize, samples),
+                newCollectionOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -698,7 +698,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
                       collectionSize.size(),
-                      collectionSizeToElements(collectionSize, samples)),
+                      newCollectionOfSize(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithNewNullElement)
           .forEachOrdered(tests::add);
 
@@ -711,7 +711,7 @@ final class ListContractHelpers {
                 () -> list.add(middleIndex(list), null),
                 () -> String.format(message, ListContractConstants.NULL));
             assertIterableEquals(
-                newCollectionWithNullElementInMiddle(samples, collectionSize),
+                newCollectionWithNullInMiddleOfSize(collectionSize, samples),
                 list,
                 ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
           };
@@ -723,7 +723,7 @@ final class ListContractHelpers {
                       ListContractConstants
                           .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
                       collectionSize.size(),
-                      newCollectionWithNullElementInMiddle(samples, collectionSize)),
+                      newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
               doesNotSupportAddAtMiddleWithExistingNullElement)
           .forEachOrdered(tests::add);
 
@@ -735,13 +735,13 @@ final class ListContractHelpers {
   static <E> List<E> newListToTest(
       TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
     SampleElements<E> samples = listGenerator.samples();
-    return listGenerator.create(collectionSizeToElements(collectionSize, samples));
+    return listGenerator.create(newCollectionOfSize(collectionSize, samples));
   }
 
   static <E> List<E> newListToTestWithNullElementInMiddle(
       TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
     Iterable<E> elements =
-        newCollectionWithNullElementInMiddle(listGenerator.samples(), collectionSize);
+        newCollectionWithNullInMiddleOfSize(collectionSize, listGenerator.samples());
     return listGenerator.create(elements);
   }
 
