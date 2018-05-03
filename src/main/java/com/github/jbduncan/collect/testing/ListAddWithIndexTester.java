@@ -275,7 +275,7 @@ final class ListAddWithIndexTester<E> {
           supportsAddAtMiddleWithExistingNullElement,
           subTests);
 
-      appendDoesNotSupportAddWithMinusOneIndexTests(subTests, IndexOutOfBoundsException.class);
+      appendDoesNotSupportAddAtMinusOneWithNullElementTests(subTests, IndexOutOfBoundsException.class);
 
       tests.add(
           dynamicContainer(
@@ -331,6 +331,8 @@ final class ListAddWithIndexTester<E> {
       appendDoesNotSupportAddAtStartWithNewNullElementTests(subTests);
       appendDoesNotSupportAddAtEndWithNewNullElementTests(subTests);
       appendDoesNotSupportAddAtMiddleWithNewNullElementTests(subTests);
+      appendDoesNotSupportAddAtMinusOneWithNullElementTests(subTests, UnsupportedOperationException.class);
+
 
       ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingNullElement =
           collectionSize -> {
@@ -404,8 +406,6 @@ final class ListAddWithIndexTester<E> {
               .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
           doesNotSupportAddAtMiddleWithExistingNullElement,
           subTests);
-
-      appendDoesNotSupportAddWithMinusOneIndexTests(subTests, UnsupportedOperationException.class);
 
       tests.add(
           dynamicContainer(
@@ -532,9 +532,9 @@ final class ListAddWithIndexTester<E> {
         supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMinusOne, subTests);
   }
 
-  private void appendDoesNotSupportAddWithMinusOneIndexTests(
+  private void appendDoesNotSupportAddAtMinusOneWithNullElementTests(
       List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndNewNullElement =
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithNewNullElementt =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
 
@@ -556,10 +556,10 @@ final class ListAddWithIndexTester<E> {
     addDynamicSubTests(
         supportedCollectionSizes,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT,
-        doesNotSupportAddWithMinus1IndexAndNewNullElement,
+        doesNotSupportAddAtMinusOneWithNewNullElementt,
         subTests);
 
-    ThrowingConsumer<CollectionSize> doesNotSupportAddWithMinus1IndexAndExistingNullElement =
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithExistingNullElement =
         collectionSize -> {
           List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
 
@@ -581,7 +581,7 @@ final class ListAddWithIndexTester<E> {
     addDynamicSubTestsWithNullElement(
         minus(supportedCollectionSizes, CollectionSize.SUPPORTS_ZERO),
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
-        doesNotSupportAddWithMinus1IndexAndExistingNullElement,
+        doesNotSupportAddAtMinusOneWithExistingNullElement,
         subTests);
   }
 
