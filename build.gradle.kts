@@ -78,21 +78,8 @@ val compileTestJava by tasks.getting(JavaCompile::class) {
 apply { plugin("com.github.jbduncan.gradle.refaster") }
 
 // Configuration for Spotless: https://github.com/diffplug/spotless
-
-// This explicitly-named "dependency configuration" is populated with the Maven co-ordinates of
-// various code formatters in the "dependencies" block below.
-// This is done so that when `./gradlew dependencyUpdates` is executed, gradle-versions-plugin can
-// then find the latest versions of all the formatters used by Spotless, which helps with keeping
-// versions up-to-date.
-val spotless by configurations.creating
-
 val googleJavaFormatVersion: String by project
 val ktlintVersion: String by project
-
-dependencies {
-    spotless("com.google.googlejavaformat:google-java-format:$googleJavaFormatVersion")
-    spotless("com.github.shyiko:ktlint:$ktlintVersion")
-}
 
 spotless {
     java {
@@ -108,18 +95,14 @@ spotless {
         endWithNewline()
     }
     format("misc") {
-        target(
-                fileTree(
-                        "$rootDir",
-                        {
-                            include("**/*.gradle",
-                                    "**/*.gitignore",
-                                    "**/*.properties",
-                                    "**/*.md",
-                                    "config/**/*.xml",
-                                    "src/**/*.xml")
-                            exclude("**/build/**", "**/.gradle/**")
-                        }))
+        target(fileTree(rootDir, {
+            include("**/*.gradle",
+                    "**/*.gitignore",
+                    "README.md",
+                    "CONTRIBUTING.md",
+                    "config/**/*.xml",
+                    "src/**/*.xml")
+        }))
         trimTrailingWhitespace()
         endWithNewline()
     }
