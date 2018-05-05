@@ -61,4 +61,4 @@ License
 
 By contributing your code, you agree to license your contribution under the terms of the Apache
 License, Version 2.0:
-https://github.com/jbduncan/jupiter-collection-testers/blob/master/LICENSE 
+https://github.com/jbduncan/jupiter-collection-testers/blob/master/LICENSE
