@@ -67,6 +67,8 @@ dependencies {
     compileOnly("com.google.errorprone:error_prone_annotations:$errorProneVersion")
 }
 
+val compileJava by tasks.getting(JavaCompile::class)
+
 val compileTestJava by tasks.getting(JavaCompile::class) {
     // error-prone options
     options.compilerArgs.addAll(
@@ -75,7 +77,9 @@ val compileTestJava by tasks.getting(JavaCompile::class) {
 }
 
 // Configuration for Refaster: http://errorprone.info/docs/refaster
-apply { plugin("com.github.jbduncan.gradle.refaster") }
+apply {
+    plugin("com.github.jbduncan.gradle.refaster")
+}
 
 // Configuration for Spotless: https://github.com/diffplug/spotless
 val googleJavaFormatVersion: String by project
