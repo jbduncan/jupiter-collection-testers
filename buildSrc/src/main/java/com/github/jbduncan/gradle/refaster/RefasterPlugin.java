@@ -36,6 +36,7 @@ public class RefasterPlugin implements Plugin<Project> {
   public void apply(Project project) {
     project.getPlugins().apply(JavaPlugin.class);
 
+    // TODO: See if there is a way of not depending on gradle-errorprone-plugin
     project.configure(
         Collections.singleton(project), proj -> proj.apply(p -> p.plugin("net.ltgt.errorprone")));
 
@@ -62,12 +63,11 @@ public class RefasterPlugin implements Plugin<Project> {
 
     Configuration refasterCompile =
         project.getConfigurations()
-            // The task "refasterCompile" is automatically created when the "refaster" source set
-            // above is created.
+            // The configuration "refasterCompile" is automatically created when the "refaster"
+            // source set above is created.
             // TODO: "compile" tasks are deprecated. Find a way of migrating from "refasterCompile"
             // to "refasterImplementation" or another task.
             .getByName("refasterCompile")
-            .setVisible(false)
             .setDescription("The Refaster artifacts needed by this plugin.");
     DependencyHandler dependencies = project.getDependencies();
     dependencies.add(
@@ -119,8 +119,7 @@ public class RefasterPlugin implements Plugin<Project> {
             task -> {
               task.doFirst(
                   unused -> {
-                    int javaVersion = Integer
-                        .parseInt(JavaVersion.current().getMajorVersion());
+                    int javaVersion = Integer.parseInt(JavaVersion.current().getMajorVersion());
                     if (javaVersion != 8) {
                       throw new GradleException(
                           "The task 'compileRefasterTemplate' requires Java 8. "
