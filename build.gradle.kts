@@ -102,6 +102,7 @@ spotless {
     }
     kotlinGradle {
         ktlint(ktlintVersion)
+        trimTrailingWhitespace()
         endWithNewline()
     }
     format("misc") {
