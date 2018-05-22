@@ -228,9 +228,9 @@ class ListContractTests {
                       ImmutableSet.of("new element", "new null element")))
               .stream()
               .map(
-                  list -> {
-                    String index = list.get(0);
-                    String elementType = list.get(1);
+                  tuple -> {
+                    String index = tuple.get(0);
+                    String elementType = tuple.get(1);
                     return String.format(messageFormat, index, elementType);
                   })
               .collect(toImmutableList());
