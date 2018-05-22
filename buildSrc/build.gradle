@@ -4,12 +4,14 @@ plugins {
 
 repositories {
     gradlePluginPortal()
+    jcenter()
 }
 
 dependencies {
-    // TODO: Consider swapping out for
-    // https://github.com/tbroyer/gradle-errorprone-javacplugin-plugin
-    compile("net.ltgt.gradle:gradle-errorprone-plugin:0.0.13")
+    implementation("commons-io:commons-io:2.6")
+    implementation("net.ltgt.gradle:gradle-errorprone-plugin:0.0.13")
+    // TODO: Use gradle-errorprone-javacplugin-plugin for Java 9+, e.g.
+    // implementation("net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:0.2")
 }
 
 gradlePlugin {
