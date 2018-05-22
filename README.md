@@ -47,8 +47,8 @@ License
 
 [Apache License, Version 2.0](https://github.com/jbduncan/jupiter-collection-testers/blob/master/LICENSE)
 
-Jupiter Collection Testers depends on JUnit 5, which is itself licensed under the
-[Eclipse Public License, Version 2.0](https://www.eclipse.org/legal/epl-2.0/).
+Jupiter Collection Testers depends on JUnit 5, the license of which can be found
+[here](https://github.com/junit-team/junit5/blob/master/LICENSE.md).
 
 Acknowledgements
 ---
