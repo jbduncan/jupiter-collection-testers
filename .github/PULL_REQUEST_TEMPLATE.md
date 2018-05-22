@@ -5,4 +5,4 @@
 ---
 
 I hereby agree to the terms of the
-[Jupiter Collection Testers Contributor License Agreement](https://github.com/jbduncan/jupiter-collection-testers/blob/master/CONTRIBUTING.md).
+[Jupiter Collection Testers Contributor License Agreement](https://github.com/jbduncan/jupiter-collection-testers/blob/master/CONTRIBUTING.md#jupiter-collection-testers-contributor-license-agreement).
