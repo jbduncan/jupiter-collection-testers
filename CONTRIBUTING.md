@@ -75,8 +75,8 @@ explanation describes _why_ the commit is being introduced, rather than _how_ it
 body can be skipped if the change is so simple that no further context is necessary.
 
 `${issues}` is a series of one or more lines that describe which issues have been resolved and/or
-which issues are partially resolved by or related to this commit. See *Pull Requests* above for more
-information on the format of this section.
+which issues are partially resolved by or related to this commit. See **Pull Requests** above for
+more information on the format of this section.
 
 `PR: ${pr}` is a line that says which PR introduced this commit, where `${pr}` is replaced with the
 PR number, e.g. `PR: #321`. This can be skipped if the commit has no associated PR.
