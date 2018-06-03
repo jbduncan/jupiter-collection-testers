@@ -18,6 +18,7 @@ package com.github.jbduncan.collect.testing;
 final class ListContractConstants {
   private ListContractConstants() {}
 
+  // TODO: These constants have a lot of duplication. Try reducing them to a smaller number.
   static final String DOES_NOT_SUPPORT_LIST_ADD_E = "Does not support List.add(E)";
   static final String DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT =
       "Does not support List.add(E) with new null element";
@@ -68,8 +69,16 @@ final class ListContractConstants {
       "Does not support List.add(size(), E) with new element: size: %s, elements: %s";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT =
       "Does not support List.add(size(), E) with new null element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_ELEMENT =
+      "Does not support List.add(size() + 1, E) with existing element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_NULL_ELEMENT =
+      "Does not support List.add(size() + 1, E) with existing null element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_ELEMENT =
+      "Does not support List.add(size() + 1, E) with new element: size: %s, elements: %s";
+  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_NULL_ELEMENT =
+      "Does not support List.add(size() + 1, E) with new null element: size: %s, elements: %s";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE =
-      "Not true that list.add(-1, %s) threw exception of type %s";
+      "Not true that list.add(%s, %s) threw exception of type %s";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE =
       "Not true that list.add(%s) returned true";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION =

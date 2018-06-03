@@ -38,6 +38,9 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+// TODO: Assert that each call to contract::* causes the relevant List methods to be called. For
+// example, if contract::addWithIndex is run on ArrayList, assert that ArrayList.add(int, E) is
+// called. Use a library like Mockito for this.
 class ListContractTests {
   private static List<String> elements;
 
@@ -110,6 +113,7 @@ class ListContractTests {
     }
 
     @Test
+    @SuppressWarnings("PMD") // TODO: Remove this warning suppression when using cartesian set below
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
       // TODO: Consider refactoring to use a cartesian product set
       assertExpectedStructure(
@@ -143,7 +147,17 @@ class ListContractTests {
               "Does not support List.add(-1, E) with new element: size: 1, elements: [a]",
               "Does not support List.add(-1, E) with new element: size: 3, elements: [a, b, c]",
               "Does not support List.add(-1, E) with existing element: size: 1, elements: [a]",
-              "Does not support List.add(-1, E) with existing element: size: 3, elements: [a, b, c]",
+              "Does not support List.add(-1, E) with existing element: size: 3, elements: "
+                  + "[a, b, c]",
+              // List.add(size() + 1, E)
+              "Does not support List.add(size() + 1, E) with new element: size: 0, elements: []",
+              "Does not support List.add(size() + 1, E) with new element: size: 1, elements: [a]",
+              "Does not support List.add(size() + 1, E) with new element: size: 3, elements: "
+                  + "[a, b, c]",
+              "Does not support List.add(size() + 1, E) with existing element: size: 1, elements: "
+                  + "[a]",
+              "Does not support List.add(size() + 1, E) with existing element: size: 3, elements: "
+                  + "[a, b, c]",
               //
               // null element(s)
               //
@@ -171,12 +185,23 @@ class ListContractTests {
               // List.add(-1, E)
               "Does not support List.add(-1, E) with new null element: size: 0, elements: []",
               "Does not support List.add(-1, E) with new null element: size: 1, elements: [a]",
-              "Does not support List.add(-1, E) with new null element: "
-                  + "size: 3, elements: [a, b, c]",
-              "Does not support List.add(-1, E) with existing null element: "
-                  + "size: 1, elements: [null]",
-              "Does not support List.add(-1, E) with existing null element: "
-                  + "size: 3, elements: [a, null, c]"));
+              "Does not support List.add(-1, E) with new null element: size: 3, elements: "
+                  + "[a, b, c]",
+              "Does not support List.add(-1, E) with existing null element: size: 1, elements: "
+                  + "[null]",
+              "Does not support List.add(-1, E) with existing null element: size: 3, elements: "
+                  + "[a, null, c]",
+              // List.add(size() + 1, E)
+              "Does not support List.add(size() + 1, E) with new null element: size: 0, elements: "
+                  + "[]",
+              "Does not support List.add(size() + 1, E) with new null element: size: 1, elements: "
+                  + "[a]",
+              "Does not support List.add(size() + 1, E) with new null element: size: 3, elements: "
+                  + "[a, b, c]",
+              "Does not support List.add(size() + 1, E) with existing null element: size: 1, "
+                  + "elements: [null]",
+              "Does not support List.add(size() + 1, E) with existing null element: size: 3, "
+                  + "elements: [a, null, c]"));
     }
   }
 
@@ -220,18 +245,19 @@ class ListContractTests {
 
     @Test
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
-      String messageFormat = "Does not support List.add(%s, E) with %s: size: 0, elements: []";
       ImmutableList<String> expectedDynamicTestNames =
           Sets.cartesianProduct(
                   ImmutableList.of(
-                      ImmutableSet.of("0", "size()", "middleIndex()", "-1"),
+                      ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
                       ImmutableSet.of("new element", "new null element")))
               .stream()
               .map(
                   tuple -> {
                     String index = tuple.get(0);
                     String elementType = tuple.get(1);
-                    return String.format(messageFormat, index, elementType);
+                    return String.format(
+                        "Does not support List.add(%s, E) with %s: size: 0, elements: []",
+                        index, elementType);
                   })
               .collect(toImmutableList());
 
@@ -295,7 +321,7 @@ class ListContractTests {
       ImmutableList<String> expectedDynamicTestNames =
           Sets.cartesianProduct(
                   ImmutableList.of(
-                      ImmutableSet.of("0", "size()", "middleIndex()", "-1"),
+                      ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
                       ImmutableSet.of(
                           "new element: size: 1, elements: [a]",
                           "existing element: size: 1, elements: [a]",
