@@ -9,6 +9,9 @@ repositories {
 
 dependencies {
     implementation("commons-io:commons-io:2.6")
+    // TODO: Rather than depending on gradle-errorprone-plugin, try depending on it in
+    // `RefasterPlugin` via `project.getPluginManager().withPlugin(...)`, and then using reflection
+    // (maybe a lib like JOOR) to interact with gradle-errorprone-plugin objects.
     implementation("net.ltgt.gradle:gradle-errorprone-plugin:0.0.13")
     // TODO: Use gradle-errorprone-javacplugin-plugin for Java 9+, e.g.
     // implementation("net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:0.2")
