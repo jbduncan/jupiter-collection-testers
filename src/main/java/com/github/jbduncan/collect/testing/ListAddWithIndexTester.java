@@ -85,7 +85,7 @@ final class ListAddWithIndexTester<E> {
     }
   }
 
-  List<DynamicNode> dynamicTests() {
+  List<DynamicNode> dynamicTestsGraph() {
     List<DynamicNode> tests = new ArrayList<>();
     generateSupportsAddWithIndexTests(tests);
     generateSupportsAddWithIndexWithNullElementsTests(tests);
@@ -96,16 +96,25 @@ final class ListAddWithIndexTester<E> {
 
   private void generateSupportsAddWithIndexTests(List<DynamicNode> tests) {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+      ListAddAtStartSubTestMaker<E> listAddAtStartSubTestMaker =
+          ListAddAtStartSubTestMaker
+              .<E>builder()
+              .features(features)
+              .testListGenerator(generator)
+              .build();
+
       List<DynamicTest> subTests = new ArrayList<>();
 
-      appendSupportsAddAtStartWithNewElement(subTests);
+      List<DynamicTest> listAddAtStartTests =
+          listAddAtStartSubTestMaker.supportsAddWithIndexSubTests();
+      subTests.addAll(listAddAtStartTests);
+
       appendSupportsAddAtEndWithNewElement(subTests);
       appendSupportsAddAtMiddleWithNewElement(subTests);
       appendDoesNotSupportAddAtMinusOneWithNewElementTests(
           subTests, IndexOutOfBoundsException.class);
       appendDoesNotSupportAddAtSizePlusOneWithNewElementTests(
           subTests, IndexOutOfBoundsException.class);
-      appendSupportsAddAtStartWithExistingElementTests(subTests);
       appendSupportsAddAtEndWithExistingElementTests(subTests);
       appendSupportsAddAtMiddleWithExistingElementTests(subTests);
       appendDoesNotSupportAddAtMinusOneWithExistingElementTests(
@@ -202,14 +211,6 @@ final class ListAddWithIndexTester<E> {
     }
   }
 
-  private void appendSupportsAddAtStartWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartTests(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_ELEMENT);
-  }
-
   private void appendSupportsAddAtEndWithNewElement(List<DynamicTest> subTests) {
     appendSupportsAddAtEndTests(
         subTests,
@@ -226,14 +227,6 @@ final class ListAddWithIndexTester<E> {
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT);
   }
 
-  private void appendSupportsAddAtStartWithExistingElementTests(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartTests(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
-  }
-
   private void appendSupportsAddAtEndWithExistingElementTests(List<DynamicTest> subTests) {
     appendSupportsAddAtEndTests(
         subTests,
@@ -248,29 +241,6 @@ final class ListAddWithIndexTester<E> {
         existingElement,
         allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
-  }
-
-  private void appendSupportsAddAtStartTests(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStart =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          list.add(0, elementToAdd);
-          List<E> expected = prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
-          assertIterableEquals(
-              expected,
-              list,
-              () ->
-                  String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED,
-                      quote(elementToAdd)));
-        };
-
-    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtStart, subTests);
   }
 
   private void appendSupportsAddAtEndTests(
