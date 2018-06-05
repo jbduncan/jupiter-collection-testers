@@ -15,10 +15,10 @@
  */
 package com.github.jbduncan.collect.testing;
 
+import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListAddWithIndexHelpers.addDynamicSubTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
@@ -31,7 +31,7 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListAddAtStartSubTestMaker<E> {
+final class ListAddAtEndSubTestMaker<E> {
   private final TestListGenerator<E> generator;
   private final SampleElements<E> samples;
   private final E newElement;
@@ -39,7 +39,7 @@ final class ListAddAtStartSubTestMaker<E> {
   private final Set<CollectionSize> allSupportedCollectionSizes;
   private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
-  private ListAddAtStartSubTestMaker(
+  private ListAddAtEndSubTestMaker(
       TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
     this.generator = requireNonNull(testListGenerator, "testListGenerator");
     this.samples = requireNonNull(testListGenerator.samples(), "samples");
@@ -54,7 +54,7 @@ final class ListAddAtStartSubTestMaker<E> {
     return new Builder<>();
   }
 
-  static class Builder<E> {
+  static final class Builder<E> {
     private Builder() {}
 
     private TestListGenerator<E> testListGenerator;
@@ -70,55 +70,55 @@ final class ListAddAtStartSubTestMaker<E> {
       return this;
     }
 
-    ListAddAtStartSubTestMaker<E> build() {
-      return new ListAddAtStartSubTestMaker<>(testListGenerator, features);
+    ListAddAtEndSubTestMaker<E> build() {
+      return new ListAddAtEndSubTestMaker<>(testListGenerator, features);
     }
   }
 
   List<DynamicTest> supportsAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendSupportsAddAtStartWithNewElement(subTests);
-    appendSupportsAddAtStartWithExistingElement(subTests);
+    appendSupportsAddAtEndWithNewElement(subTests);
+    appendSupportsAddAtEndWithExistingElement(subTests);
     return subTests;
   }
 
-  private void appendSupportsAddAtStartWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(
+  private void appendSupportsAddAtEndWithNewElement(List<DynamicTest> subTests) {
+    appendSupportsAddAtEndImpl(
         subTests,
         newElement,
         allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_ELEMENT);
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
   }
 
-  private void appendSupportsAddAtStartWithExistingElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(
+  private void appendSupportsAddAtEndWithExistingElement(List<DynamicTest> subTests) {
+    appendSupportsAddAtEndImpl(
         subTests,
         existingElement,
         allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
   }
 
-  private void appendSupportsAddAtStartImpl(
+  private void appendSupportsAddAtEndImpl(
       List<DynamicTest> subTests,
       E elementToAdd,
       Set<CollectionSize> supportedCollectionSizes,
       String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStart =
+    ThrowingConsumer<CollectionSize> supportsAddAtEnd =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
 
-          list.add(0, elementToAdd);
-          List<E> expected = prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
+          list.add(list.size(), elementToAdd);
+          List<E> expected = append(newCollectionOfSize(collectionSize, samples), elementToAdd);
           assertIterableEquals(
               expected,
               list,
               () ->
                   String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED,
+                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
                       quote(elementToAdd)));
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, samples, supportsAddAtStart, subTests);
+        supportedCollectionSizes, displayNameFormat, samples, supportsAddAtEnd, subTests);
   }
 }

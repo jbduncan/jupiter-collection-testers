@@ -64,7 +64,7 @@ final class ListAddWithIndexTester<E> {
     return new Builder<>();
   }
 
-  static class Builder<E> {
+  static final class Builder<E> {
     private Builder() {}
 
     private TestListGenerator<E> testListGenerator;
@@ -97,25 +97,25 @@ final class ListAddWithIndexTester<E> {
   private void generateSupportsAddWithIndexTests(List<DynamicNode> tests) {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       ListAddAtStartSubTestMaker<E> listAddAtStartSubTestMaker =
-          ListAddAtStartSubTestMaker
-              .<E>builder()
+          ListAddAtStartSubTestMaker.<E>builder()
+              .features(features)
+              .testListGenerator(generator)
+              .build();
+      ListAddAtEndSubTestMaker<E> listAddAtEndSubTestMaker =
+          ListAddAtEndSubTestMaker.<E>builder()
               .features(features)
               .testListGenerator(generator)
               .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
+      subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexSubTests());
+      subTests.addAll(listAddAtEndSubTestMaker.supportsAddWithIndexSubTests());
 
-      List<DynamicTest> listAddAtStartTests =
-          listAddAtStartSubTestMaker.supportsAddWithIndexSubTests();
-      subTests.addAll(listAddAtStartTests);
-
-      appendSupportsAddAtEndWithNewElement(subTests);
       appendSupportsAddAtMiddleWithNewElement(subTests);
       appendDoesNotSupportAddAtMinusOneWithNewElementTests(
           subTests, IndexOutOfBoundsException.class);
       appendDoesNotSupportAddAtSizePlusOneWithNewElementTests(
           subTests, IndexOutOfBoundsException.class);
-      appendSupportsAddAtEndWithExistingElementTests(subTests);
       appendSupportsAddAtMiddleWithExistingElementTests(subTests);
       appendDoesNotSupportAddAtMinusOneWithExistingElementTests(
           subTests, IndexOutOfBoundsException.class);
@@ -211,14 +211,6 @@ final class ListAddWithIndexTester<E> {
     }
   }
 
-  private void appendSupportsAddAtEndWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndTests(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
-  }
-
   private void appendSupportsAddAtMiddleWithNewElement(List<DynamicTest> subTests) {
     appendSupportsAddAtMiddleTests(
         subTests,
@@ -227,43 +219,12 @@ final class ListAddWithIndexTester<E> {
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT);
   }
 
-  private void appendSupportsAddAtEndWithExistingElementTests(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndTests(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
-  }
-
   private void appendSupportsAddAtMiddleWithExistingElementTests(List<DynamicTest> subTests) {
     appendSupportsAddAtMiddleTests(
         subTests,
         existingElement,
         allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
-  }
-
-  private void appendSupportsAddAtEndTests(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> supportsAddAtEnd =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          list.add(list.size(), elementToAdd);
-          List<E> expected = append(newCollectionOfSize(collectionSize, samples), elementToAdd);
-          assertIterableEquals(
-              expected,
-              list,
-              () ->
-                  String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
-                      quote(elementToAdd)));
-        };
-
-    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtEnd, subTests);
   }
 
   private void appendSupportsAddAtMiddleTests(

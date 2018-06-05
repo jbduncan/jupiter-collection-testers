@@ -18,7 +18,8 @@ package com.github.jbduncan.collect.testing;
 final class ListContractConstants {
   private ListContractConstants() {}
 
-  // TODO: These constants have a lot of duplication. Try reducing them to a smaller number.
+  // TODO: These constants have a lot of duplication. Try reducing them to a smaller number and/or
+  // inlining those that are used only once.
   static final String DOES_NOT_SUPPORT_LIST_ADD_E = "Does not support List.add(E)";
   static final String DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT =
       "Does not support List.add(E) with new null element";
