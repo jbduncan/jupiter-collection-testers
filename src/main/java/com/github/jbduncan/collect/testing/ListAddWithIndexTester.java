@@ -147,14 +147,15 @@ final class ListAddWithIndexTester<E> {
       tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E, subTests));
 
       if (!features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
-        appendDoesNotSupportAddAtStartWithNewNullElementTests(subTests);
-        appendDoesNotSupportAddAtEndWithNewNullElementTests(subTests);
-        appendDoesNotSupportAddAtMiddleWithNewNullElementTests(subTests);
+        List<DynamicTest> innerSubTests = new ArrayList<>();
+        appendDoesNotSupportAddAtStartWithNewNullElementTests(innerSubTests);
+        appendDoesNotSupportAddAtEndWithNewNullElementTests(innerSubTests);
+        appendDoesNotSupportAddAtMiddleWithNewNullElementTests(innerSubTests);
 
         tests.add(
             dynamicContainer(
                 ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NEW_NULL_ELEMENT,
-                subTests));
+                innerSubTests));
       }
     }
   }

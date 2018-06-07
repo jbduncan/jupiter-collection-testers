@@ -347,6 +347,7 @@ class ListContractTests {
   }
 
   // TODO: Consider testing the following list implementations:
+  // - Guava's ImmutableList
   // - ArraysAsList
   // - LinkedList
   // - UnmodifiableList
