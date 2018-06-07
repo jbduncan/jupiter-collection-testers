@@ -122,17 +122,24 @@ final class ListAddWithIndexTester<E> {
               .existingElement(existingElement)
               .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
+      ListAddAtMinusOneSubTestMaker<E> listAddAtMinusOneSubTestMaker =
+          ListAddAtMinusOneSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .expectedExceptionType(IndexOutOfBoundsException.class)
+              .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexSubTests());
       subTests.addAll(listAddAtEndSubTestMaker.supportsAddWithIndexSubTests());
       subTests.addAll(listAddAtMiddleSubTestMaker.supportsAddWithIndexSubTests());
+      subTests.addAll(listAddAtMinusOneSubTestMaker.doesNotSupportAddWithIndexSubTests());
 
-      appendDoesNotSupportAddAtMinusOneWithNewElementTests(
-          subTests, IndexOutOfBoundsException.class);
       appendDoesNotSupportAddAtSizePlusOneWithNewElementTests(
-          subTests, IndexOutOfBoundsException.class);
-      appendDoesNotSupportAddAtMinusOneWithExistingElementTests(
           subTests, IndexOutOfBoundsException.class);
       appendDoesNotSupportAddAtSizePlusOneWithExistingElementTests(
           subTests, IndexOutOfBoundsException.class);
