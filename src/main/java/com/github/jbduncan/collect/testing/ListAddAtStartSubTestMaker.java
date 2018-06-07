@@ -15,8 +15,6 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
-import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
@@ -39,15 +37,16 @@ final class ListAddAtStartSubTestMaker<E> {
   private final Set<CollectionSize> allSupportedCollectionSizes;
   private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
-  private ListAddAtStartSubTestMaker(
-      TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
-    this.generator = requireNonNull(testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(testListGenerator.samples(), "samples");
-    this.newElement = samples.e3();
-    this.existingElement = samples.e0();
-    this.allSupportedCollectionSizes = extractConcreteSizes(features);
+  private ListAddAtStartSubTestMaker(Builder<E> builder) {
+    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
+    this.samples = requireNonNull(builder.sampleElements, "samples");
+    this.newElement = requireNonNull(builder.newElement, "newElement");
+    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
+    this.allSupportedCollectionSizes =
+        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
     this.allSupportedCollectionSizesExceptZero =
-        minus(allSupportedCollectionSizes, CollectionSize.SUPPORTS_ZERO);
+        requireNonNull(
+            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
   static <E> Builder<E> builder() {
@@ -58,20 +57,45 @@ final class ListAddAtStartSubTestMaker<E> {
     private Builder() {}
 
     private TestListGenerator<E> testListGenerator;
-    private Set<Feature<?>> features;
+    private SampleElements<E> sampleElements;
+    private E newElement;
+    private E existingElement;
+    private Set<CollectionSize> allSupportedCollectionSizes;
+    private Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
     Builder<E> testListGenerator(TestListGenerator<E> testListGenerator) {
       this.testListGenerator = testListGenerator;
       return this;
     }
 
-    Builder<E> features(Set<Feature<?>> features) {
-      this.features = features;
+    Builder<E> sampleElements(SampleElements<E> sampleElements) {
+      this.sampleElements = sampleElements;
+      return this;
+    }
+
+    Builder<E> newElement(E newElement) {
+      this.newElement = newElement;
+      return this;
+    }
+
+    Builder<E> existingElement(E existingElement) {
+      this.existingElement = existingElement;
+      return this;
+    }
+
+    Builder<E> allSupportedCollectionSizes(Set<CollectionSize> allSupportedCollectionSizes) {
+      this.allSupportedCollectionSizes = allSupportedCollectionSizes;
+      return this;
+    }
+
+    Builder<E> allSupportedCollectionSizesExceptZero(
+        Set<CollectionSize> allSupportedCollectionSizesExceptZero) {
+      this.allSupportedCollectionSizesExceptZero = allSupportedCollectionSizesExceptZero;
       return this;
     }
 
     ListAddAtStartSubTestMaker<E> build() {
-      return new ListAddAtStartSubTestMaker<>(testListGenerator, features);
+      return new ListAddAtStartSubTestMaker<>(this);
     }
   }
 

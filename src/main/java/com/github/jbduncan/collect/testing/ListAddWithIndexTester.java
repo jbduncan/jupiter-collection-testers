@@ -98,18 +98,29 @@ final class ListAddWithIndexTester<E> {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       ListAddAtStartSubTestMaker<E> listAddAtStartSubTestMaker =
           ListAddAtStartSubTestMaker.<E>builder()
-              .features(features)
               .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
       ListAddAtEndSubTestMaker<E> listAddAtEndSubTestMaker =
           ListAddAtEndSubTestMaker.<E>builder()
-              .features(features)
               .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
       ListAddAtMiddleSubTestMaker<E> listAddAtMiddleSubTestMaker =
           ListAddAtMiddleSubTestMaker.<E>builder()
-              .features(features)
               .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
