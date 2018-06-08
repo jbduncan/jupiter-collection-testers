@@ -16,7 +16,7 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.stream;
-import static com.github.jbduncan.collect.testing.Helpers.toUnmodifiableList;
+import static java.util.stream.Collectors.toCollection;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -25,7 +25,7 @@ class ArrayListTests implements ListContract<String> {
   @Override
   public TestListGenerator<String> generator() {
     return (TestStringListGenerator)
-        elements -> new ArrayList<>(stream(elements).collect(toUnmodifiableList()));
+        elements -> stream(elements).collect(toCollection(ArrayList::new));
   }
 
   @Override

@@ -24,6 +24,8 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
 
+// TODO: Consider allowing the user to pass in a graph that describes a partial ordering in which
+// the Refaster templates must be executed.
 public class RefasterPlugin implements Plugin<Project> {
   @Override
   public void apply(Project project) {
@@ -42,6 +44,8 @@ public class RefasterPlugin implements Plugin<Project> {
     // refaster(Check|Apply) JavaCompile-based sub-tasks use custom error-prone toolchains (as they
     // currently do) rather than the default toolchain that net.ltgt.errorprone would automatically
     // apply.
+    // Alternatively, migrate away from sub-tasks implementing JavaCompile and use project.javaexec
+    // instead.
     project
         .getPluginManager()
         .withPlugin("net.ltgt.errorprone-base", appliedPlugin -> applyInternal(project));
