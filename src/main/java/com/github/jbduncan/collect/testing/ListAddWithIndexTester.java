@@ -16,7 +16,6 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
-import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
@@ -186,13 +185,21 @@ final class ListAddWithIndexTester<E> {
               .allSupportedCollectionSizes(allSupportedCollectionSizes)
               .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
+      ListAddAtMiddleSubTestMaker<E> listAddAtMiddleSubTestMaker =
+          ListAddAtMiddleSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexForNullsSubTests());
       subTests.addAll(listAddAtEndSubTestMaker.supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(listAddAtMiddleSubTestMaker.supportsAddWithIndexForNullsSubTests());
 
-      appendSupportsAddAtMiddleWithNewNullElementTests(subTests);
-      appendSupportsAddAtMiddleWithExistingNullElementTests(subTests);
       appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
           subTests, IndexOutOfBoundsException.class);
       appendDoesNotSupportAddAtMinusOneWithExistingNullElementTests(
@@ -254,60 +261,6 @@ final class ListAddWithIndexTester<E> {
           dynamicContainer(
               ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
     }
-  }
-
-  private void appendSupportsAddAtMiddleWithNewNullElementTests(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewNullElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-          int middleIndex = middleIndex(list);
-
-          list.add(middleIndex, null);
-          Iterable<E> expected =
-              insert(newCollectionOfSize(collectionSize, samples), middleIndex, null);
-          assertIterableEquals(
-              expected,
-              list,
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
-                      quote(ListContractConstants.NULL),
-                      middleIndex));
-        };
-
-    addDynamicSubTests(
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
-        supportsAddAtMiddleWithNewNullElement,
-        subTests);
-  }
-
-  private void appendSupportsAddAtMiddleWithExistingNullElementTests(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-          int middleIndex = middleIndex(list);
-
-          list.add(middleIndex, null);
-          Iterable<E> expected =
-              insert(
-                  newCollectionWithNullInMiddleOfSize(collectionSize, samples), middleIndex, null);
-          assertIterableEquals(
-              expected,
-              list,
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
-                      quote(ListContractConstants.NULL),
-                      middleIndex));
-        };
-
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
-        supportsAddAtMiddleWithExistingNullElement,
-        subTests);
   }
 
   private void appendDoesNotSupportAddAtStartWithNewElementTests(List<DynamicTest> subTests) {

@@ -123,7 +123,7 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
   private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
     appendSupportsAddAtStartImpl(
         subTests,
-        newElement,
+        null,
         allSupportedCollectionSizes,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT);
   }

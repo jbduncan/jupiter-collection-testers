@@ -17,9 +17,11 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.middleIndex;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import java.util.ArrayList;
@@ -110,6 +112,49 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         existingElement,
         allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
+  }
+
+  List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendSupportsAddAtMiddleWithNewNull(subTests);
+    appendSupportsAddAtMiddleWithExistingNull(subTests);
+    return subTests;
+  }
+
+  private void appendSupportsAddAtMiddleWithNewNull(List<DynamicTest> subTests) {
+    appendSupportsAddAtMiddleImpl(
+        subTests,
+        null,
+        allSupportedCollectionSizesExceptZero,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT);
+  }
+
+  private void appendSupportsAddAtMiddleWithExistingNull(List<DynamicTest> subTests) {
+    ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingNullElement =
+        collectionSize -> {
+          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+          int middleIndex = middleIndex(list);
+
+          list.add(middleIndex, null);
+          Iterable<E> expected =
+              insert(
+                  newCollectionWithNullInMiddleOfSize(collectionSize, samples), middleIndex, null);
+          assertIterableEquals(
+              expected,
+              list,
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
+                      quote(ListContractConstants.NULL),
+                      middleIndex));
+        };
+
+    addDynamicSubTestsForListWithNullElement(
+        allSupportedCollectionSizesExceptZero,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
+        supportsAddAtMiddleWithExistingNullElement,
+        subTests);
   }
 
   private void appendSupportsAddAtMiddleImpl(
