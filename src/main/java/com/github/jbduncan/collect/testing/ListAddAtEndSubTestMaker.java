@@ -17,8 +17,10 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import java.util.ArrayList;
@@ -111,6 +113,40 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
   }
 
+  List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendSupportsAddAtStartWithNewNull(subTests);
+    appendSupportsAddAtStartWithExistingNull(subTests);
+    return subTests;
+  }
+
+  private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
+    appendSupportsAddAtEndImpl(
+        subTests,
+        null,
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT);
+  }
+
+  private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
+    ThrowingConsumer<CollectionSize> supportsAddAtEndWithExistingNullElement =
+        collectionSize -> {
+          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+
+          list.add(list.size(), null);
+          List<E> expected =
+              append(newCollectionWithNullInMiddleOfSize(collectionSize, samples), null);
+          assertIterableEquals(
+              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
+        };
+
+    addDynamicSubTestsForListWithNullElement(
+        allSupportedCollectionSizesExceptZero,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
+        supportsAddAtEndWithExistingNullElement,
+        subTests);
+  }
+
   private void appendSupportsAddAtEndImpl(
       List<DynamicTest> subTests,
       E elementToAdd,
@@ -128,7 +164,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
               () ->
                   String.format(
                       ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
-                      quote(elementToAdd)));
+                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
         };
 
     addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtEnd, subTests);

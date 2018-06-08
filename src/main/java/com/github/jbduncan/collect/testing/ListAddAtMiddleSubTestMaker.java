@@ -18,7 +18,6 @@ package com.github.jbduncan.collect.testing;
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
-import static com.github.jbduncan.collect.testing.ListAddWithIndexHelpers.addDynamicSubTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.middleIndex;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -133,7 +132,7 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
                   String.format(
                       ListContractConstants
                           .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
-                      quote(elementToAdd),
+                      (elementToAdd == null) ? "null" : quote(elementToAdd),
                       middleIndex));
         };
 

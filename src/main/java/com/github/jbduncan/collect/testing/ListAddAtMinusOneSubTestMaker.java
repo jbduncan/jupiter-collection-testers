@@ -16,6 +16,7 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -138,7 +139,7 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
                       -1,
-                      elementToAdd,
+                      (elementToAdd == null) ? "null" : quote(elementToAdd),
                       expectedExceptionType));
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),

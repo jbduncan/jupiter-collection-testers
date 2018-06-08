@@ -15,7 +15,6 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
@@ -178,13 +177,21 @@ final class ListAddWithIndexTester<E> {
               .allSupportedCollectionSizes(allSupportedCollectionSizes)
               .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
+      ListAddAtEndSubTestMaker<E> listAddAtEndSubTestMaker =
+          ListAddAtEndSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(listAddAtEndSubTestMaker.supportsAddWithIndexForNullsSubTests());
 
-      appendSupportsAddAtEndWithNewNullElementTests(subTests);
       appendSupportsAddAtMiddleWithNewNullElementTests(subTests);
-      appendSupportsAddAtEndWithExistingNullElementTests(subTests);
       appendSupportsAddAtMiddleWithExistingNullElementTests(subTests);
       appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
           subTests, IndexOutOfBoundsException.class);
@@ -249,24 +256,6 @@ final class ListAddWithIndexTester<E> {
     }
   }
 
-  private void appendSupportsAddAtEndWithNewNullElementTests(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtEndWithNewNullElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          list.add(list.size(), null);
-          List<E> expected = append(newCollectionOfSize(collectionSize, samples), null);
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
-        };
-
-    addDynamicSubTests(
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT,
-        supportsAddAtEndWithNewNullElement,
-        subTests);
-  }
-
   private void appendSupportsAddAtMiddleWithNewNullElementTests(List<DynamicTest> subTests) {
     ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithNewNullElement =
         collectionSize -> {
@@ -291,24 +280,6 @@ final class ListAddWithIndexTester<E> {
         allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
         supportsAddAtMiddleWithNewNullElement,
-        subTests);
-  }
-
-  private void appendSupportsAddAtEndWithExistingNullElementTests(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtEndWithExistingNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          list.add(list.size(), null);
-          List<E> expected =
-              append(newCollectionWithNullInMiddleOfSize(collectionSize, samples), null);
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
-        };
-
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
-        supportsAddAtEndWithExistingNullElement,
         subTests);
   }
 

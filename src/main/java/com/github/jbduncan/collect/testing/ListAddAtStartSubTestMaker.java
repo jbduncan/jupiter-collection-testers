@@ -113,29 +113,6 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
   }
 
-  private void appendSupportsAddAtStartImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStart =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          list.add(0, elementToAdd);
-          List<E> expected = prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
-          assertIterableEquals(
-              expected,
-              list,
-              () ->
-                  String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED,
-                      quote(elementToAdd)));
-        };
-
-    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtStart, subTests);
-  }
-
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
     appendSupportsAddAtStartWithNewNull(subTests);
@@ -144,21 +121,11 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStartWithNewNullElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          list.add(0, null);
-          List<E> expected = prepend(null, newCollectionOfSize(collectionSize, samples));
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
-        };
-
-    addDynamicSubTests(
+    appendSupportsAddAtStartImpl(
+        subTests,
+        newElement,
         allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
-        supportsAddAtStartWithNewNullElement,
-        subTests);
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT);
   }
 
   private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
@@ -178,5 +145,28 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
         supportsAddAtStartWithExistingNullElement,
         subTests);
+  }
+
+  private void appendSupportsAddAtStartImpl(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> supportsAddAtStart =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          list.add(0, elementToAdd);
+          List<E> expected = prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
+          assertIterableEquals(
+              expected,
+              list,
+              () ->
+                  String.format(
+                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED,
+                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+        };
+
+    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtStart, subTests);
   }
 }
