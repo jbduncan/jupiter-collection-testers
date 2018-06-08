@@ -23,6 +23,7 @@ import static com.github.jbduncan.collect.testing.ListContractHelpers.middleInde
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,6 +157,30 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         subTests);
   }
 
+  List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendDoesNotSupportAddAtMiddleWithNewElement(subTests);
+    appendDoesNotSupportAddAtMiddleWithExistingElement(subTests);
+    return subTests;
+  }
+
+  private void appendDoesNotSupportAddAtMiddleWithNewElement(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtMiddleImpl(
+        subTests,
+        newElement,
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT);
+  }
+
+  private void appendDoesNotSupportAddAtMiddleWithExistingElement(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtMiddleImpl(
+        subTests,
+        existingElement,
+        allSupportedCollectionSizesExceptZero,
+        ListContractConstants
+            .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
+  }
+
   private void appendSupportsAddAtMiddleImpl(
       List<DynamicTest> subTests,
       E elementToAdd,
@@ -181,5 +206,32 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtMiddle, subTests);
+  }
+
+  private void appendDoesNotSupportAddAtMiddleImpl(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddle =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              UnsupportedOperationException.class,
+              () -> list.add(middleIndex(list), elementToAdd),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+          assertIterableEquals(
+              newCollectionOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    addDynamicSubTests(
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMiddle, subTests);
   }
 }

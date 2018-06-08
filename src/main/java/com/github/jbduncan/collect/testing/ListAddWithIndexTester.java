@@ -19,7 +19,6 @@ import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.middleIndex;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
@@ -240,14 +239,30 @@ final class ListAddWithIndexTester<E> {
               .allSupportedCollectionSizes(allSupportedCollectionSizes)
               .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
+      ListAddAtEndSubTestMaker<E> listAddAtEndSubTestMaker =
+          ListAddAtEndSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .build();
+      ListAddAtMiddleSubTestMaker<E> listAddAtMiddleSubTestMaker =
+          ListAddAtMiddleSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(listAddAtStartSubTestMaker.doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(listAddAtEndSubTestMaker.doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(listAddAtMiddleSubTestMaker.doesNotSupportAddWithIndexSubTests());
 
-      appendDoesNotSupportAddAtEndWithNewElementTests(subTests);
-      appendDoesNotSupportAddAtEndWithExistingElementTests(subTests);
-      appendDoesNotSupportAddAtMiddleWithNewElementTests(subTests);
-      appendDoesNotSupportAddAtMiddleWithExistingTests(subTests);
       appendDoesNotSupportAddAtMinusOneWithNewElementTests(
           subTests, UnsupportedOperationException.class);
       appendDoesNotSupportAddAtMinusOneWithExistingElementTests(
@@ -284,39 +299,6 @@ final class ListAddWithIndexTester<E> {
           dynamicContainer(
               ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
     }
-  }
-
-  private void appendDoesNotSupportAddAtEndWithNewElementTests(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtEndTestsImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtEndWithExistingElementTests(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtEndTestsImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtMiddleWithNewElementTests(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleTestsImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtMiddleWithExistingTests(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleTestsImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants
-            .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
   }
 
   private void appendDoesNotSupportAddAtStartWithNewNullElementTests(List<DynamicTest> subTests) {
@@ -474,60 +456,6 @@ final class ListAddWithIndexTester<E> {
             .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtMiddleWithExistingNullElement,
         subTests);
-  }
-
-  private void appendDoesNotSupportAddAtEndTestsImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtEnd =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          assertThrows(
-              UnsupportedOperationException.class,
-              () -> list.add(list.size(), elementToAdd),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      quote(elementToAdd)));
-          assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtEnd, subTests);
-  }
-
-  private void appendDoesNotSupportAddAtMiddleTestsImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddle =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          assertThrows(
-              UnsupportedOperationException.class,
-              () -> list.add(middleIndex(list), elementToAdd),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      quote(elementToAdd)));
-          assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMiddle, subTests);
   }
 
   private void appendDoesNotSupportAddAtMinusOneWithNewElementTests(

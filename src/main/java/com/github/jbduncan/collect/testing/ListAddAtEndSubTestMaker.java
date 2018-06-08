@@ -22,6 +22,7 @@ import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +147,29 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         subTests);
   }
 
+  List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendDoesNotSupportAddAtEndWithNewElement(subTests);
+    appendDoesNotSupportAddAtEndWithExistingElement(subTests);
+    return subTests;
+  }
+
+  private void appendDoesNotSupportAddAtEndWithNewElement(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtEndImpl(
+        subTests,
+        newElement,
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
+  }
+
+  private void appendDoesNotSupportAddAtEndWithExistingElement(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtEndImpl(
+        subTests,
+        existingElement,
+        allSupportedCollectionSizesExceptZero,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
+  }
+
   private void appendSupportsAddAtEndImpl(
       List<DynamicTest> subTests,
       E elementToAdd,
@@ -167,5 +191,32 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtEnd, subTests);
+  }
+
+  private void appendDoesNotSupportAddAtEndImpl(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtEnd =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              UnsupportedOperationException.class,
+              () -> list.add(list.size(), elementToAdd),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+          assertIterableEquals(
+              newCollectionOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    addDynamicSubTests(
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtEnd, subTests);
   }
 }
