@@ -194,16 +194,23 @@ final class ListAddWithIndexTester<E> {
               .allSupportedCollectionSizes(allSupportedCollectionSizes)
               .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
+      ListAddAtMinusOneSubTestMaker<E> listAddAtMinusOneSubTestMaker =
+          ListAddAtMinusOneSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .expectedExceptionType(IndexOutOfBoundsException.class)
+              .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexForNullsSubTests());
       subTests.addAll(listAddAtEndSubTestMaker.supportsAddWithIndexForNullsSubTests());
       subTests.addAll(listAddAtMiddleSubTestMaker.supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(listAddAtMinusOneSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
 
-      appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
-          subTests, IndexOutOfBoundsException.class);
-      appendDoesNotSupportAddAtMinusOneWithExistingNullElementTests(
-          subTests, IndexOutOfBoundsException.class);
       appendDoesNotSupportAddAtSizePlusOneWithNewNullElementTests(
           subTests, IndexOutOfBoundsException.class);
       appendDoesNotSupportAddAtSizePlusOneWithExistingNullElementTests(
