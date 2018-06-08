@@ -35,7 +35,7 @@ public interface ListContract<E> extends CollectionContract<E> {
         .testListGenerator(generator())
         .features(features())
         .build()
-        .dynamicTests();
+        .dynamicTestsGraph();
   }
 
   @TestFactory

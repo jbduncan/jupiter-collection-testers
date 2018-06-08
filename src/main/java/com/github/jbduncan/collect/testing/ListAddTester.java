@@ -83,7 +83,7 @@ final class ListAddTester<E> {
     }
   }
 
-  List<DynamicNode> dynamicTests() {
+  List<DynamicNode> dynamicTestsGraph() {
     List<DynamicNode> tests = new ArrayList<>();
     generateSupportsAddTests(tests);
     generateSupportsAddButNotOnNullElementsTests(tests);
