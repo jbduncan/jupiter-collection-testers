@@ -21,7 +21,6 @@ import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
-import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import java.util.ArrayList;
@@ -31,18 +30,14 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
-  private final TestListGenerator<E> generator;
-  private final E newElement;
-  private final E existingElement;
-
   private ListAddAtStartSubTestMaker(Builder<E> builder) {
     super(
+        builder.testListGenerator,
+        builder.newElement,
+        builder.existingElement,
         builder.sampleElements,
         builder.allSupportedCollectionSizes,
         builder.allSupportedCollectionSizesExceptZero);
-    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.newElement = requireNonNull(builder.newElement, "newElement");
-    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
   }
 
   static <E> Builder<E> builder() {

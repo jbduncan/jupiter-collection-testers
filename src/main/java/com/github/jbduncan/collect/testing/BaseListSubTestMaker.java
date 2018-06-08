@@ -25,14 +25,23 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 class BaseListSubTestMaker<E> {
+  final TestListGenerator<E> generator;
+  final E newElement;
+  final E existingElement;
   final SampleElements<E> samples;
   final Set<CollectionSize> allSupportedCollectionSizes;
   final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
   BaseListSubTestMaker(
+      TestListGenerator<E> testListGenerator,
+      E newElement,
+      E existingElement,
       SampleElements<E> sampleElements,
       Set<CollectionSize> allSupportedCollectionSizes,
       Set<CollectionSize> allSupportedCollectionSizesExceptZero) {
+    this.generator = requireNonNull(testListGenerator, "testListGenerator");
+    this.newElement = requireNonNull(newElement, "newElement");
+    this.existingElement = requireNonNull(existingElement, "existingElement");
     this.samples = requireNonNull(sampleElements, "samples");
     this.allSupportedCollectionSizes =
         requireNonNull(allSupportedCollectionSizes, "allSupportedCollectionSizes");
