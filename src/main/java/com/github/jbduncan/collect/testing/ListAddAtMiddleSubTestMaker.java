@@ -30,21 +30,19 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListAddAtMiddleSubTestMaker<E> {
+final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
   private final TestListGenerator<E> generator;
-  private final SampleElements<E> samples;
   private final E newElement;
   private final E existingElement;
-  private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
   private ListAddAtMiddleSubTestMaker(Builder<E> builder) {
+    super(
+        builder.sampleElements,
+        builder.allSupportedCollectionSizes,
+        builder.allSupportedCollectionSizesExceptZero);
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(builder.sampleElements, "samples");
     this.newElement = requireNonNull(builder.newElement, "newElement");
     this.existingElement = requireNonNull(builder.existingElement, "existingElement");
-    this.allSupportedCollectionSizesExceptZero =
-        requireNonNull(
-            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
   static <E> Builder<E> builder() {
@@ -58,6 +56,7 @@ final class ListAddAtMiddleSubTestMaker<E> {
     private SampleElements<E> sampleElements;
     private E newElement;
     private E existingElement;
+    private Set<CollectionSize> allSupportedCollectionSizes;
     private Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
     Builder<E> testListGenerator(TestListGenerator<E> testListGenerator) {
@@ -77,6 +76,11 @@ final class ListAddAtMiddleSubTestMaker<E> {
 
     Builder<E> existingElement(E existingElement) {
       this.existingElement = existingElement;
+      return this;
+    }
+
+    Builder<E> allSupportedCollectionSizes(Set<CollectionSize> allSupportedCollectionSizes) {
+      this.allSupportedCollectionSizes = allSupportedCollectionSizes;
       return this;
     }
 
@@ -138,7 +142,6 @@ final class ListAddAtMiddleSubTestMaker<E> {
                       middleIndex));
         };
 
-    addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, samples, supportsAddAtMiddle, subTests);
+    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtMiddle, subTests);
   }
 }

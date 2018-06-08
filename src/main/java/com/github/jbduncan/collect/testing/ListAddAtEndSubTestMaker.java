@@ -18,7 +18,6 @@ package com.github.jbduncan.collect.testing;
 import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
-import static com.github.jbduncan.collect.testing.ListAddWithIndexHelpers.addDynamicSubTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -29,24 +28,19 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListAddAtEndSubTestMaker<E> {
+final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   private final TestListGenerator<E> generator;
-  private final SampleElements<E> samples;
   private final E newElement;
   private final E existingElement;
-  private final Set<CollectionSize> allSupportedCollectionSizes;
-  private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
   private ListAddAtEndSubTestMaker(Builder<E> builder) {
+    super(
+        builder.sampleElements,
+        builder.allSupportedCollectionSizes,
+        builder.allSupportedCollectionSizesExceptZero);
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(builder.sampleElements, "samples");
     this.newElement = requireNonNull(builder.newElement, "newElement");
     this.existingElement = requireNonNull(builder.existingElement, "existingElement");
-    this.allSupportedCollectionSizes =
-        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
-    this.allSupportedCollectionSizesExceptZero =
-        requireNonNull(
-            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
   static <E> Builder<E> builder() {
@@ -142,7 +136,6 @@ final class ListAddAtEndSubTestMaker<E> {
                       quote(elementToAdd)));
         };
 
-    addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, samples, supportsAddAtEnd, subTests);
+    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtEnd, subTests);
   }
 }

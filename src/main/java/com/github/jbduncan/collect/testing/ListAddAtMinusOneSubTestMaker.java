@@ -16,7 +16,6 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
-import static com.github.jbduncan.collect.testing.ListAddWithIndexHelpers.addDynamicSubTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -28,25 +27,20 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListAddAtMinusOneSubTestMaker<E> {
+final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
   private final TestListGenerator<E> generator;
-  private final SampleElements<E> samples;
   private final E newElement;
   private final E existingElement;
-  private final Set<CollectionSize> allSupportedCollectionSizes;
-  private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
   private Class<? extends Throwable> expectedExceptionType;
 
   private ListAddAtMinusOneSubTestMaker(Builder<E> builder) {
+    super(
+        builder.sampleElements,
+        builder.allSupportedCollectionSizes,
+        builder.allSupportedCollectionSizesExceptZero);
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(builder.sampleElements, "samples");
     this.newElement = requireNonNull(builder.newElement, "newElement");
     this.existingElement = requireNonNull(builder.existingElement, "existingElement");
-    this.allSupportedCollectionSizes =
-        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
-    this.allSupportedCollectionSizesExceptZero =
-        requireNonNull(
-            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
     this.expectedExceptionType =
         requireNonNull(builder.expectedExceptionType, "expectedExceptionType");
   }
@@ -156,10 +150,6 @@ final class ListAddAtMinusOneSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes,
-        displayNameFormat,
-        samples,
-        doesNotSupportAddAtMinusOne,
-        subTests);
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMinusOne, subTests);
   }
 }
