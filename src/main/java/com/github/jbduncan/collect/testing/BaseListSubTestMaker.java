@@ -67,7 +67,6 @@ class BaseListSubTestMaker<E> {
   }
 
   void addDynamicSubTestsForListWithNullElement(
-      Set<CollectionSize> allSupportedCollectionSizesExceptZero,
       String displayNameFormat,
       ThrowingConsumer<CollectionSize> testExecutor,
       List<DynamicTest> subTests) {

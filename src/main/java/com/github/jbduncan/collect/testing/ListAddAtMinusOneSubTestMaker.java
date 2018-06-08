@@ -161,7 +161,6 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtMinusOneWithExistingNullElement,
         subTests);

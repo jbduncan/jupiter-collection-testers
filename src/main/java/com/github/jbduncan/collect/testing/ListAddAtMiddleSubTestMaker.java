@@ -151,7 +151,6 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
         supportsAddAtMiddleWithExistingNullElement,
         subTests);

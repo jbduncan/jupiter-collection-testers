@@ -16,8 +16,10 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -120,6 +122,49 @@ final class ListAddAtSizePlusOneSubTestMaker<E> extends BaseListSubTestMaker<E> 
         existingElement,
         allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_ELEMENT);
+  }
+
+  List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendDoesNotSupportAddAtSizePlusOneWithNewNull(subTests);
+    appendDoesNotSupportAddAtSizePlusOneWithExistingNull(subTests);
+    return subTests;
+  }
+
+  private void appendDoesNotSupportAddAtSizePlusOneWithNewNull(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtSizePlusOneImpl(
+        subTests,
+        null,
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_NULL_ELEMENT);
+  }
+
+  private void appendDoesNotSupportAddAtSizePlusOneWithExistingNull(List<DynamicTest> subTests) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtSizePlusOneWithExistingNullElement =
+        collectionSize -> {
+          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+
+          assertThrows(
+              expectedExceptionType,
+              () -> list.add(list.size() + 1, null),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
+                      list.size() + 1,
+                      ListContractConstants.NULL,
+                      expectedExceptionType));
+          assertIterableEquals(
+              newCollectionWithNullInMiddleOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    addDynamicSubTestsForListWithNullElement(
+        ListContractConstants
+            .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_NULL_ELEMENT,
+        doesNotSupportAddAtSizePlusOneWithExistingNullElement,
+        subTests);
   }
 
   private void appendDoesNotSupportAddAtSizePlusOneImpl(
