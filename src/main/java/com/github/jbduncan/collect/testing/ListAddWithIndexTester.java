@@ -257,20 +257,33 @@ final class ListAddWithIndexTester<E> {
               .allSupportedCollectionSizes(allSupportedCollectionSizes)
               .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
+      ListAddAtMinusOneSubTestMaker<E> listAddAtMinusOneSubTestMaker =
+          ListAddAtMinusOneSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .expectedExceptionType(UnsupportedOperationException.class)
+              .build();
+      ListAddAtSizePlusOneSubTestMaker<E> listAddAtSizePlusOneSubTestMaker =
+          ListAddAtSizePlusOneSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .expectedExceptionType(UnsupportedOperationException.class)
+              .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(listAddAtStartSubTestMaker.doesNotSupportAddWithIndexSubTests());
       subTests.addAll(listAddAtEndSubTestMaker.doesNotSupportAddWithIndexSubTests());
       subTests.addAll(listAddAtMiddleSubTestMaker.doesNotSupportAddWithIndexSubTests());
-
-      appendDoesNotSupportAddAtMinusOneWithNewElementTests(
-          subTests, UnsupportedOperationException.class);
-      appendDoesNotSupportAddAtMinusOneWithExistingElementTests(
-          subTests, UnsupportedOperationException.class);
-      appendDoesNotSupportAddAtSizePlusOneWithNewElementTests(
-          subTests, UnsupportedOperationException.class);
-      appendDoesNotSupportAddAtSizePlusOneWithExistingElementTests(
-          subTests, UnsupportedOperationException.class);
+      subTests.addAll(listAddAtMinusOneSubTestMaker.doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(listAddAtSizePlusOneSubTestMaker.doesNotSupportAddWithIndexSubTests());
 
       tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, subTests));
     }
@@ -458,56 +471,6 @@ final class ListAddWithIndexTester<E> {
         subTests);
   }
 
-  private void appendDoesNotSupportAddAtMinusOneWithNewElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    appendDoesNotSupportAddAtMinusOneTestsImpl(
-        subTests,
-        expectedExceptionType,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneWithExistingElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    appendDoesNotSupportAddAtMinusOneTestsImpl(
-        subTests,
-        expectedExceptionType,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneTestsImpl(
-      List<DynamicTest> subTests,
-      Class<? extends Throwable> expectedExceptionType,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOne =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          assertThrows(
-              expectedExceptionType,
-              () -> list.add(-1, elementToAdd),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      -1,
-                      elementToAdd,
-                      expectedExceptionType));
-          assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMinusOne, subTests);
-  }
-
   private void appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
       List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithNewNullElement =
@@ -563,57 +526,6 @@ final class ListAddWithIndexTester<E> {
         ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtMinusOneWithExistingNullElement,
         subTests);
-  }
-
-  private void appendDoesNotSupportAddAtSizePlusOneWithNewElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    appendDoesNotSupportAddAtSizePlusOneImpl(
-        subTests,
-        expectedExceptionType,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtSizePlusOneWithExistingElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    appendDoesNotSupportAddAtSizePlusOneImpl(
-        subTests,
-        expectedExceptionType,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtSizePlusOneImpl(
-      List<DynamicTest> subTests,
-      Class<? extends Throwable> expectedExceptionType,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtSizePlusOne =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          assertThrows(
-              expectedExceptionType,
-              () -> list.add(list.size() + 1, elementToAdd),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      list.size() + 1,
-                      elementToAdd,
-                      expectedExceptionType));
-
-          assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtSizePlusOne, subTests);
   }
 
   private void appendDoesNotSupportAddAtSizePlusOneWithNewNullElementTests(
