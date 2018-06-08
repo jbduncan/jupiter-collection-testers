@@ -16,10 +16,11 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
-import static com.github.jbduncan.collect.testing.ListAddWithIndexHelpers.addDynamicSubTests;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
@@ -29,24 +30,19 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListAddAtStartSubTestMaker<E> {
+final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
   private final TestListGenerator<E> generator;
-  private final SampleElements<E> samples;
   private final E newElement;
   private final E existingElement;
-  private final Set<CollectionSize> allSupportedCollectionSizes;
-  private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
   private ListAddAtStartSubTestMaker(Builder<E> builder) {
+    super(
+        builder.sampleElements,
+        builder.allSupportedCollectionSizes,
+        builder.allSupportedCollectionSizesExceptZero);
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(builder.sampleElements, "samples");
     this.newElement = requireNonNull(builder.newElement, "newElement");
     this.existingElement = requireNonNull(builder.existingElement, "existingElement");
-    this.allSupportedCollectionSizes =
-        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
-    this.allSupportedCollectionSizesExceptZero =
-        requireNonNull(
-            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
   static <E> Builder<E> builder() {
@@ -142,7 +138,50 @@ final class ListAddAtStartSubTestMaker<E> {
                       quote(elementToAdd)));
         };
 
+    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtStart, subTests);
+  }
+
+  List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendSupportsAddAtStartWithNewNull(subTests);
+    appendSupportsAddAtStartWithExistingNull(subTests);
+    return subTests;
+  }
+
+  private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
+    ThrowingConsumer<CollectionSize> supportsAddAtStartWithNewNullElement =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          list.add(0, null);
+          List<E> expected = prepend(null, newCollectionOfSize(collectionSize, samples));
+          assertIterableEquals(
+              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
+        };
+
     addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, samples, supportsAddAtStart, subTests);
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
+        supportsAddAtStartWithNewNullElement,
+        subTests);
+  }
+
+  private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
+    ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingNullElement =
+        collectionSize -> {
+          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+
+          list.add(0, null);
+          List<E> expected =
+              prepend(null, newCollectionWithNullInMiddleOfSize(collectionSize, samples));
+          assertIterableEquals(
+              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
+        };
+
+    addDynamicSubTestsForListWithNullElement(
+        allSupportedCollectionSizesExceptZero,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
+        supportsAddAtStartWithExistingNullElement,
+        subTests);
   }
 }

@@ -21,7 +21,6 @@ import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.middleIndex;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
@@ -169,12 +168,21 @@ final class ListAddWithIndexTester<E> {
   private void generateSupportsAddWithIndexWithNullElementsTests(List<DynamicNode> tests) {
     if (features.containsAll(
         Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
-      List<DynamicTest> subTests = new ArrayList<>();
+      ListAddAtStartSubTestMaker<E> listAddAtStartSubTestMaker =
+          ListAddAtStartSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .build();
 
-      appendSupportsAddAtStartWithNewNullElementTests(subTests);
+      List<DynamicTest> subTests = new ArrayList<>();
+      subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexForNullsSubTests());
+
       appendSupportsAddAtEndWithNewNullElementTests(subTests);
       appendSupportsAddAtMiddleWithNewNullElementTests(subTests);
-      appendSupportsAddAtStartWithExistingNullElementTests(subTests);
       appendSupportsAddAtEndWithExistingNullElementTests(subTests);
       appendSupportsAddAtMiddleWithExistingNullElementTests(subTests);
       appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
@@ -240,24 +248,6 @@ final class ListAddWithIndexTester<E> {
     }
   }
 
-  private void appendSupportsAddAtStartWithNewNullElementTests(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStartWithNewNullElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          list.add(0, null);
-          List<E> expected = prepend(null, newCollectionOfSize(collectionSize, samples));
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
-        };
-
-    addDynamicSubTests(
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT,
-        supportsAddAtStartWithNewNullElement,
-        subTests);
-  }
-
   private void appendSupportsAddAtEndWithNewNullElementTests(List<DynamicTest> subTests) {
     ThrowingConsumer<CollectionSize> supportsAddAtEndWithNewNullElement =
         collectionSize -> {
@@ -300,24 +290,6 @@ final class ListAddWithIndexTester<E> {
         allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT,
         supportsAddAtMiddleWithNewNullElement,
-        subTests);
-  }
-
-  private void appendSupportsAddAtStartWithExistingNullElementTests(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          list.add(0, null);
-          List<E> expected =
-              prepend(null, newCollectionWithNullInMiddleOfSize(collectionSize, samples));
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
-        };
-
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
-        supportsAddAtStartWithExistingNullElement,
         subTests);
   }
 
