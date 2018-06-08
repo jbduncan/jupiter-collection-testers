@@ -22,6 +22,7 @@ import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +147,29 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
         subTests);
   }
 
+  List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendDoesNotSupportAddAtStartWithNewElement(subTests);
+    appendDoesNotSupportAddAtStartWithExistingElement(subTests);
+    return subTests;
+  }
+
+  private void appendDoesNotSupportAddAtStartWithNewElement(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtStartImpl(
+        subTests,
+        newElement,
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_ELEMENT);
+  }
+
+  private void appendDoesNotSupportAddAtStartWithExistingElement(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtStartImpl(
+        subTests,
+        existingElement,
+        allSupportedCollectionSizesExceptZero,
+        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
+  }
+
   private void appendSupportsAddAtStartImpl(
       List<DynamicTest> subTests,
       E elementToAdd,
@@ -167,5 +191,32 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtStart, subTests);
+  }
+
+  private void appendDoesNotSupportAddAtStartImpl(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      String displayNameFormat) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtStart =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          assertThrows(
+              UnsupportedOperationException.class,
+              () -> list.add(0, elementToAdd),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+          assertIterableEquals(
+              newCollectionOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    addDynamicSubTests(
+        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtStart, subTests);
   }
 }

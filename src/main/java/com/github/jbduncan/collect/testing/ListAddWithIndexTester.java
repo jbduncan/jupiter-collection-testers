@@ -223,11 +223,6 @@ final class ListAddWithIndexTester<E> {
       subTests.addAll(
           listAddAtSizePlusOneSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
 
-      //      appendDoesNotSupportAddAtSizePlusOneWithNewNullElementTests(
-      //          subTests, IndexOutOfBoundsException.class);
-      //      appendDoesNotSupportAddAtSizePlusOneWithExistingNullElementTests(
-      //          subTests, IndexOutOfBoundsException.class);
-
       tests.add(
           dynamicContainer(
               ListContractConstants.SUPPORTS_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
@@ -236,10 +231,19 @@ final class ListAddWithIndexTester<E> {
 
   private void generateDoesNotSupportAddWithIndexTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
-      List<DynamicTest> subTests = new ArrayList<>();
+      ListAddAtStartSubTestMaker<E> listAddAtStartSubTestMaker =
+          ListAddAtStartSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .build();
 
-      appendDoesNotSupportAddAtStartWithNewElementTests(subTests);
-      appendDoesNotSupportAddAtStartWithExistingElementTests(subTests);
+      List<DynamicTest> subTests = new ArrayList<>();
+      subTests.addAll(listAddAtStartSubTestMaker.doesNotSupportAddWithIndexSubTests());
+
       appendDoesNotSupportAddAtEndWithNewElementTests(subTests);
       appendDoesNotSupportAddAtEndWithExistingElementTests(subTests);
       appendDoesNotSupportAddAtMiddleWithNewElementTests(subTests);
@@ -280,22 +284,6 @@ final class ListAddWithIndexTester<E> {
           dynamicContainer(
               ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
     }
-  }
-
-  private void appendDoesNotSupportAddAtStartWithNewElementTests(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtStartTestsImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_ELEMENT);
-  }
-
-  private void appendDoesNotSupportAddAtStartWithExistingElementTests(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtStartTestsImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
   }
 
   private void appendDoesNotSupportAddAtEndWithNewElementTests(List<DynamicTest> subTests) {
@@ -486,33 +474,6 @@ final class ListAddWithIndexTester<E> {
             .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
         doesNotSupportAddAtMiddleWithExistingNullElement,
         subTests);
-  }
-
-  private void appendDoesNotSupportAddAtStartTestsImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtStart =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          assertThrows(
-              UnsupportedOperationException.class,
-              () -> list.add(0, elementToAdd),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      quote(elementToAdd)));
-          assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtStart, subTests);
   }
 
   private void appendDoesNotSupportAddAtEndTestsImpl(
