@@ -181,6 +181,48 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
             .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT);
   }
 
+  List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+    appendDoesNotSupportAddAtMiddleWithNewNull(subTests);
+    appendDoesNotSupportAddAtMiddleWithExistingNull(subTests);
+    return subTests;
+  }
+
+  private void appendDoesNotSupportAddAtMiddleWithNewNull(List<DynamicTest> subTests) {
+    appendDoesNotSupportAddAtMiddleImpl(
+        subTests,
+        null,
+        allSupportedCollectionSizes,
+        ListContractConstants
+            .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT);
+  }
+
+  private void appendDoesNotSupportAddAtMiddleWithExistingNull(List<DynamicTest> subTests) {
+    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingNullElement =
+        collectionSize -> {
+          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+
+          assertThrows(
+              UnsupportedOperationException.class,
+              () -> list.add(middleIndex(list), null),
+              () ->
+                  String.format(
+                      ListContractConstants
+                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
+                      ListContractConstants.NULL));
+          assertIterableEquals(
+              newCollectionWithNullInMiddleOfSize(collectionSize, samples),
+              list,
+              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+        };
+
+    addDynamicSubTestsForListWithNullElement(
+        ListContractConstants
+            .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT,
+        doesNotSupportAddAtMiddleWithExistingNullElement,
+        subTests);
+  }
+
   private void appendSupportsAddAtMiddleImpl(
       List<DynamicTest> subTests,
       E elementToAdd,
