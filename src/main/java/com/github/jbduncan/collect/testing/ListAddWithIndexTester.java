@@ -17,13 +17,7 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.minus;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 
 import java.util.ArrayList;
@@ -33,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddWithIndexTester<E> {
   private final TestListGenerator<E> generator;
@@ -319,170 +312,38 @@ final class ListAddWithIndexTester<E> {
               .allSupportedCollectionSizes(allSupportedCollectionSizes)
               .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
               .build();
+      ListAddAtMinusOneSubTestMaker<E> listAddAtMinusOneSubTestMaker =
+          ListAddAtMinusOneSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .expectedExceptionType(UnsupportedOperationException.class)
+              .build();
+      ListAddAtSizePlusOneSubTestMaker<E> listAddAtSizePlusOneSubTestMaker =
+          ListAddAtSizePlusOneSubTestMaker.<E>builder()
+              .testListGenerator(generator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(allSupportedCollectionSizes)
+              .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
+              .expectedExceptionType(UnsupportedOperationException.class)
+              .build();
 
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(listAddAtStartSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(listAddAtEndSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(listAddAtMiddleSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
-
-      appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
-          subTests, UnsupportedOperationException.class);
-      appendDoesNotSupportAddAtMinusOneWithExistingNullElementTests(
-          subTests, UnsupportedOperationException.class);
-      appendDoesNotSupportAddAtSizePlusOneWithNewNullElementTests(
-          subTests, UnsupportedOperationException.class);
-      appendDoesNotSupportAddAtSizePlusOneWithExistingNullElementTests(
-          subTests, UnsupportedOperationException.class);
+      subTests.addAll(listAddAtMinusOneSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
+      subTests.addAll(
+          listAddAtSizePlusOneSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
 
       tests.add(
           dynamicContainer(
               ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
     }
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneWithNewNullElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithNewNullElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          assertThrows(
-              expectedExceptionType,
-              () -> list.add(-1, null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      -1,
-                      ListContractConstants.NULL,
-                      expectedExceptionType));
-          assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTests(
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT,
-        doesNotSupportAddAtMinusOneWithNewNullElement,
-        subTests);
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneWithExistingNullElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithExistingNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          assertThrows(
-              expectedExceptionType,
-              () -> list.add(-1, null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      -1,
-                      ListContractConstants.NULL,
-                      expectedExceptionType));
-          assertIterableEquals(
-              newCollectionWithNullInMiddleOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
-        doesNotSupportAddAtMinusOneWithExistingNullElement,
-        subTests);
-  }
-
-  private void appendDoesNotSupportAddAtSizePlusOneWithNewNullElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtSizePlusOneWithNewNullElement =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-
-          assertThrows(
-              expectedExceptionType,
-              () -> list.add(list.size() + 1, null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      list.size() + 1,
-                      ListContractConstants.NULL,
-                      expectedExceptionType));
-          assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTests(
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_NULL_ELEMENT,
-        doesNotSupportAddAtSizePlusOneWithNewNullElement,
-        subTests);
-  }
-
-  private void appendDoesNotSupportAddAtSizePlusOneWithExistingNullElementTests(
-      List<DynamicTest> subTests, Class<? extends Throwable> expectedExceptionType) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtSizePlusOneWithExistingNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          assertThrows(
-              expectedExceptionType,
-              () -> list.add(list.size() + 1, null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      list.size() + 1,
-                      ListContractConstants.NULL,
-                      expectedExceptionType));
-          assertIterableEquals(
-              newCollectionWithNullInMiddleOfSize(collectionSize, samples),
-              list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
-        };
-
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants
-            .FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_NULL_ELEMENT,
-        doesNotSupportAddAtSizePlusOneWithExistingNullElement,
-        subTests);
-  }
-
-  private void addDynamicSubTests(
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat,
-      ThrowingConsumer<CollectionSize> testExecutor,
-      List<DynamicTest> subTests) {
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
-            testExecutor)
-        .forEachOrdered(subTests::add);
-  }
-
-  private void addDynamicSubTestsForListWithNullElement(
-      String displayNameFormat,
-      ThrowingConsumer<CollectionSize> testExecutor,
-      List<DynamicTest> subTests) {
-    DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                String.format(
-                    displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-            testExecutor)
-        .forEachOrdered(subTests::add);
   }
 }
