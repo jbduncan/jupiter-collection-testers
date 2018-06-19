@@ -106,14 +106,14 @@ spotless {
         endWithNewline()
     }
     format("misc") {
-        target(fileTree(rootDir, {
+        target(fileTree(rootDir) {
             include("**/*.gradle",
                     "**/*.gitignore",
                     "README.md",
                     "CONTRIBUTING.md",
                     "config/**/*.xml",
                     "src/**/*.xml")
-        }))
+        })
         trimTrailingWhitespace()
         endWithNewline()
     }
