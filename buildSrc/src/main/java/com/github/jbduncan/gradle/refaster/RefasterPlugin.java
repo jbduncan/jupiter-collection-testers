@@ -3,7 +3,6 @@ package com.github.jbduncan.gradle.refaster;
 import static com.github.jbduncan.gradle.refaster.Constants.REFASTER_MAVEN_COORDINATES_FORMAT;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.ltgt.gradle.errorprone.ErrorProneBasePlugin;
@@ -103,12 +102,10 @@ public class RefasterPlugin implements Plugin<Project> {
         project.file(String.format("%s/templates", refasterBuildDir));
 
     // Compile all Refaster templates
-    List<JavaCompile> allJavaCompileTasksExceptRefaster = new ArrayList<>();
-    for (JavaCompile javaCompile : project.getTasks().withType(JavaCompile.class)) {
-      if (!javaCompile.getName().contains("Refaster")) {
-        allJavaCompileTasksExceptRefaster.add(javaCompile);
-      }
-    }
+    List<JavaCompile> baseJavaCompileTasks =
+        Arrays.asList(
+            project.getTasks().withType(JavaCompile.class).getByName("compileJava"),
+            project.getTasks().withType(JavaCompile.class).getByName("compileTestJava"));
 
     Task refasterCheckTask =
         project
@@ -150,11 +147,10 @@ public class RefasterPlugin implements Plugin<Project> {
       // TODO: Consider redirecting all logging messages by the refaster(Check|Apply) sub-tasks to a
       // log file in the buildDir, as in https://stackoverflow.com/a/27679230/2252930
 
-      for (JavaCompile underlyingJavaCompileTask : allJavaCompileTasksExceptRefaster) {
-        String javaCompileTaskNameCapitalised =
-            Utils.capitalise(underlyingJavaCompileTask.getName());
-        FileCollection classpath = underlyingJavaCompileTask.getClasspath();
-        FileTree source = underlyingJavaCompileTask.getSource();
+      for (JavaCompile baseJavaCompileTask : baseJavaCompileTasks) {
+        String javaCompileTaskNameCapitalised = Utils.capitalise(baseJavaCompileTask.getName());
+        FileCollection classpath = baseJavaCompileTask.getClasspath();
+        FileTree source = baseJavaCompileTask.getSource();
 
         JavaCompile refasterCheckSubTask =
             project
@@ -173,7 +169,7 @@ public class RefasterPlugin implements Plugin<Project> {
                       // might be able to help here.)
                       j.setClasspath(classpath);
                       j.setSource(source);
-                      Utils.setDestinationDirToTaskTemporaryDir(j);
+                      setDestinationDirToTaskTemporaryDir(j);
 
                       j.setToolChain(new ErrorProneToolChain(refasterConfiguration));
 
@@ -188,7 +184,7 @@ public class RefasterPlugin implements Plugin<Project> {
                       j.getInputs().file(compiledRefasterTemplateFile);
                     });
         refasterCheckSubTask.dependsOn(compileRefasterTemplateSubTask);
-        underlyingJavaCompileTask.mustRunAfter(refasterCheckSubTask);
+        baseJavaCompileTask.mustRunAfter(refasterCheckSubTask);
         refasterCheckTask.dependsOn(refasterCheckSubTask);
 
         JavaCompile refasterApplySubTask =
@@ -208,7 +204,7 @@ public class RefasterPlugin implements Plugin<Project> {
                       // might be able to help here.)
                       j.setClasspath(classpath);
                       j.setSource(source);
-                      Utils.setDestinationDirToTaskTemporaryDir(j);
+                      setDestinationDirToTaskTemporaryDir(j);
 
                       j.setToolChain(new ErrorProneToolChain(refasterConfiguration));
 
@@ -225,7 +221,7 @@ public class RefasterPlugin implements Plugin<Project> {
                       j.getOutputs().upToDateWhen(x -> false);
                     });
         refasterApplySubTask.dependsOn(compileRefasterTemplateSubTask);
-        underlyingJavaCompileTask.mustRunAfter(refasterApplySubTask);
+        baseJavaCompileTask.mustRunAfter(refasterApplySubTask);
         refasterApplyTask.dependsOn(refasterApplySubTask);
       }
     }
@@ -259,7 +255,7 @@ public class RefasterPlugin implements Plugin<Project> {
                     .getOptions()
                     .getAnnotationProcessorPath()
                     .plus(refasterConfiguration));
-    Utils.setDestinationDirToTaskTemporaryDir(compileRefasterTemplateSubTask);
+    setDestinationDirToTaskTemporaryDir(compileRefasterTemplateSubTask);
 
     compileRefasterTemplateSubTask
         .getOptions()
@@ -270,5 +266,11 @@ public class RefasterPlugin implements Plugin<Project> {
     compileRefasterTemplateSubTask.getOutputs().file(compiledRefasterTemplateFile);
 
     return compileRefasterTemplateSubTask;
+  }
+
+  private static void setDestinationDirToTaskTemporaryDir(JavaCompile task) {
+    // It seems that javac has trouble writing files to the operating system's null directory (at
+    // least on Windows 7), so write to the next best place.
+    task.setDestinationDir(task.getTemporaryDir());
   }
 }
