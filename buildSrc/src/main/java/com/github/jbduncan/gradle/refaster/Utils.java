@@ -29,11 +29,5 @@ final class Utils {
     return new File(outputFileWithCorrectExtension);
   }
 
-  static void setDestinationDirToTaskTemporaryDir(JavaCompile task) {
-    // It seems that javac has trouble writing files to the operating system's null directory (at
-    // least on Windows 7), so write to the next best place.
-    task.setDestinationDir(task.getTemporaryDir());
-  }
-
   private Utils() {}
 }
