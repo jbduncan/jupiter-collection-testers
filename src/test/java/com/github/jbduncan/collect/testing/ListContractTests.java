@@ -99,6 +99,9 @@ class ListContractTests {
           contract::add,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
               "Supports List.add(E)", "Supports List.add(E) with null element"),
+
+          // TODO: Consider replacing dynamic test names with simpler-looking ones like:
+          // "Supports List.add(d) on [a, b, c]" and "Supports List.add(null) on [a, null, c]"
           /* expectedDynamicTestNames = */ ImmutableList.of(
               "Supports List.add(E) with new element: size: 0, elements: []",
               "Supports List.add(E) with new element: size: 1, elements: [a]",
@@ -120,6 +123,9 @@ class ListContractTests {
           contract::addWithIndex,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
               "Supports List.add(int, E)", "Supports List.add(int, E) with null element"),
+
+          // TODO: Consider replacing dynamic test names with simpler-looking ones like:
+          // "Supports List.add(0, d) on [a, b, c]" and "Supports List.add(size(), null) on [a, null, c]"
           /* expectedDynamicTestNames = */ ImmutableList.of(
               //
               // regular elements
@@ -158,6 +164,10 @@ class ListContractTests {
                   + "[a]",
               "Does not support List.add(size() + 1, E) with existing element: size: 3, elements: "
                   + "[a, b, c]",
+              // Fails fast on concurrent modification
+              "List.add(0, E) fails fast on concurrent modification: size: 0, elements: []",
+              "List.add(0, E) fails fast on concurrent modification: size: 1, elements: [a]",
+              "List.add(0, E) fails fast on concurrent modification: size: 3, elements: [a, b, c]",
               //
               // null element(s)
               //
@@ -201,7 +211,14 @@ class ListContractTests {
               "Does not support List.add(size() + 1, E) with existing null element: size: 1, "
                   + "elements: [null]",
               "Does not support List.add(size() + 1, E) with existing null element: size: 3, "
-                  + "elements: [a, null, c]"));
+                  + "elements: [a, null, c]",
+              // Fails fast on concurrent modification
+              "List.add(0, E) fails fast on concurrent modification involving null element: "
+                  + "size: 0, elements: []",
+              "List.add(0, E) fails fast on concurrent modification involving null element: "
+                  + "size: 1, elements: [a]",
+              "List.add(0, E) fails fast on concurrent modification involving null element: "
+                  + "size: 3, elements: [a, b, c]"));
     }
   }
 
@@ -238,6 +255,9 @@ class ListContractTests {
           contract::add,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
               "Does not support List.add(E)", "Does not support List.add(E) with null element"),
+
+          // TODO: Consider replacing dynamic test names with simpler-looking ones like:
+          // "Supports List.add(d) on []" and "Supports List.add(null) on []"
           /* expectedDynamicTestNames = */ ImmutableList.of(
               "Does not support List.add(E) with new element: size: 0, elements: []",
               "Does not support List.add(E) with new null element: size: 0, elements: []"));
@@ -245,9 +265,13 @@ class ListContractTests {
 
     @Test
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
+      // TODO: Consider replacing dynamic test names with simpler-looking ones like:
+      // "Supports List.add(0, d) on []" and "Supports List.add(size(), null) on []"
       ImmutableList<String> expectedDynamicTestNames =
           Sets.cartesianProduct(
                   ImmutableList.of(
+                      // TODO: Consider removing dynamic tests for "size()" and "middleIndex()" as
+                      // they are lists that only support CollectionSize.SUPPORTS_ZERO.
                       ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
                       ImmutableSet.of("new element", "new null element")))
               .stream()
@@ -308,6 +332,9 @@ class ListContractTests {
           contract::add,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
               "Does not support List.add(E)", "Does not support List.add(E) with null element"),
+
+          // TODO: Consider appending each of these dynamic test names with something like:
+          // ", added: d" or "rejected adding: d"
           /* expectedDynamicTestNames = */ ImmutableList.of(
               "Does not support List.add(E) with new element: size: 1, elements: [a]",
               "Does not support List.add(E) with existing element: size: 1, elements: [a]",
@@ -318,9 +345,13 @@ class ListContractTests {
 
     @Test
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
+      // TODO: Consider appending each of these dynamic test names with something like:
+      // ", added: d" or "rejected adding: d"
       ImmutableList<String> expectedDynamicTestNames =
           Sets.cartesianProduct(
                   ImmutableList.of(
+                      // TODO: Consider removing dynamic tests for "size()" and "middleIndex()" as
+                      // they are redundant for lists that only support CollectionSize.SUPPORTS_ONE.
                       ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
                       ImmutableSet.of(
                           "new element: size: 1, elements: [a]",
@@ -392,8 +423,8 @@ class ListContractTests {
         };
 
     return Streams.stream(Traverser.forTree(dynamicNodeChildren).breadthFirst(dynamicNodes))
-        .filter(d -> d instanceof DynamicTest)
-        .map(d -> (DynamicTest) d)
+        .filter(DynamicTest.class::isInstance)
+        .map(DynamicTest.class::cast)
         .collect(toImmutableList());
   }
 }

@@ -84,6 +84,7 @@ final class ListAddWithIndexTester<E> {
 
   private void generateSupportsAddWithIndexTests(List<DynamicNode> tests) {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
+      // TODO: Consider extracting the sub-testers into their own fields
       ListAddAtStartSubTestMaker<E> listAddAtStartSubTestMaker =
           ListAddAtStartSubTestMaker.<E>builder()
               .testListGenerator(generator)
@@ -138,6 +139,15 @@ final class ListAddWithIndexTester<E> {
       subTests.addAll(listAddAtMiddleSubTestMaker.supportsAddWithIndexSubTests());
       subTests.addAll(listAddAtMinusOneSubTestMaker.doesNotSupportAddWithIndexSubTests());
       subTests.addAll(listAddAtSizePlusOneSubTestMaker.doesNotSupportAddWithIndexSubTests());
+
+      if (features.contains(CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION)) {
+        subTests.addAll(listAddAtStartSubTestMaker.failsFastOnConcurrentModificationSubTests());
+        if (features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
+          subTests.addAll(
+              listAddAtStartSubTestMaker
+                  .failsFastOnConcurrentModificationInvolvingNullElementSubTests());
+        }
+      }
 
       tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E, subTests));
 

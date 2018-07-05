@@ -21,24 +21,31 @@ import static com.github.jbduncan.collect.testing.Helpers.prepend;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
+  private final TestListGenerator<E> generator;
+  private final E newElement;
+  private final E existingElement;
+  private final Set<CollectionSize> allSupportedCollectionSizes;
+
   private ListAddAtStartSubTestMaker(Builder<E> builder) {
-    super(
-        builder.testListGenerator,
-        builder.newElement,
-        builder.existingElement,
-        builder.sampleElements,
-        builder.allSupportedCollectionSizes,
-        builder.allSupportedCollectionSizesExceptZero);
+    super(builder.sampleElements, builder.allSupportedCollectionSizesExceptZero);
+    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
+    this.newElement = requireNonNull(builder.newElement, "newElement");
+    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
+    this.allSupportedCollectionSizes =
+        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
   }
 
   static <E> Builder<E> builder() {
@@ -258,5 +265,55 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
 
     addDynamicSubTests(
         supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtStart, subTests);
+  }
+
+  List<DynamicTest> failsFastOnConcurrentModificationSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+
+    ThrowingConsumer<CollectionSize> failsFastOnCme =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          Iterator<E> iterator = list.iterator();
+          assertThrows(
+              ConcurrentModificationException.class,
+              () -> {
+                list.add(0, newElement);
+                iterator.next();
+              });
+        };
+
+    addDynamicSubTests(
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION,
+        failsFastOnCme,
+        subTests);
+
+    return subTests;
+  }
+
+  List<DynamicTest> failsFastOnConcurrentModificationInvolvingNullElementSubTests() {
+    List<DynamicTest> subTests = new ArrayList<>();
+
+    ThrowingConsumer<CollectionSize> failsFastOnCme =
+        collectionSize -> {
+          List<E> list = newListToTest(generator, collectionSize);
+
+          Iterator<E> iterator = list.iterator();
+          assertThrows(
+              ConcurrentModificationException.class,
+              () -> {
+                list.add(0, null);
+                iterator.next();
+              });
+        };
+
+    addDynamicSubTests(
+        allSupportedCollectionSizes,
+        ListContractConstants.FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION_INVOLVING_NULL_ELEMENT,
+        failsFastOnCme,
+        subTests);
+
+    return subTests;
   }
 }

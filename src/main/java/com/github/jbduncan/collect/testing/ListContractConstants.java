@@ -78,6 +78,10 @@ final class ListContractConstants {
       "Does not support List.add(size() + 1, E) with new element: size: %s, elements: %s";
   static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_NULL_ELEMENT =
       "Does not support List.add(size() + 1, E) with new null element: size: %s, elements: %s";
+  static final String FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION =
+      "List.add(0, E) fails fast on concurrent modification: size: %s, elements: %s";
+  static final String FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION_INVOLVING_NULL_ELEMENT =
+      "List.add(0, E) fails fast on concurrent modification involving null element: size: %s, elements: %s";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE =
       "Not true that list.add(%s, %s) threw exception of type %s";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE =

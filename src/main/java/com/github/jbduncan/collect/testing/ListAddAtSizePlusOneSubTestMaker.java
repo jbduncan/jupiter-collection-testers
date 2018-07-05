@@ -31,16 +31,19 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtSizePlusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
+  private final TestListGenerator<E> generator;
+  private final E newElement;
+  private final E existingElement;
+  private final Set<CollectionSize> allSupportedCollectionSizes;
   private Class<? extends Throwable> expectedExceptionType;
 
   private ListAddAtSizePlusOneSubTestMaker(Builder<E> builder) {
-    super(
-        builder.testListGenerator,
-        builder.newElement,
-        builder.existingElement,
-        builder.sampleElements,
-        builder.allSupportedCollectionSizes,
-        builder.allSupportedCollectionSizesExceptZero);
+    super(builder.sampleElements, builder.allSupportedCollectionSizesExceptZero);
+    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
+    this.newElement = requireNonNull(builder.newElement, "newElement");
+    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
+    this.allSupportedCollectionSizes =
+        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
     this.expectedExceptionType =
         requireNonNull(builder.expectedExceptionType, "expectedExceptionType");
   }

@@ -21,6 +21,7 @@ import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullI
 import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -31,14 +32,18 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
+  private final TestListGenerator<E> generator;
+  private final E newElement;
+  private final E existingElement;
+  private final Set<CollectionSize> allSupportedCollectionSizes;
+
   private ListAddAtEndSubTestMaker(Builder<E> builder) {
-    super(
-        builder.testListGenerator,
-        builder.newElement,
-        builder.existingElement,
-        builder.sampleElements,
-        builder.allSupportedCollectionSizes,
-        builder.allSupportedCollectionSizesExceptZero);
+    super(builder.sampleElements, builder.allSupportedCollectionSizesExceptZero);
+    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
+    this.newElement = requireNonNull(builder.newElement, "newElement");
+    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
+    this.allSupportedCollectionSizes =
+        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
   }
 
   static <E> Builder<E> builder() {
