@@ -106,11 +106,11 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtEndWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndImpl(subTests, newElement, allSupportedCollectionSizes);
+    appendSupportsAddAtEndImpl(subTests, newElement);
   }
 
   private void appendSupportsAddAtEndWithExistingElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndImpl(subTests, existingElement, allSupportedCollectionSizesExceptZero);
+    appendSupportsAddAtEndImpl(subTests, existingElement);
   }
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
@@ -121,7 +121,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndImpl(subTests, null, allSupportedCollectionSizes);
+    appendSupportsAddAtEndImpl(subTests, null);
   }
 
   private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
@@ -151,12 +151,11 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtEndWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtEndImpl(subTests, newElement, allSupportedCollectionSizes);
+    appendDoesNotSupportAddAtEndImpl(subTests, newElement);
   }
 
   private void appendDoesNotSupportAddAtEndWithExistingElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtEndImpl(
-        subTests, existingElement, allSupportedCollectionSizesExceptZero);
+    appendDoesNotSupportAddAtEndImpl(subTests, existingElement);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
@@ -167,7 +166,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtEndWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtEndImpl(subTests, null, allSupportedCollectionSizes);
+    appendDoesNotSupportAddAtEndImpl(subTests, null);
   }
 
   private void appendDoesNotSupportAddAtEndWithExistingNull(List<DynamicTest> subTests) {
@@ -196,8 +195,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         subTests);
   }
 
-  private void appendSupportsAddAtEndImpl(
-      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
+  private void appendSupportsAddAtEndImpl(List<DynamicTest> subTests, E elementToAdd) {
     ThrowingConsumer<CollectionSize> supportsAddAtEnd =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -214,7 +212,10 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes,
+        // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
+        // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
+        // CollectionSize.SUPPORTS_ZERO.
+        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
         INDEX_TO_ADD_AT,
         elementToAdd,
@@ -222,8 +223,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         subTests);
   }
 
-  private void appendDoesNotSupportAddAtEndImpl(
-      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
+  private void appendDoesNotSupportAddAtEndImpl(List<DynamicTest> subTests, E elementToAdd) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtEnd =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -243,7 +243,10 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes,
+        // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
+        // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
+        // CollectionSize.SUPPORTS_ZERO.
+        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
         INDEX_TO_ADD_AT,
         elementToAdd,

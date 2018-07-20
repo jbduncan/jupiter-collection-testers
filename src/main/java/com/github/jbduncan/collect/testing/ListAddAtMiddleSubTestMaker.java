@@ -108,11 +108,11 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtMiddleWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtMiddleImpl(subTests, newElement, allSupportedCollectionSizesExceptZero);
+    appendSupportsAddAtMiddleImpl(subTests, newElement);
   }
 
   private void appendSupportsAddAtMiddleWithExistingElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtMiddleImpl(subTests, existingElement, allSupportedCollectionSizesExceptZero);
+    appendSupportsAddAtMiddleImpl(subTests, existingElement);
   }
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
@@ -123,7 +123,7 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtMiddleWithNewNull(List<DynamicTest> subTests) {
-    appendSupportsAddAtMiddleImpl(subTests, null, allSupportedCollectionSizesExceptZero);
+    appendSupportsAddAtMiddleImpl(subTests, null);
   }
 
   private void appendSupportsAddAtMiddleWithExistingNull(List<DynamicTest> subTests) {
@@ -162,12 +162,11 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtMiddleWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleImpl(subTests, newElement, allSupportedCollectionSizes);
+    appendDoesNotSupportAddAtMiddleImpl(subTests, newElement);
   }
 
   private void appendDoesNotSupportAddAtMiddleWithExistingElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleImpl(
-        subTests, existingElement, allSupportedCollectionSizesExceptZero);
+    appendDoesNotSupportAddAtMiddleImpl(subTests, existingElement);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
@@ -178,7 +177,7 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtMiddleWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleImpl(subTests, null, allSupportedCollectionSizes);
+    appendDoesNotSupportAddAtMiddleImpl(subTests, null);
   }
 
   private void appendDoesNotSupportAddAtMiddleWithExistingNull(List<DynamicTest> subTests) {
@@ -207,8 +206,7 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         subTests);
   }
 
-  private void appendSupportsAddAtMiddleImpl(
-      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
+  private void appendSupportsAddAtMiddleImpl(List<DynamicTest> subTests, E elementToAdd) {
     ThrowingConsumer<CollectionSize> supportsAddAtMiddle =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -229,7 +227,10 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes,
+        // [].add(middleIndex(), E) is already indirectly tested by ListAddAtStartSubTestMaker,
+        // because it tests [].add(0, E), and middleIndex() == 0 for empty lists, so we skip
+        // CollectionSize.SUPPORTS_ZERO.
+        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
         INDEX_TO_ADD_AT,
         elementToAdd,
@@ -237,8 +238,7 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         subTests);
   }
 
-  private void appendDoesNotSupportAddAtMiddleImpl(
-      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
+  private void appendDoesNotSupportAddAtMiddleImpl(List<DynamicTest> subTests, E elementToAdd) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddle =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -258,7 +258,10 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes,
+        // [].add(middleIndex(), E) is already indirectly tested by ListAddAtStartSubTestMaker,
+        // because it tests [].add(0, E), and middleIndex() == 0 for empty lists, so we skip
+        // CollectionSize.SUPPORTS_ZERO.
+        allSupportedCollectionSizesExceptZero,
         ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
         INDEX_TO_ADD_AT,
         elementToAdd,

@@ -13,7 +13,7 @@ plugins {
     // TODO: Add other static analysis and formal verification tools
 }
 
-// Configuration for Java
+// Configuration for Java - START
 group = "com.github.jbduncan"
 // TODO: Start at version 0.0.1? Consider following semver.
 version = "1.0-SNAPSHOT"
@@ -49,8 +49,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junit5Version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
 }
+// Configuration for Java - END
 
-// Configuration for PMD
+// Configuration for PMD - START
 val pmdVersion: String by project
 
 pmd {
@@ -64,8 +65,9 @@ tasks.withType<Pmd> {
         enabled = false
     }
 }
+// Configuration for PMD - END
 
-// Configuration for error-prone: https://github.com/tbroyer/gradle-errorprone-plugin
+// Configuration for error-prone - START (https://github.com/tbroyer/gradle-errorprone-plugin)
 val errorProneVersion: String by project
 
 dependencies {
@@ -73,19 +75,20 @@ dependencies {
     compileOnly("com.google.errorprone:error_prone_annotations:$errorProneVersion")
 }
 
-val compileJava by tasks.getting(JavaCompile::class)
-
 val compileTestJava by tasks.getting(JavaCompile::class) {
     // error-prone options
     options.compilerArgs.addAll(
             // Produces false positives against JUnit Platform @Nested tests
             listOf("-Xep:ClassCanBeStatic:OFF"))
+    // TODO: Consider turning on experimental error-prone options
 }
+// Configuration for error-prone - END
 
-// Configuration for Refaster: http://errorprone.info/docs/refaster
+// Configuration for Refaster - START (http://errorprone.info/docs/refaster)
 apply {
     plugin("com.github.jbduncan.gradle.refaster")
 }
+// Configuration for Refaster - END
 
 // Configuration for Spotless: https://github.com/diffplug/spotless
 val googleJavaFormatVersion: String by project
@@ -119,7 +122,10 @@ spotless {
     }
     encoding("UTF-8")
 }
+// Configuration for Spotless - END
 
+// If both Spotless and Refaster are requested, make sure Spotless runs after Refaster so that the
+// code remains formatted as expected.
 afterEvaluate {
     tasks["spotlessApply"].mustRunAfter("refasterApply")
 }
