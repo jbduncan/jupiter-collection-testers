@@ -45,9 +45,6 @@ public interface ListContract<E> extends CollectionContract<E> {
         .features(features())
         .build()
         .dynamicTestsGraph();
-
-    // TODO: Finish implementing this method - ListAddWithIndexTester doesn't test everything yet
-    // TODO: Test this method
   }
 
   // TODO: Add tests for all other methods of List interface
