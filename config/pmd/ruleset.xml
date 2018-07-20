@@ -8,9 +8,9 @@
   </description>
 
   <rule ref="category/java/bestpractices.xml">
-    <exclude name="AccessorClassGeneration"/>
-    <exclude name="AccessorMethodGeneration"/>
-    <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+    <exclude name="AccessorClassGeneration"/> <!-- Impractical -->
+    <exclude name="AccessorMethodGeneration"/> <!-- Impractical -->
+    <exclude name="JUnitAssertionsShouldIncludeMessage"/> <!-- False positive(s) with Truth -->
     <exclude name="UnusedImports"/> <!-- Covered by google-java-format through Spotless -->
     <exclude name="UnusedLocalVariable"/> <!-- Covered by error-prone -->
   </rule>
@@ -19,14 +19,14 @@
        "category/java/documentation.xml" -->
 
   <rule ref="category/java/errorprone.xml">
-    <exclude name="DataflowAnomalyAnalysis"/>
-    <exclude name="BeanMembersShouldSerialize"/>
-    <exclude name="AvoidFieldNameMatchingMethodName"/>
-    <exclude name="TestClassWithoutTestCases"/>
+    <exclude name="DataflowAnomalyAnalysis"/> <!-- False positive(s) -->
+    <exclude name="BeanMembersShouldSerialize"/> <!-- We avoid serialization; see Effective Java -->
+    <exclude name="AvoidFieldNameMatchingMethodName"/> <!-- Impractical -->
+    <exclude name="TestClassWithoutTestCases"/> <!-- False positive(s) on JUnit 5 -->
   </rule>
 
   <rule ref="category/java/multithreading.xml">
-    <exclude name="UseConcurrentHashMap"/>
+    <exclude name="UseConcurrentHashMap"/> <!-- False positive(s) -->
   </rule>
 
   <rule ref="category/java/performance.xml"/>
