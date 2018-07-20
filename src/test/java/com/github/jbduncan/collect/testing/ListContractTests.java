@@ -92,7 +92,7 @@ class ListContractTests {
               CollectionSize.SUPPORTS_ANY_SIZE,
               CollectionSize.SUPPORTS_ZERO,
               CollectionSize.SUPPORTS_ONE,
-              CollectionSize.SUPPORTS_THREE);
+              CollectionSize.SUPPORTS_MULTIPLE);
     }
 
     @Test

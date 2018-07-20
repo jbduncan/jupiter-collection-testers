@@ -77,7 +77,7 @@ final class Helpers {
         return Collections.emptyList();
       case SUPPORTS_ONE:
         return Collections.singletonList(sampleElements.e0());
-      case SUPPORTS_THREE:
+      case SUPPORTS_MULTIPLE:
         return Collections.unmodifiableList(
             Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2()));
       case SUPPORTS_ANY_SIZE:
@@ -98,7 +98,7 @@ final class Helpers {
             "Cannot create iterable that is both of size 0 and contains 'null'");
       case SUPPORTS_ONE:
         return Collections.singletonList(null);
-      case SUPPORTS_THREE:
+      case SUPPORTS_MULTIPLE:
         return Collections.unmodifiableList(
             Arrays.asList(sampleElements.e0(), null, sampleElements.e2()));
       case SUPPORTS_ANY_SIZE:

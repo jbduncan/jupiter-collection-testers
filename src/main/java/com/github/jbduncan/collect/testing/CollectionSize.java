@@ -19,14 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-// TODO: Unit test all methods in this class
 @SuppressWarnings("unchecked")
 public enum CollectionSize implements Feature<Collection<?>>, Comparable<CollectionSize> {
   SUPPORTS_ZERO(0),
   SUPPORTS_ONE(1),
-  // TODO: Consider renaming this enum instance to "SUPPORTS_MULTIPLE" for consistency with Guava.
-  SUPPORTS_THREE(3),
-  SUPPORTS_ANY_SIZE(SUPPORTS_ZERO, SUPPORTS_ONE, SUPPORTS_THREE);
+  SUPPORTS_MULTIPLE(3),
+  SUPPORTS_ANY_SIZE(SUPPORTS_ZERO, SUPPORTS_ONE, SUPPORTS_MULTIPLE);
 
   private static final int NO_SIZE = -1;
 

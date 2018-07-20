@@ -33,7 +33,7 @@ class CollectionSizeTests {
 
   @Test
   void sizeForSupportsMultiple() {
-    assertThat(CollectionSize.SUPPORTS_THREE.size()).isAtLeast(3);
+    assertThat(CollectionSize.SUPPORTS_MULTIPLE.size()).isAtLeast(3);
   }
 
   @Test
@@ -57,7 +57,7 @@ class CollectionSizeTests {
 
   @Test
   void impliedFeaturesForSupportsMultiple() {
-    assertThat(CollectionSize.SUPPORTS_THREE.impliedFeatures()).isEmpty();
+    assertThat(CollectionSize.SUPPORTS_MULTIPLE.impliedFeatures()).isEmpty();
   }
 
   @Test
@@ -66,6 +66,6 @@ class CollectionSizeTests {
         .containsExactly(
             CollectionSize.SUPPORTS_ZERO,
             CollectionSize.SUPPORTS_ONE,
-            CollectionSize.SUPPORTS_THREE);
+            CollectionSize.SUPPORTS_MULTIPLE);
   }
 }
