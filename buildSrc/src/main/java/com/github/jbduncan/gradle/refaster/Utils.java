@@ -2,11 +2,12 @@ package com.github.jbduncan.gradle.refaster;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Objects;
 import org.apache.commons.io.FilenameUtils;
-import org.gradle.api.tasks.compile.JavaCompile;
 
 final class Utils {
   static String capitalise(String value) {
+    Objects.requireNonNull(value, "value");
     if (value.isEmpty()) {
       return "";
     }
