@@ -95,7 +95,7 @@ public class RefasterPlugin implements Plugin<Project> {
 
     String refasterConfigurationName = "refaster";
     Configuration refasterConfiguration =
-        project.getConfigurations().maybeCreate(refasterConfigurationName);
+        project.getConfigurations().create(refasterConfigurationName);
     project.getDependencies().add(refasterConfigurationName, refasterMavenCoords);
 
     File compiledRefasterTemplatesDir =
@@ -143,15 +143,12 @@ public class RefasterPlugin implements Plugin<Project> {
               compiledRefasterTemplateFile);
 
       // Use compiled Refaster templates to perform refactorings
-
-      // TODO: Consider redirecting all logging messages by the refaster(Check|Apply) sub-tasks to a
-      // log file in the buildDir, as in https://stackoverflow.com/a/27679230/2252930
-
       for (JavaCompile baseJavaCompileTask : baseJavaCompileTasks) {
         String javaCompileTaskNameCapitalised = Utils.capitalise(baseJavaCompileTask.getName());
         FileCollection classpath = baseJavaCompileTask.getClasspath();
         FileTree source = baseJavaCompileTask.getSource();
 
+        // TODO: Find a way of suppressing the noisy standard-out logging produced by Refaster.
         JavaCompile refasterCheckSubTask =
             project
                 .getTasks()
@@ -161,12 +158,6 @@ public class RefasterPlugin implements Plugin<Project> {
                         javaCompileTaskNameCapitalised, refasterTemplateName),
                     JavaCompile.class,
                     j -> {
-                      // TODO: See if it's possible to forgo including the classpath and in turn
-                      // see if it's possible to combine compileJava's and compileTestJava's sources
-                      // together in one refaster check sub-task (or to combine all Java files a-la
-                      // Spotless).
-                      // (https://github.com/google/error-prone/blob/master/examples/maven/refaster-based-cleanup/pom.xml
-                      // might be able to help here.)
                       j.setClasspath(classpath);
                       j.setSource(source);
                       setDestinationDirToTaskTemporaryDir(j);
@@ -196,12 +187,6 @@ public class RefasterPlugin implements Plugin<Project> {
                         javaCompileTaskNameCapitalised, refasterTemplateName),
                     JavaCompile.class,
                     j -> {
-                      // TODO: See if it's possible to forgo including the classpath and in turn
-                      // see if it's possible to combine compileJava's and compileTestJava's sources
-                      // together in one refaster check sub-task (or to combine all Java files a-la
-                      // Spotless).
-                      // (https://github.com/google/error-prone/blob/master/examples/maven/refaster-based-cleanup/pom.xml
-                      // might be able to help here.)
                       j.setClasspath(classpath);
                       j.setSource(source);
                       setDestinationDirToTaskTemporaryDir(j);
@@ -215,9 +200,8 @@ public class RefasterPlugin implements Plugin<Project> {
                                   "-XepPatchChecks:refaster:" + compiledRefasterTemplateFile,
                                   "-XepPatchLocation:IN_PLACE"));
 
-                      // TODO: This is a hack to disable UP-TO-DATE checking, as for some reason
-                      // it doesn't seem to work properly for refasterApply. Remove this hack if the
-                      // problem is fixed.
+                      // This is a hack to disable UP-TO-DATE checking, as for some reason
+                      // it doesn't seem to work properly for refasterApply.
                       j.getOutputs().upToDateWhen(x -> false);
                     });
         refasterApplySubTask.dependsOn(compileRefasterTemplateSubTask);
@@ -237,7 +221,7 @@ public class RefasterPlugin implements Plugin<Project> {
     JavaCompile compileRefasterTemplateSubTask =
         project
             .getTasks()
-            .maybeCreate(
+            .create(
                 String.format("compileRefasterTemplateNamed%s", refasterTemplateName),
                 JavaCompile.class);
     compileRefasterTemplateSubTask.setSource(refasterTemplateFile);
