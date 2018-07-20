@@ -19,6 +19,9 @@ final class Utils {
 
   static File toCompiledRefasterTemplateFile(
       File refasterTemplate, File projectRootDir, File compiledRefasterTemplatesDir) {
+    Objects.requireNonNull(refasterTemplate, "refasterTemplate");
+    Objects.requireNonNull(projectRootDir, "projectRootDir");
+    Objects.requireNonNull(compiledRefasterTemplatesDir, "compiledRefasterTemplatesDir");
 
     Path refasterTemplateRelativePath =
         projectRootDir.toPath().relativize(refasterTemplate.toPath());
