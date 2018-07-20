@@ -152,7 +152,6 @@ final class ListAddTester<E> {
   }
 
   private void appendSupportsAddWithNewElementTests(List<DynamicTest> subTests) {
-    // TODO: Consider moving these ThrowingConsumers into their own methods.
     ThrowingConsumer<CollectionSize> supportsAddWithNewElement =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
