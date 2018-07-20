@@ -149,8 +149,6 @@ final class Helpers {
   }
 
   static String stringifyElements(Iterable<?> iterable) {
-    return StreamSupport.stream(iterable.spliterator(), false)
-        .map(Helpers::stringify)
-        .collect(joining(", ", "[", "]"));
+    return stream(iterable).map(Helpers::stringify).collect(joining(", ", "[", "]"));
   }
 }

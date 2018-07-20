@@ -14,6 +14,11 @@
     <exclude name="UnusedImports"/> <!-- Covered by google-java-format through Spotless -->
     <exclude name="UnusedLocalVariable"/> <!-- Covered by error-prone -->
   </rule>
+  <rule ref="category/java/bestpractices.xml/JUnitTestContainsTooManyAsserts">
+    <properties>
+      <property name="maximumAsserts" value="5"/>
+    </properties>
+  </rule>
 
   <!-- TODO: Consider applying "category/java/codestyle.xml", "category/java/design.xml",
        "category/java/documentation.xml" -->
