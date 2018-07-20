@@ -16,6 +16,7 @@
 package com.github.jbduncan.collect.testing;
 
 import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 
@@ -141,5 +142,15 @@ final class Helpers {
 
   static <E> String quote(E value) {
     return '"' + value.toString() + '"';
+  }
+
+  static <E> String stringify(E value) {
+    return value == null ? "null" : quote(value);
+  }
+
+  static String stringifyElements(Iterable<?> iterable) {
+    return StreamSupport.stream(iterable.spliterator(), false)
+        .map(Helpers::stringify)
+        .collect(joining(", ", "[", "]"));
   }
 }

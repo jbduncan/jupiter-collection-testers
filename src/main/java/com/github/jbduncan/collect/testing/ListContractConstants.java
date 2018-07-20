@@ -18,70 +18,17 @@ package com.github.jbduncan.collect.testing;
 final class ListContractConstants {
   private ListContractConstants() {}
 
-  // TODO: These constants have a lot of duplication. Try reducing them to a smaller number and/or
+  // TODO: These constants have some duplication. Try reducing them to a smaller number and/or
   // inlining those that are used only once.
-  static final String DOES_NOT_SUPPORT_LIST_ADD_E = "Does not support List.add(E)";
-  static final String DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(E) with new null element";
-  static final String DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NULL_ELEMENT =
-      "Does not support List.add(E) with null element";
-  static final String DOES_NOT_SUPPORT_LIST_ADD_INT_E = "Does not support List.add(int, E)";
-  static final String DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT =
-      "Does not support List.add(int, E) with null element";
-  static final String DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(int, E) with new null element";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT =
-      "Does not support List.add(0, E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT =
-      "Does not support List.add(0, E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_ELEMENT =
-      "Does not support List.add(0, E) with new element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(0, E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_EXISTING_ELEMENT =
-      "Does not support List.add(E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_EXISTING_NULL_ELEMENT =
-      "Does not support List.add(E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_ELEMENT =
-      "Does not support List.add(E) with new element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT =
-      "Does not support List.add(middleIndex(), E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT =
-      "Does not support List.add(middleIndex(), E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT =
-      "Does not support List.add(middleIndex(), E) with new element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(middleIndex(), E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_ELEMENT =
-      "Does not support List.add(-1, E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT =
-      "Does not support List.add(-1, E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_ELEMENT =
-      "Does not support List.add(-1, E) with new element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(-1, E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT =
-      "Does not support List.add(size(), E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT =
-      "Does not support List.add(size(), E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT =
-      "Does not support List.add(size(), E) with new element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(size(), E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_ELEMENT =
-      "Does not support List.add(size() + 1, E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_EXISTING_NULL_ELEMENT =
-      "Does not support List.add(size() + 1, E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_ELEMENT =
-      "Does not support List.add(size() + 1, E) with new element: size: %s, elements: %s";
-  static final String FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_PLUS_1_E_WITH_NEW_NULL_ELEMENT =
-      "Does not support List.add(size() + 1, E) with new null element: size: %s, elements: %s";
+  static final String DOESNT_SUPPORT_LIST_ADD_E = "Doesn't support List.add(E)";
+  static final String DOESNT_SUPPORT_LIST_ADD_NULL = "Doesn't support List.add(null)";
+  static final String DOESNT_SUPPORT_LIST_ADD_INT_E = "Doesn't support List.add(int, E)";
+  static final String DOESNT_SUPPORT_LIST_ADD_INT_NULL = "Doesn't support List.add(int, null)";
+  static final String FORMAT_DOESNT_SUPPORT_LIST_ADD = "Doesn't support List.add(%s) on %s";
+  static final String FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX =
+      "Doesn't support List.add(%s, %s) on %s";
   static final String FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION =
-      "List.add(0, E) fails fast on concurrent modification: size: %s, elements: %s";
-  static final String FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION_INVOLVING_NULL_ELEMENT =
-      "List.add(0, E) fails fast on concurrent modification involving null element: size: %s, elements: %s";
+      "List.add(%s, %s) fails fast when concurrently modifying %s";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE =
       "Not true that list.add(%s, %s) threw exception of type %s";
   static final String FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE =
@@ -94,38 +41,8 @@ final class ListContractConstants {
       "Not true that list was prepended with %s";
   static final String FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER =
       "Not true that %s was inserted at index %s of list, or that elements in list are in expected order";
-  static final String FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT =
-      "Supports List.add(0, E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT =
-      "Supports List.add(0, E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_ELEMENT =
-      "Supports List.add(0, E) with new element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT =
-      "Supports List.add(0, E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_E_WITH_EXISTING_ELEMENT =
-      "Supports List.add(E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_E_WITH_EXISTING_NULL_ELEMENT =
-      "Supports List.add(E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_E_WITH_NEW_ELEMENT =
-      "Supports List.add(E) with new element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_E_WITH_NEW_NULL_ELEMENT =
-      "Supports List.add(E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_ELEMENT =
-      "Supports List.add(middleIndex(), E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_EXISTING_NULL_ELEMENT =
-      "Supports List.add(middleIndex(), E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_ELEMENT =
-      "Supports List.add(middleIndex(), E) with new element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_MIDDLE_INDEX_E_WITH_NEW_NULL_ELEMENT =
-      "Supports List.add(middleIndex(), E) with new null element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT =
-      "Supports List.add(size(), E) with existing element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT =
-      "Supports List.add(size(), E) with existing null element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT =
-      "Supports List.add(size(), E) with new element: size: %s, elements: %s";
-  static final String FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT =
-      "Supports List.add(size(), E) with new null element: size: %s, elements: %s";
+  static final String FORMAT_SUPPORTS_LIST_ADD = "Supports List.add(%s) on %s";
+  static final String FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX = "Supports List.add(%s, %s) on %s";
   static final String NOT_TRUE_THAT_LIST_ADD_NULL_RETURNED_TRUE =
       "Not true that list.add(null) returned true";
   static final String NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED =
@@ -134,11 +51,8 @@ final class ListContractConstants {
       "Not true that list was appended with null";
   static final String NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL =
       "Not true that list was prepended with null";
-  static final String NULL = "null";
   static final String SUPPORTS_LIST_ADD_E = "Supports List.add(E)";
-  static final String SUPPORTS_LIST_ADD_E_WITH_NULL_ELEMENT =
-      "Supports List.add(E) with null element";
+  static final String SUPPORTS_LIST_ADD_E_WITH_NULL_ELEMENT = "Supports List.add(null)";
   static final String SUPPORTS_LIST_ADD_INT_E = "Supports List.add(int, E)";
-  static final String SUPPORTS_LIST_ADD_INT_E_WITH_NULL_ELEMENT =
-      "Supports List.add(int, E) with null element";
+  static final String SUPPORTS_LIST_ADD_INT_E_WITH_NULL_ELEMENT = "Supports List.add(int, null)";
 }

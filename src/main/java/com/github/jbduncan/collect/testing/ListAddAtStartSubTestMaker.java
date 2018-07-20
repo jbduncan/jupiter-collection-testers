@@ -18,7 +18,7 @@ package com.github.jbduncan.collect.testing;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.prepend;
-import static com.github.jbduncan.collect.testing.Helpers.quote;
+import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
@@ -34,6 +34,8 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
+  private static final String INDEX_TO_ADD_AT = "0";
+
   private final TestListGenerator<E> generator;
   private final E newElement;
   private final E existingElement;
@@ -106,19 +108,11 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_ELEMENT);
+    appendSupportsAddAtStartImpl(subTests, newElement, allSupportedCollectionSizes);
   }
 
   private void appendSupportsAddAtStartWithExistingElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
+    appendSupportsAddAtStartImpl(subTests, existingElement, allSupportedCollectionSizesExceptZero);
   }
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
@@ -129,11 +123,7 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(
-        subTests,
-        null,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT);
+    appendSupportsAddAtStartImpl(subTests, null, allSupportedCollectionSizes);
   }
 
   private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
@@ -149,7 +139,8 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
         supportsAddAtStartWithExistingNullElement,
         subTests);
   }
@@ -162,19 +153,12 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtStartWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtStartImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_ELEMENT);
+    appendDoesNotSupportAddAtStartImpl(subTests, newElement, allSupportedCollectionSizes);
   }
 
   private void appendDoesNotSupportAddAtStartWithExistingElement(List<DynamicTest> subTests) {
     appendDoesNotSupportAddAtStartImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_ELEMENT);
+        subTests, existingElement, allSupportedCollectionSizesExceptZero);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
@@ -185,11 +169,7 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtStartWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtStartImpl(
-        subTests,
-        null,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_NEW_NULL_ELEMENT);
+    appendDoesNotSupportAddAtStartImpl(subTests, null, allSupportedCollectionSizes);
   }
 
   private void appendDoesNotSupportAddAtStartWithExistingNull(List<DynamicTest> subTests) {
@@ -204,7 +184,7 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
                   String.format(
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      ListContractConstants.NULL));
+                      "null"));
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
               list,
@@ -212,16 +192,14 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_0_E_WITH_EXISTING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
         doesNotSupportAddAtStartWithExistingNullElement,
         subTests);
   }
 
   private void appendSupportsAddAtStartImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
+      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
     ThrowingConsumer<CollectionSize> supportsAddAtStart =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -234,17 +212,20 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
               () ->
                   String.format(
                       ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED,
-                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+                      stringify(elementToAdd)));
         };
 
-    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtStart, subTests);
+    addDynamicSubTests(
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
+        elementToAdd,
+        supportsAddAtStart,
+        subTests);
   }
 
   private void appendDoesNotSupportAddAtStartImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
+      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtStart =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -256,7 +237,7 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
                   String.format(
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+                      stringify(elementToAdd)));
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
@@ -264,7 +245,12 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtStart, subTests);
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
+        elementToAdd,
+        doesNotSupportAddAtStart,
+        subTests);
   }
 
   List<DynamicTest> failsFastOnConcurrentModificationSubTests() {
@@ -286,6 +272,8 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
     addDynamicSubTests(
         allSupportedCollectionSizes,
         ListContractConstants.FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION,
+        INDEX_TO_ADD_AT,
+        newElement,
         failsFastOnCme,
         subTests);
 
@@ -310,7 +298,9 @@ final class ListAddAtStartSubTestMaker<E> extends BaseListSubTestMaker<E> {
 
     addDynamicSubTests(
         allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION_INVOLVING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION,
+        INDEX_TO_ADD_AT,
+        null,
         failsFastOnCme,
         subTests);
 

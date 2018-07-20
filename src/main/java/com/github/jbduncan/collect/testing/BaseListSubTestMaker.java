@@ -17,6 +17,8 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.stringify;
+import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
@@ -40,6 +42,8 @@ class BaseListSubTestMaker<E> {
   void addDynamicSubTests(
       Set<CollectionSize> supportedCollectionSizes,
       String displayNameFormat,
+      String indexToAddAt,
+      E elementToAdd,
       ThrowingConsumer<CollectionSize> testExecutor,
       List<DynamicTest> subTests) {
     DynamicTest.stream(
@@ -47,14 +51,16 @@ class BaseListSubTestMaker<E> {
             collectionSize ->
                 String.format(
                     displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
+                    indexToAddAt,
+                    stringify(elementToAdd),
+                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
             testExecutor)
         .forEachOrdered(subTests::add);
   }
 
   void addDynamicSubTestsForListWithNullElement(
       String displayNameFormat,
+      String indexToAddAt,
       ThrowingConsumer<CollectionSize> testExecutor,
       List<DynamicTest> subTests) {
     DynamicTest.stream(
@@ -62,8 +68,10 @@ class BaseListSubTestMaker<E> {
             collectionSize ->
                 String.format(
                     displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
+                    indexToAddAt,
+                    "null",
+                    stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
             testExecutor)
         .forEachOrdered(subTests::add);
   }

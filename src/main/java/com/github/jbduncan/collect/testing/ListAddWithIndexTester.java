@@ -161,8 +161,7 @@ final class ListAddWithIndexTester<E> {
 
         tests.add(
             dynamicContainer(
-                ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NEW_NULL_ELEMENT,
-                innerSubTests));
+                ListContractConstants.DOESNT_SUPPORT_LIST_ADD_INT_NULL, innerSubTests));
       }
     }
   }
@@ -289,7 +288,7 @@ final class ListAddWithIndexTester<E> {
       subTests.addAll(listAddAtMinusOneSubTestMaker.doesNotSupportAddWithIndexSubTests());
       subTests.addAll(listAddAtSizePlusOneSubTestMaker.doesNotSupportAddWithIndexSubTests());
 
-      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E, subTests));
+      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_INT_E, subTests));
     }
   }
 
@@ -351,9 +350,7 @@ final class ListAddWithIndexTester<E> {
       subTests.addAll(
           listAddAtSizePlusOneSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
 
-      tests.add(
-          dynamicContainer(
-              ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
+      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_INT_NULL, subTests));
     }
   }
 }

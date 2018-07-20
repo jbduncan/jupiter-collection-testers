@@ -27,6 +27,9 @@ public interface Feature<T> {
     Set<Feature<?>> expandedFeatures = Helpers.copyToMutableInsertionOrderSet(features);
     Queue<Feature<?>> queue = new ArrayDeque<>(expandedFeatures);
     // Do a breadth-first traversal rooted at the input features.
+    // TODO: If we ever import Guava or a graph library like JGraphT, consider using
+    // com.google.common.graph.Traverser#breadthFirstTraversal or an equivalent construct for
+    // iterating over all features in breadth-first order.
     while (!queue.isEmpty()) {
       Feature<?> next = queue.remove();
       for (Feature<?> implied : next.impliedFeatures()) {

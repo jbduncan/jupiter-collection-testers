@@ -21,6 +21,8 @@ import static com.github.jbduncan.collect.testing.Helpers.minus;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
+import static com.github.jbduncan.collect.testing.Helpers.stringify;
+import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
@@ -86,7 +88,6 @@ final class ListAddTester<E> {
   List<DynamicNode> dynamicTestsGraph() {
     List<DynamicNode> tests = new ArrayList<>();
     generateSupportsAddTests(tests);
-    generateSupportsAddButNotOnNullElementsTests(tests);
     generateSupportsAddWithNullElementsTests(tests);
     generateDoesNotSupportAddTests(tests);
     generateDoesNotSupportAddWithNullElementsTests(tests);
@@ -103,19 +104,15 @@ final class ListAddTester<E> {
       appendSupportsAddWithExistingElementTests(subTests);
 
       tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_E, subTests));
-    }
-  }
 
-  private void generateSupportsAddButNotOnNullElementsTests(List<DynamicNode> tests) {
-    if (features.contains(CollectionFeature.SUPPORTS_ADD)
-        && !features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
-      List<DynamicTest> subTests = new ArrayList<>();
+      if (!features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
+        List<DynamicTest> innerSubTests = new ArrayList<>();
 
-      appendDoesNotSupportAddWithNewNullElementTests(subTests);
+        appendDoesNotSupportAddWithNewNullElementTests(innerSubTests);
 
-      tests.add(
-          dynamicContainer(
-              ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT, subTests));
+        tests.add(
+            dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_NULL, innerSubTests));
+      }
     }
   }
 
@@ -139,7 +136,7 @@ final class ListAddTester<E> {
       appendDoesNotSupportAddWithNewElementTests(subTests);
       appendDoesNotSupportAddWithExistingElementTests(subTests);
 
-      tests.add(dynamicContainer(ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E, subTests));
+      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_E, subTests));
     }
   }
 
@@ -150,9 +147,7 @@ final class ListAddTester<E> {
       appendDoesNotSupportAddWithNewNullElementTests(subTests);
       appendDoesNotSupportAddWithExistingNullElementTests(subTests);
 
-      tests.add(
-          dynamicContainer(
-              ListContractConstants.DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NULL_ELEMENT, subTests));
+      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_NULL, subTests));
     }
   }
 
@@ -180,7 +175,8 @@ final class ListAddTester<E> {
 
     addDyamicSubTests(
         allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_E_WITH_NEW_ELEMENT,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
+        newElement,
         supportsAddWithNewElement,
         subTests);
   }
@@ -208,7 +204,8 @@ final class ListAddTester<E> {
 
     addDyamicSubTests(
         allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_E_WITH_EXISTING_ELEMENT,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
+        existingElement,
         supportsAddWithExistingElement,
         subTests);
   }
@@ -227,7 +224,8 @@ final class ListAddTester<E> {
 
     addDyamicSubTests(
         allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_E_WITH_NEW_NULL_ELEMENT,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
+        null,
         supportsAddWithNewNullElement,
         subTests);
   }
@@ -246,7 +244,7 @@ final class ListAddTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_E_WITH_EXISTING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
         supportsAddWithExistingNullElement,
         subTests);
   }
@@ -272,7 +270,8 @@ final class ListAddTester<E> {
 
     addDyamicSubTests(
         allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_ELEMENT,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
+        newElement,
         doesNotSupportAddWithNewElement,
         subTests);
   }
@@ -298,7 +297,8 @@ final class ListAddTester<E> {
 
     addDyamicSubTests(
         allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_EXISTING_ELEMENT,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
+        existingElement,
         doesNotSupportAddWithExistingElement,
         subTests);
   }
@@ -315,7 +315,7 @@ final class ListAddTester<E> {
                   String.format(
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      ListContractConstants.NULL));
+                      "null"));
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
@@ -324,7 +324,8 @@ final class ListAddTester<E> {
 
     addDyamicSubTests(
         allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_NEW_NULL_ELEMENT,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
+        null,
         doesNotSupportAddWithNewNullElement,
         subTests);
   }
@@ -341,7 +342,7 @@ final class ListAddTester<E> {
                   String.format(
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      ListContractConstants.NULL));
+                      "null"));
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
               list,
@@ -349,7 +350,7 @@ final class ListAddTester<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_E_WITH_EXISTING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
         doesNotSupportAddWithExistingNullElement,
         subTests);
   }
@@ -357,6 +358,7 @@ final class ListAddTester<E> {
   private void addDyamicSubTests(
       Set<CollectionSize> supportedCollectionSizes,
       String displayNameFormat,
+      E elementToAdd,
       ThrowingConsumer<CollectionSize> testExecutor,
       List<DynamicTest> subTests) {
     DynamicTest.stream(
@@ -364,8 +366,8 @@ final class ListAddTester<E> {
             collectionSize ->
                 String.format(
                     displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionOfSize(collectionSize, samples)),
+                    stringify(elementToAdd),
+                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
             testExecutor)
         .forEachOrdered(subTests::add);
   }
@@ -379,8 +381,9 @@ final class ListAddTester<E> {
             collectionSize ->
                 String.format(
                     displayNameFormat,
-                    collectionSize.size(),
-                    newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
+                    "null",
+                    stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
             testExecutor)
         .forEachOrdered(subTests::add);
   }

@@ -24,6 +24,7 @@ import java.util.Set;
 public enum CollectionSize implements Feature<Collection<?>>, Comparable<CollectionSize> {
   SUPPORTS_ZERO(0),
   SUPPORTS_ONE(1),
+  // TODO: Consider renaming this enum instance to "SUPPORTS_MULTIPLE" for consistency with Guava.
   SUPPORTS_THREE(3),
   SUPPORTS_ANY_SIZE(SUPPORTS_ZERO, SUPPORTS_ONE, SUPPORTS_THREE);
 
@@ -32,8 +33,8 @@ public enum CollectionSize implements Feature<Collection<?>>, Comparable<Collect
   private final int size;
 
   // We don't have access to Guava's immutable collections, so we're forced to use
-  // Collections.unmodifiable* instead. Furthermore, we ensure that features are themselves
-  // effectively immutable.
+  // Collections.unmodifiable* instead. However, we ensure that features are themselves
+  // effectively immutable, so we can suppress this warning.
   @SuppressWarnings("ImmutableEnumChecker")
   private final Set<Feature<? super Collection<?>>> impliedFeatures;
 

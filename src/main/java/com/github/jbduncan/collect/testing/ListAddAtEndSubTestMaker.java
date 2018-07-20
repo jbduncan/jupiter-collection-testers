@@ -18,7 +18,7 @@ package com.github.jbduncan.collect.testing;
 import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.quote;
+import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
@@ -32,6 +32,8 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
+  private static final String INDEX_TO_ADD_AT = "size()";
+
   private final TestListGenerator<E> generator;
   private final E newElement;
   private final E existingElement;
@@ -104,19 +106,11 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtEndWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
+    appendSupportsAddAtEndImpl(subTests, newElement, allSupportedCollectionSizes);
   }
 
   private void appendSupportsAddAtEndWithExistingElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
+    appendSupportsAddAtEndImpl(subTests, existingElement, allSupportedCollectionSizesExceptZero);
   }
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
@@ -127,11 +121,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
-    appendSupportsAddAtEndImpl(
-        subTests,
-        null,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT);
+    appendSupportsAddAtEndImpl(subTests, null, allSupportedCollectionSizes);
   }
 
   private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
@@ -147,7 +137,8 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
+        "size()",
         supportsAddAtEndWithExistingNullElement,
         subTests);
   }
@@ -160,19 +151,12 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtEndWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtEndImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_ELEMENT);
+    appendDoesNotSupportAddAtEndImpl(subTests, newElement, allSupportedCollectionSizes);
   }
 
   private void appendDoesNotSupportAddAtEndWithExistingElement(List<DynamicTest> subTests) {
     appendDoesNotSupportAddAtEndImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_ELEMENT);
+        subTests, existingElement, allSupportedCollectionSizesExceptZero);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
@@ -183,11 +167,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtEndWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtEndImpl(
-        subTests,
-        null,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_NEW_NULL_ELEMENT);
+    appendDoesNotSupportAddAtEndImpl(subTests, null, allSupportedCollectionSizes);
   }
 
   private void appendDoesNotSupportAddAtEndWithExistingNull(List<DynamicTest> subTests) {
@@ -202,7 +182,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
                   String.format(
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      ListContractConstants.NULL));
+                      "null"));
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
               list,
@@ -210,16 +190,14 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_SIZE_E_WITH_EXISTING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
         doesNotSupportAddAtEndWithExistingNullElement,
         subTests);
   }
 
   private void appendSupportsAddAtEndImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
+      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
     ThrowingConsumer<CollectionSize> supportsAddAtEnd =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -232,17 +210,20 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
               () ->
                   String.format(
                       ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
-                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+                      stringify(elementToAdd)));
         };
 
-    addDynamicSubTests(supportedCollectionSizes, displayNameFormat, supportsAddAtEnd, subTests);
+    addDynamicSubTests(
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
+        elementToAdd,
+        supportsAddAtEnd,
+        subTests);
   }
 
   private void appendDoesNotSupportAddAtEndImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
+      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtEnd =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -254,7 +235,7 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
                   String.format(
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      (elementToAdd == null) ? "null" : quote(elementToAdd)));
+                      stringify(elementToAdd)));
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
@@ -262,6 +243,11 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtEnd, subTests);
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
+        elementToAdd,
+        doesNotSupportAddAtEnd,
+        subTests);
   }
 }

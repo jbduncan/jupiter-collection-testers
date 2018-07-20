@@ -17,7 +17,7 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.quote;
+import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
@@ -31,11 +31,13 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
+  private static final String INDEX_TO_ADD_AT = "-1";
+
   private final TestListGenerator<E> generator;
   private final E newElement;
   private final E existingElement;
   private final Set<CollectionSize> allSupportedCollectionSizes;
-  private Class<? extends Throwable> expectedExceptionType;
+  private final Class<? extends Throwable> expectedExceptionType;
 
   private ListAddAtMinusOneSubTestMaker(Builder<E> builder) {
     super(builder.sampleElements, builder.allSupportedCollectionSizesExceptZero);
@@ -112,19 +114,12 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtMinusOneWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMinusOneImpl(
-        subTests,
-        newElement,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_ELEMENT);
+    appendDoesNotSupportAddAtMinusOneImpl(subTests, newElement, allSupportedCollectionSizes);
   }
 
   private void appendDoesNotSupportAddAtMinusOneWithExistingElement(List<DynamicTest> subTests) {
     appendDoesNotSupportAddAtMinusOneImpl(
-        subTests,
-        existingElement,
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_ELEMENT);
+        subTests, existingElement, allSupportedCollectionSizesExceptZero);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
@@ -135,11 +130,7 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtMinusOneWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMinusOneImpl(
-        subTests,
-        null,
-        allSupportedCollectionSizes,
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_NEW_NULL_ELEMENT);
+    appendDoesNotSupportAddAtMinusOneImpl(subTests, null, allSupportedCollectionSizes);
   }
 
   private void appendDoesNotSupportAddAtMinusOneWithExistingNull(List<DynamicTest> subTests) {
@@ -155,7 +146,7 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
                       -1,
-                      ListContractConstants.NULL,
+                      "null",
                       expectedExceptionType));
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
@@ -164,16 +155,14 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_DOES_NOT_SUPPORT_LIST_ADD_MINUS1_E_WITH_EXISTING_NULL_ELEMENT,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
         doesNotSupportAddAtMinusOneWithExistingNullElement,
         subTests);
   }
 
   private void appendDoesNotSupportAddAtMinusOneImpl(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      String displayNameFormat) {
+      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
     ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOne =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -186,7 +175,7 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
                       ListContractConstants
                           .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
                       -1,
-                      (elementToAdd == null) ? "null" : quote(elementToAdd),
+                      stringify(elementToAdd),
                       expectedExceptionType));
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
@@ -195,6 +184,11 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
         };
 
     addDynamicSubTests(
-        supportedCollectionSizes, displayNameFormat, doesNotSupportAddAtMinusOne, subTests);
+        supportedCollectionSizes,
+        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+        INDEX_TO_ADD_AT,
+        elementToAdd,
+        doesNotSupportAddAtMinusOne,
+        subTests);
   }
 }

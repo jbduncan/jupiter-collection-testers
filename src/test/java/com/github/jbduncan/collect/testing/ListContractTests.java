@@ -41,6 +41,8 @@ import org.junit.jupiter.api.Test;
 // TODO: Assert that each call to contract::* causes the relevant List methods to be called. For
 // example, if contract::addWithIndex is run on ArrayList, assert that ArrayList.add(int, E) is
 // called. Use a library like Mockito for this.
+// TODO: Consider testing with JUnit 5's `junit-platform-testkit`
+// (https://github.com/junit-team/junit5/pull/1392)
 class ListContractTests {
   private static List<String> elements;
 
@@ -98,127 +100,102 @@ class ListContractTests {
       assertExpectedStructure(
           contract::add,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
-              "Supports List.add(E)", "Supports List.add(E) with null element"),
-
-          // TODO: Consider replacing dynamic test names with simpler-looking ones like:
-          // "Supports List.add(d) on [a, b, c]" and "Supports List.add(null) on [a, null, c]"
+              "Supports List.add(E)", "Supports List.add(null)"),
           /* expectedDynamicTestNames = */ ImmutableList.of(
-              "Supports List.add(E) with new element: size: 0, elements: []",
-              "Supports List.add(E) with new element: size: 1, elements: [a]",
-              "Supports List.add(E) with new element: size: 3, elements: [a, b, c]",
-              "Supports List.add(E) with existing element: size: 1, elements: [a]",
-              "Supports List.add(E) with existing element: size: 3, elements: [a, b, c]",
-              "Supports List.add(E) with new null element: size: 0, elements: []",
-              "Supports List.add(E) with new null element: size: 1, elements: [a]",
-              "Supports List.add(E) with new null element: size: 3, elements: [a, b, c]",
-              "Supports List.add(E) with existing null element: size: 1, elements: [null]",
-              "Supports List.add(E) with existing null element: size: 3, elements: [a, null, c]"));
+              "Supports List.add(\"d\") on []",
+              "Supports List.add(\"d\") on [\"a\"]",
+              "Supports List.add(\"d\") on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(\"a\") on [\"a\"]",
+              "Supports List.add(\"a\") on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(null) on []",
+              "Supports List.add(null) on [\"a\"]",
+              "Supports List.add(null) on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(null) on [null]",
+              "Supports List.add(null) on [\"a\", null, \"c\"]"));
     }
 
     @Test
     @SuppressWarnings("PMD") // TODO: Remove this warning suppression when using cartesian set below
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
-      // TODO: Consider refactoring to use a cartesian product set
       assertExpectedStructure(
           contract::addWithIndex,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
-              "Supports List.add(int, E)", "Supports List.add(int, E) with null element"),
-
-          // TODO: Consider replacing dynamic test names with simpler-looking ones like:
-          // "Supports List.add(0, d) on [a, b, c]" and "Supports List.add(size(), null) on [a, null, c]"
+              "Supports List.add(int, E)", "Supports List.add(int, null)"),
           /* expectedDynamicTestNames = */ ImmutableList.of(
               //
               // regular elements
               //
               // List.add(0, E)
-              "Supports List.add(0, E) with new element: size: 0, elements: []",
-              "Supports List.add(0, E) with new element: size: 1, elements: [a]",
-              "Supports List.add(0, E) with new element: size: 3, elements: [a, b, c]",
-              "Supports List.add(0, E) with existing element: size: 1, elements: [a]",
-              "Supports List.add(0, E) with existing element: size: 3, elements: [a, b, c]",
+              "Supports List.add(0, \"d\") on []",
+              "Supports List.add(0, \"d\") on [\"a\"]",
+              "Supports List.add(0, \"d\") on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(0, \"a\") on [\"a\"]",
+              "Supports List.add(0, \"a\") on [\"a\", \"b\", \"c\"]",
               // List.add(size(), E)
-              "Supports List.add(size(), E) with new element: size: 0, elements: []",
-              "Supports List.add(size(), E) with new element: size: 1, elements: [a]",
-              "Supports List.add(size(), E) with new element: size: 3, elements: [a, b, c]",
-              "Supports List.add(size(), E) with existing element: size: 1, elements: [a]",
-              "Supports List.add(size(), E) with existing element: size: 3, elements: [a, b, c]",
+              // TODO: Consider removing the dynamic test just below, as it's redundant.
+              "Supports List.add(size(), \"d\") on []",
+              "Supports List.add(size(), \"d\") on [\"a\"]",
+              "Supports List.add(size(), \"d\") on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(size(), \"a\") on [\"a\"]",
+              "Supports List.add(size(), \"a\") on [\"a\", \"b\", \"c\"]",
               // List.add(middleIndex(), E)
-              "Supports List.add(middleIndex(), E) with new element: size: 1, elements: [a]",
-              "Supports List.add(middleIndex(), E) with new element: size: 3, elements: [a, b, c]",
-              "Supports List.add(middleIndex(), E) with existing element: size: 1, elements: [a]",
-              "Supports List.add(middleIndex(), E) with existing element: size: 3, elements: "
-                  + "[a, b, c]",
+              "Supports List.add(middleIndex(), \"d\") on [\"a\"]",
+              "Supports List.add(middleIndex(), \"d\") on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(middleIndex(), \"a\") on [\"a\"]",
+              "Supports List.add(middleIndex(), \"a\") on [\"a\", \"b\", \"c\"]",
               // List.add(-1, E)
-              "Does not support List.add(-1, E) with new element: size: 0, elements: []",
-              "Does not support List.add(-1, E) with new element: size: 1, elements: [a]",
-              "Does not support List.add(-1, E) with new element: size: 3, elements: [a, b, c]",
-              "Does not support List.add(-1, E) with existing element: size: 1, elements: [a]",
-              "Does not support List.add(-1, E) with existing element: size: 3, elements: "
-                  + "[a, b, c]",
+              "Doesn't support List.add(-1, \"d\") on []",
+              "Doesn't support List.add(-1, \"d\") on [\"a\"]",
+              "Doesn't support List.add(-1, \"d\") on [\"a\", \"b\", \"c\"]",
+              "Doesn't support List.add(-1, \"a\") on [\"a\"]",
+              "Doesn't support List.add(-1, \"a\") on [\"a\", \"b\", \"c\"]",
               // List.add(size() + 1, E)
-              "Does not support List.add(size() + 1, E) with new element: size: 0, elements: []",
-              "Does not support List.add(size() + 1, E) with new element: size: 1, elements: [a]",
-              "Does not support List.add(size() + 1, E) with new element: size: 3, elements: "
-                  + "[a, b, c]",
-              "Does not support List.add(size() + 1, E) with existing element: size: 1, elements: "
-                  + "[a]",
-              "Does not support List.add(size() + 1, E) with existing element: size: 3, elements: "
-                  + "[a, b, c]",
+              "Doesn't support List.add(size() + 1, \"d\") on []",
+              "Doesn't support List.add(size() + 1, \"d\") on [\"a\"]",
+              "Doesn't support List.add(size() + 1, \"d\") on [\"a\", \"b\", \"c\"]",
+              "Doesn't support List.add(size() + 1, \"a\") on [\"a\"]",
+              "Doesn't support List.add(size() + 1, \"a\") on [\"a\", \"b\", \"c\"]",
               // Fails fast on concurrent modification
-              "List.add(0, E) fails fast on concurrent modification: size: 0, elements: []",
-              "List.add(0, E) fails fast on concurrent modification: size: 1, elements: [a]",
-              "List.add(0, E) fails fast on concurrent modification: size: 3, elements: [a, b, c]",
+              "List.add(0, \"d\") fails fast when concurrently modifying []",
+              "List.add(0, \"d\") fails fast when concurrently modifying [\"a\"]",
+              "List.add(0, \"d\") fails fast when concurrently modifying [\"a\", \"b\", \"c\"]",
               //
               // null element(s)
               //
               // List.add(0, E)
-              "Supports List.add(0, E) with new null element: size: 0, elements: []",
-              "Supports List.add(0, E) with new null element: size: 1, elements: [a]",
-              "Supports List.add(0, E) with new null element: size: 3, elements: [a, b, c]",
-              "Supports List.add(0, E) with existing null element: size: 1, elements: [null]",
-              "Supports List.add(0, E) with existing null element: size: 3, elements: [a, null, c]",
+              "Supports List.add(0, null) on []",
+              "Supports List.add(0, null) on [\"a\"]",
+              "Supports List.add(0, null) on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(0, null) on [null]",
+              "Supports List.add(0, null) on [\"a\", null, \"c\"]",
               // List.add(size(), E)
-              "Supports List.add(size(), E) with new null element: size: 0, elements: []",
-              "Supports List.add(size(), E) with new null element: size: 1, elements: [a]",
-              "Supports List.add(size(), E) with new null element: size: 3, elements: [a, b, c]",
-              "Supports List.add(size(), E) with existing null element: size: 1, elements: [null]",
-              "Supports List.add(size(), E) with existing null element: size: 3, elements: "
-                  + "[a, null, c]",
+              // TODO: Consider removing the dynamic test just below, as it's redundant.
+              "Supports List.add(size(), null) on []",
+              "Supports List.add(size(), null) on [\"a\"]",
+              "Supports List.add(size(), null) on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(size(), null) on [null]",
+              "Supports List.add(size(), null) on [\"a\", null, \"c\"]",
               // List.add(middleIndex(), E)
-              "Supports List.add(middleIndex(), E) with new null element: size: 1, elements: [a]",
-              "Supports List.add(middleIndex(), E) with new null element: size: 3, elements: "
-                  + "[a, b, c]",
-              "Supports List.add(middleIndex(), E) with existing null element: size: 1, elements: "
-                  + "[null]",
-              "Supports List.add(middleIndex(), E) with existing null element: size: 3, elements: "
-                  + "[a, null, c]",
+              "Supports List.add(middleIndex(), null) on [\"a\"]",
+              "Supports List.add(middleIndex(), null) on [\"a\", \"b\", \"c\"]",
+              "Supports List.add(middleIndex(), null) on [null]",
+              "Supports List.add(middleIndex(), null) on [\"a\", null, \"c\"]",
               // List.add(-1, E)
-              "Does not support List.add(-1, E) with new null element: size: 0, elements: []",
-              "Does not support List.add(-1, E) with new null element: size: 1, elements: [a]",
-              "Does not support List.add(-1, E) with new null element: size: 3, elements: "
-                  + "[a, b, c]",
-              "Does not support List.add(-1, E) with existing null element: size: 1, elements: "
-                  + "[null]",
-              "Does not support List.add(-1, E) with existing null element: size: 3, elements: "
-                  + "[a, null, c]",
+              "Doesn't support List.add(-1, null) on []",
+              "Doesn't support List.add(-1, null) on [\"a\"]",
+              "Doesn't support List.add(-1, null) on [\"a\", \"b\", \"c\"]",
+              "Doesn't support List.add(-1, null) on [null]",
+              "Doesn't support List.add(-1, null) on [\"a\", null, \"c\"]",
               // List.add(size() + 1, E)
-              "Does not support List.add(size() + 1, E) with new null element: size: 0, elements: "
-                  + "[]",
-              "Does not support List.add(size() + 1, E) with new null element: size: 1, elements: "
-                  + "[a]",
-              "Does not support List.add(size() + 1, E) with new null element: size: 3, elements: "
-                  + "[a, b, c]",
-              "Does not support List.add(size() + 1, E) with existing null element: size: 1, "
-                  + "elements: [null]",
-              "Does not support List.add(size() + 1, E) with existing null element: size: 3, "
-                  + "elements: [a, null, c]",
+              "Doesn't support List.add(size() + 1, null) on []",
+              "Doesn't support List.add(size() + 1, null) on [\"a\"]",
+              "Doesn't support List.add(size() + 1, null) on [\"a\", \"b\", \"c\"]",
+              "Doesn't support List.add(size() + 1, null) on [null]",
+              "Doesn't support List.add(size() + 1, null) on [\"a\", null, \"c\"]",
               // Fails fast on concurrent modification
-              "List.add(0, E) fails fast on concurrent modification involving null element: "
-                  + "size: 0, elements: []",
-              "List.add(0, E) fails fast on concurrent modification involving null element: "
-                  + "size: 1, elements: [a]",
-              "List.add(0, E) fails fast on concurrent modification involving null element: "
-                  + "size: 3, elements: [a, b, c]"));
+              "List.add(0, null) fails fast when concurrently modifying []",
+              "List.add(0, null) fails fast when concurrently modifying [\"a\"]",
+              "List.add(0, null) fails fast when concurrently modifying [\"a\", \"b\", \"c\"]"));
     }
   }
 
@@ -254,43 +231,33 @@ class ListContractTests {
       assertExpectedStructure(
           contract::add,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
-              "Does not support List.add(E)", "Does not support List.add(E) with null element"),
-
-          // TODO: Consider replacing dynamic test names with simpler-looking ones like:
-          // "Supports List.add(d) on []" and "Supports List.add(null) on []"
+              "Doesn't support List.add(E)", "Doesn't support List.add(null)"),
           /* expectedDynamicTestNames = */ ImmutableList.of(
-              "Does not support List.add(E) with new element: size: 0, elements: []",
-              "Does not support List.add(E) with new null element: size: 0, elements: []"));
+              "Doesn't support List.add(\"d\") on []", "Doesn't support List.add(null) on []"));
     }
 
     @Test
     void theAddWithIndexTestFactoryHasTheExpectedStructure() {
-      // TODO: Consider replacing dynamic test names with simpler-looking ones like:
-      // "Supports List.add(0, d) on []" and "Supports List.add(size(), null) on []"
       ImmutableList<String> expectedDynamicTestNames =
           Sets.cartesianProduct(
-                  ImmutableList.of(
-                      // TODO: Consider removing dynamic tests for "size()" and "middleIndex()" as
-                      // they are lists that only support CollectionSize.SUPPORTS_ZERO.
-                      ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
-                      ImmutableSet.of("new element", "new null element")))
+                  // TODO: Consider removing dynamic tests for "size()" and "middleIndex()" as they
+                  // are redundant for lists that only support CollectionSize.SUPPORTS_ZERO.
+                  ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
+                  ImmutableSet.of("\"d\"", "null"))
               .stream()
               .map(
                   tuple -> {
                     String index = tuple.get(0);
-                    String elementType = tuple.get(1);
-                    return String.format(
-                        "Does not support List.add(%s, E) with %s: size: 0, elements: []",
-                        index, elementType);
+                    String element = tuple.get(1);
+                    return String.format("Doesn't support List.add(%s, %s) on []", index, element);
                   })
               .collect(toImmutableList());
 
       assertExpectedStructure(
           contract::addWithIndex,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
-              "Does not support List.add(int, E)",
-              "Does not support List.add(int, E) with null element"),
-          /* expectedDynamicTestNames = */ expectedDynamicTestNames);
+              "Doesn't support List.add(int, E)", "Doesn't support List.add(int, null)"),
+          expectedDynamicTestNames);
     }
   }
 
@@ -331,16 +298,15 @@ class ListContractTests {
       assertExpectedStructure(
           contract::add,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
-              "Does not support List.add(E)", "Does not support List.add(E) with null element"),
+              "Doesn't support List.add(E)", "Doesn't support List.add(null)"),
 
           // TODO: Consider appending each of these dynamic test names with something like:
           // ", added: d" or "rejected adding: d"
           /* expectedDynamicTestNames = */ ImmutableList.of(
-              "Does not support List.add(E) with new element: size: 1, elements: [a]",
-              "Does not support List.add(E) with existing element: size: 1, elements: [a]",
-              "Does not support List.add(E) with new null element: size: 1, elements: [a]",
-              "Does not support List.add(E) with existing null element: "
-                  + "size: 1, elements: [null]"));
+              "Doesn't support List.add(\"d\") on [\"a\"]",
+              "Doesn't support List.add(\"a\") on [\"a\"]",
+              "Doesn't support List.add(null) on [\"a\"]",
+              "Doesn't support List.add(null) on [null]"));
     }
 
     @Test
@@ -349,30 +315,27 @@ class ListContractTests {
       // ", added: d" or "rejected adding: d"
       ImmutableList<String> expectedDynamicTestNames =
           Sets.cartesianProduct(
-                  ImmutableList.of(
-                      // TODO: Consider removing dynamic tests for "size()" and "middleIndex()" as
-                      // they are redundant for lists that only support CollectionSize.SUPPORTS_ONE.
-                      ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
-                      ImmutableSet.of(
-                          "new element: size: 1, elements: [a]",
-                          "existing element: size: 1, elements: [a]",
-                          "new null element: size: 1, elements: [a]",
-                          "existing null element: size: 1, elements: [null]")))
+                  // TODO: Consider removing dynamic tests for "size()" and "middleIndex()" as they
+                  // are redundant for lists that only support CollectionSize.SUPPORTS_ONE.
+                  ImmutableSet.of("0", "size()", "middleIndex()", "-1", "size() + 1"),
+                  ImmutableSet.of(
+                      "\"d\") on [\"a\"]",
+                      "\"a\") on [\"a\"]",
+                      "null) on [\"a\"]",
+                      "null) on [null]"))
               .stream()
               .map(
                   tuple -> {
                     String index = tuple.get(0);
                     String messageEnd = tuple.get(1);
-                    return String.format(
-                        "Does not support List.add(%s, E) with %s", index, messageEnd);
+                    return String.format("Doesn't support List.add(%s, %s", index, messageEnd);
                   })
               .collect(toImmutableList());
 
       assertExpectedStructure(
           contract::addWithIndex,
           /* expectedDynamicContainerNames = */ ImmutableList.of(
-              "Does not support List.add(int, E)",
-              "Does not support List.add(int, E) with null element"),
+              "Doesn't support List.add(int, E)", "Doesn't support List.add(int, null)"),
           /* expectedDynamicTestNames = */ expectedDynamicTestNames);
     }
   }
@@ -397,9 +360,7 @@ class ListContractTests {
         .comparingElementsUsing(Correspondences.DYNAMIC_NODE_TO_DISPLAY_NAME_CORRESPONDENCE)
         .containsExactlyElementsIn(expectedDynamicContainerNames);
 
-    Iterable<DynamicNode> dynamicNodes = dynamicNodesSupplier.get();
-    ImmutableList<DynamicTest> innerDynamicTests = extractDynamicTests(dynamicNodes);
-    assertThat(innerDynamicTests)
+    assertThat(extractDynamicTests(dynamicNodesSupplier.get()))
         .comparingElementsUsing(Correspondences.DYNAMIC_NODE_TO_DISPLAY_NAME_CORRESPONDENCE)
         .containsExactlyElementsIn(expectedDynamicTestNames);
   }
@@ -409,7 +370,8 @@ class ListContractTests {
 
     SuccessorsFunction<DynamicNode> dynamicNodeChildren =
         new SuccessorsFunction<DynamicNode>() {
-          Map<DynamicNode, ImmutableList<DynamicNode>> dynamicNodeToChildren = new HashMap<>();
+          private final Map<DynamicNode, ImmutableList<DynamicNode>> dynamicNodeToChildren =
+              new HashMap<>();
 
           @Override
           public Iterable<? extends DynamicNode> successors(DynamicNode node) {
