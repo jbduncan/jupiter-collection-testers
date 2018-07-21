@@ -138,8 +138,8 @@ public class RefasterPlugin implements Plugin<Project> {
           Utils.toCompiledRefasterTemplateFile(
               refasterTemplateFile, project.getRootDir(), compiledRefasterTemplatesDir);
 
-      Task compileRefasterTemplateSubTask =
-          createCompileRefasterTemplateTask(
+      TaskProvider<JavaCompile> compileRefasterTemplateSubTask =
+          createCompileRefasterTemplateTaskProvider(
               project.getTasks(),
               refasterConfiguration,
               refasterTemplateFile,
@@ -222,7 +222,7 @@ public class RefasterPlugin implements Plugin<Project> {
     }
   }
 
-  private Task createCompileRefasterTemplateTask(
+  private TaskProvider<JavaCompile> createCompileRefasterTemplateTaskProvider(
       TaskContainer projectTasks,
       Configuration refasterConfiguration,
       File refasterTemplateFile,
@@ -230,7 +230,7 @@ public class RefasterPlugin implements Plugin<Project> {
       File compiledRefasterTemplateFile) {
 
     return projectTasks
-        .create(
+        .register(
             String.format("compileRefasterTemplateNamed%s", refasterTemplateName),
             JavaCompile.class,
             task -> {
