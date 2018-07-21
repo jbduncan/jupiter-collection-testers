@@ -111,20 +111,20 @@ public class RefasterPlugin implements Plugin<Project> {
             project.getTasks().withType(JavaCompile.class).getByName("compileJava"),
             project.getTasks().withType(JavaCompile.class).getByName("compileTestJava"));
 
-    Task refasterCheckTask =
+    TaskProvider<Task> refasterCheckTaskProvider =
         project
             .getTasks()
-            .create(
+            .register(
                 "refasterCheck",
                 task -> {
                   task.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
                   task.setDescription("Checks that Java source code satisfies Refaster refactorings.");
                 });
-    project.getTasks().getByPath("check").dependsOn(refasterCheckTask);
-    Task refasterApplyTask =
+    project.getTasks().named("check").configure(t -> t.dependsOn(refasterCheckTaskProvider));
+    TaskProvider<Task> refasterApplyTaskProvider =
         project
             .getTasks()
-            .create(
+            .register(
                 "refasterApply",
                 task -> {
                   task.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
@@ -185,7 +185,7 @@ public class RefasterPlugin implements Plugin<Project> {
                       task.dependsOn(compileRefasterTemplateSubTask);
                     });
         baseJavaCompileTask.mustRunAfter(refasterCheckSubTaskProvider);
-        refasterCheckTask.dependsOn(refasterCheckSubTaskProvider);
+        refasterCheckTaskProvider.configure(t -> t.dependsOn(refasterCheckSubTaskProvider));
 
         TaskProvider<JavaCompile> refasterApplySubTaskProvider =
             project
@@ -217,7 +217,7 @@ public class RefasterPlugin implements Plugin<Project> {
                       j.dependsOn(compileRefasterTemplateSubTask);
                     });
         baseJavaCompileTask.mustRunAfter(refasterApplySubTaskProvider);
-        refasterApplyTask.dependsOn(refasterApplySubTaskProvider);
+        refasterApplyTaskProvider.configure(t -> t.dependsOn(refasterApplySubTaskProvider));
       }
     }
   }
