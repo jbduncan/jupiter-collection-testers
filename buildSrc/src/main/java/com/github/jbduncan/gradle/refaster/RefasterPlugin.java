@@ -22,6 +22,7 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 
 // TODO: Consider allowing the user to pass in a graph describing a partial ordering in which the
@@ -154,10 +155,10 @@ public class RefasterPlugin implements Plugin<Project> {
         // TODO: Find a way of suppressing the noisy standard-out logging produced by Refaster.
         // TODO: Refactor common parts of `refasterCheckSubTask` and
         // `refasterApplySubTask` into its own method.
-        JavaCompile refasterCheckSubTask =
+        TaskProvider<JavaCompile> refasterCheckSubTaskProvider =
             project
                 .getTasks()
-                .create(
+                .register(
                     String.format(
                         "refasterCheckFor%sWith%s",
                         javaCompileTaskNameCapitalised, refasterTemplateName),
@@ -179,15 +180,17 @@ public class RefasterPlugin implements Plugin<Project> {
                                   "-XepPatchLocation:" + nullDir));
 
                       task.getInputs().file(compiledRefasterTemplateFile);
-                    });
-        refasterCheckSubTask.dependsOn(compileRefasterTemplateSubTask);
-        baseJavaCompileTask.mustRunAfter(refasterCheckSubTask);
-        refasterCheckTask.dependsOn(refasterCheckSubTask);
+                      task.getInputs().file(compiledRefasterTemplateFile);
 
-        JavaCompile refasterApplySubTask =
+                      task.dependsOn(compileRefasterTemplateSubTask);
+                    });
+        baseJavaCompileTask.mustRunAfter(refasterCheckSubTaskProvider);
+        refasterCheckTask.dependsOn(refasterCheckSubTaskProvider);
+
+        TaskProvider<JavaCompile> refasterApplySubTaskProvider =
             project
                 .getTasks()
-                .create(
+                .register(
                     String.format(
                         "refasterApplyFor%sWith%s",
                         javaCompileTaskNameCapitalised, refasterTemplateName),
@@ -210,10 +213,11 @@ public class RefasterPlugin implements Plugin<Project> {
                       // This is a hack to disable UP-TO-DATE checking, as for some reason
                       // it doesn't seem to work properly for refasterApply.
                       j.getOutputs().upToDateWhen(x -> false);
+
+                      j.dependsOn(compileRefasterTemplateSubTask);
                     });
-        refasterApplySubTask.dependsOn(compileRefasterTemplateSubTask);
-        baseJavaCompileTask.mustRunAfter(refasterApplySubTask);
-        refasterApplyTask.dependsOn(refasterApplySubTask);
+        baseJavaCompileTask.mustRunAfter(refasterApplySubTaskProvider);
+        refasterApplyTask.dependsOn(refasterApplySubTaskProvider);
       }
     }
   }
