@@ -21,12 +21,12 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.withType<JavaCompile> {
+tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
@@ -123,10 +123,10 @@ val commonErrorProneOptions =
         "-Xep:UnnecessaryStaticImport",
         "-Xep:WildcardImport")
 
-val compileJava by tasks.getting(JavaCompile::class) {
+tasks.withType(JavaCompile::class.java).named("compileJava").configure {
     options.compilerArgs.addAll(commonErrorProneOptions)
 }
-val compileTestJava by tasks.getting(JavaCompile::class) {
+tasks.withType(JavaCompile::class.java).named("compileTestJava").configure {
     options.compilerArgs.addAll(
             commonErrorProneOptions.plus(listOf(
                     // Produces false positives against JUnit Platform @Nested tests
@@ -178,5 +178,5 @@ spotless {
 // If both Spotless and Refaster are requested, make sure Spotless runs after Refaster so that the
 // code remains formatted as expected.
 afterEvaluate {
-    tasks["spotlessApply"].mustRunAfter("refasterApply")
+    tasks.named("spotlessApply").configure { mustRunAfter("refasterApply") }
 }

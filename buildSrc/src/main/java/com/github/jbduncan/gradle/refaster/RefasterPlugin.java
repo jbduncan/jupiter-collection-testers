@@ -138,7 +138,7 @@ public class RefasterPlugin implements Plugin<Project> {
           Utils.toCompiledRefasterTemplateFile(
               refasterTemplateFile, project.getRootDir(), compiledRefasterTemplatesDir);
 
-      TaskProvider<JavaCompile> compileRefasterTemplateSubTask =
+      TaskProvider<JavaCompile> compileRefasterTemplateSubTaskProvider =
           createCompileRefasterTemplateTaskProvider(
               project.getTasks(),
               refasterConfiguration,
@@ -187,7 +187,7 @@ public class RefasterPlugin implements Plugin<Project> {
 
                                 task.getInputs().file(compiledRefasterTemplateFile);
 
-                                task.dependsOn(compileRefasterTemplateSubTask);
+                                task.dependsOn(compileRefasterTemplateSubTaskProvider);
                               });
                   baseJavaCompileTask.mustRunAfter(refasterCheckSubTaskProvider);
                   refasterCheckTaskProvider.configure(
@@ -221,7 +221,7 @@ public class RefasterPlugin implements Plugin<Project> {
                                 // it doesn't seem to work properly for refasterApply.
                                 task.getOutputs().upToDateWhen(x -> false);
 
-                                task.dependsOn(compileRefasterTemplateSubTask);
+                                task.dependsOn(compileRefasterTemplateSubTaskProvider);
                               });
                   baseJavaCompileTask.mustRunAfter(refasterApplySubTaskProvider);
                   refasterApplyTaskProvider.configure(
