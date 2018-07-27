@@ -58,11 +58,9 @@ pmd {
     ruleSetConfig = resources.text.fromFile(file("$rootDir/config/pmd/ruleset.xml"), "UTF-8")
 }
 
-tasks.withType<Pmd> {
-    if (name.contains("refaster", ignoreCase = true)) {
-        enabled = false
-    }
-}
+tasks.withType(Pmd::class.java)
+        .matching { name.contains("refaster", ignoreCase = true) }
+        .configureEach { enabled = false }
 // Configuration for PMD - END
 
 // Configuration for error-prone - START (https://github.com/tbroyer/gradle-errorprone-plugin)
