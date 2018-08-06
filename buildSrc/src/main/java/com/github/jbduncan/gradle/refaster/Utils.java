@@ -1,5 +1,7 @@
 package com.github.jbduncan.gradle.refaster;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -7,7 +9,7 @@ import org.apache.commons.io.FilenameUtils;
 
 final class Utils {
   static String capitalise(String value) {
-    Objects.requireNonNull(value, "value");
+    requireNonNull(value, "value");
     if (value.isEmpty()) {
       return "";
     }
@@ -19,9 +21,9 @@ final class Utils {
 
   static File toCompiledRefasterTemplateFile(
       File refasterTemplate, File projectRootDir, File compiledRefasterTemplatesDir) {
-    Objects.requireNonNull(refasterTemplate, "refasterTemplate");
-    Objects.requireNonNull(projectRootDir, "projectRootDir");
-    Objects.requireNonNull(compiledRefasterTemplatesDir, "compiledRefasterTemplatesDir");
+    requireNonNull(refasterTemplate, "refasterTemplate");
+    requireNonNull(projectRootDir, "projectRootDir");
+    requireNonNull(compiledRefasterTemplatesDir, "compiledRefasterTemplatesDir");
 
     Path refasterTemplateRelativePath =
         projectRootDir.toPath().relativize(refasterTemplate.toPath());

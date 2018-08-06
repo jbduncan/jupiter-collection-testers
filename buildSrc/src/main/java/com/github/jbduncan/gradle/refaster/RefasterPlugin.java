@@ -29,6 +29,7 @@ import org.gradle.api.tasks.compile.JavaCompile;
 // Refaster templates should be executed.
 // TODO: Consider migrating to Kotlin.
 // TODO: Consider using Task Configuration Avoidance:
+// TODO: Use Gradle providers more in general to increase laziness.
 // (https://docs.gradle.org/4.9/userguide/task_configuration_avoidance.html)
 public class RefasterPlugin implements Plugin<Project> {
   @Override
@@ -146,87 +147,81 @@ public class RefasterPlugin implements Plugin<Project> {
               refasterTemplateName,
               compiledRefasterTemplateFile);
 
-      // Use compiled Refaster templates to perform refactorings
+      // Use current compiled Refaster template to perform refactorings
       for (TaskProvider<JavaCompile> baseJavaCompileTaskProvider : baseJavaCompileTasks) {
-        baseJavaCompileTaskProvider
-            .configure(
-                baseJavaCompileTask -> {
-                  String javaCompileTaskNameCapitalised =
-                      Utils.capitalise(baseJavaCompileTask.getName());
-                  FileCollection classpath = baseJavaCompileTask.getClasspath();
-                  FileTree source = baseJavaCompileTask.getSource();
+        baseJavaCompileTaskProvider.configure(
+            baseJavaCompileTask -> {
+              String javaCompileTaskNameCapitalised =
+                  Utils.capitalise(baseJavaCompileTask.getName());
+              FileCollection classpath = baseJavaCompileTask.getClasspath();
+              FileTree source = baseJavaCompileTask.getSource();
 
-                  // TODO: Find a way of suppressing noisy standard-out logging produced by Refaster
-                  // TODO: Refactor common parts of `refasterCheckSubTaskProvider` and
-                  // `refasterApplySubTaskProvider` into its own method.
-                  TaskProvider<JavaCompile> refasterCheckSubTaskProvider =
-                      project
-                          .getTasks()
-                          .register(
-                              String.format(
-                                  "refasterCheckFor%sWith%s",
-                                  javaCompileTaskNameCapitalised, refasterTemplateName),
-                              JavaCompile.class,
-                              task -> {
-                                task.setClasspath(classpath);
-                                task.setSource(source);
-                                setDestinationDirToTaskTemporaryDir(task);
+              // TODO: Find a way of suppressing noisy standard-out logging produced by Refaster.
+              // TODO: Refactor common parts of `refasterCheckSubTaskProvider` and
+              // `refasterApplySubTaskProvider` into its own method.
+              TaskProvider<JavaCompile> refasterCheckSubTaskProvider =
+                  project
+                      .getTasks()
+                      .register(
+                          String.format(
+                              "refasterChecking%sOn%s",
+                              refasterTemplateName, javaCompileTaskNameCapitalised),
+                          JavaCompile.class,
+                          task -> {
+                            task.setClasspath(classpath);
+                            task.setSource(source);
+                            setDestinationDirToTaskTemporaryDir(task);
 
-                                task.setToolChain(new ErrorProneToolChain(refasterConfiguration));
+                            task.setToolChain(new ErrorProneToolChain(refasterConfiguration));
 
-                                String nullDir =
-                                    Os.isFamily(Os.FAMILY_WINDOWS) ? "nul" : "/dev/null";
-                                task.getOptions()
-                                    .setCompilerArgs(
-                                        Arrays.asList(
-                                            "-Werror",
-                                            "-XDcompilePolicy=byfile",
-                                            "-XepPatchChecks:refaster:"
-                                                + compiledRefasterTemplateFile,
-                                            "-XepPatchLocation:" + nullDir));
+                            String nullDir = Os.isFamily(Os.FAMILY_WINDOWS) ? "nul" : "/dev/null";
+                            task.getOptions()
+                                .setCompilerArgs(
+                                    Arrays.asList(
+                                        "-Werror",
+                                        "-XDcompilePolicy=byfile",
+                                        "-XepPatchChecks:refaster:" + compiledRefasterTemplateFile,
+                                        "-XepPatchLocation:" + nullDir));
 
-                                task.getInputs().file(compiledRefasterTemplateFile);
+                            task.getInputs().file(compiledRefasterTemplateFile);
 
-                                task.dependsOn(compileRefasterTemplateSubTaskProvider);
-                              });
-                  baseJavaCompileTask.mustRunAfter(refasterCheckSubTaskProvider);
-                  refasterCheckTaskProvider.configure(
-                      task -> task.dependsOn(refasterCheckSubTaskProvider));
+                            task.dependsOn(compileRefasterTemplateSubTaskProvider);
+                          });
+              baseJavaCompileTask.mustRunAfter(refasterCheckSubTaskProvider);
+              refasterCheckTaskProvider.configure(t -> t.dependsOn(refasterCheckSubTaskProvider));
 
-                  TaskProvider<JavaCompile> refasterApplySubTaskProvider =
-                      project
-                          .getTasks()
-                          .register(
-                              String.format(
-                                  "refasterApplyFor%sWith%s",
-                                  javaCompileTaskNameCapitalised, refasterTemplateName),
-                              JavaCompile.class,
-                              task -> {
-                                task.setClasspath(classpath);
-                                task.setSource(source);
-                                setDestinationDirToTaskTemporaryDir(task);
+              TaskProvider<JavaCompile> refasterApplySubTaskProvider =
+                  project
+                      .getTasks()
+                      .register(
+                          String.format(
+                              "refasterApplying%sOn%s",
+                              refasterTemplateName, javaCompileTaskNameCapitalised),
+                          JavaCompile.class,
+                          task -> {
+                            task.setClasspath(classpath);
+                            task.setSource(source);
+                            setDestinationDirToTaskTemporaryDir(task);
 
-                                task.setToolChain(new ErrorProneToolChain(refasterConfiguration));
+                            task.setToolChain(new ErrorProneToolChain(refasterConfiguration));
 
-                                task.getOptions()
-                                    .setCompilerArgs(
-                                        Arrays.asList(
-                                            "-Xlint:none",
-                                            "-XDcompilePolicy=byfile",
-                                            "-XepPatchChecks:refaster:"
-                                                + compiledRefasterTemplateFile,
-                                            "-XepPatchLocation:IN_PLACE"));
+                            task.getOptions()
+                                .setCompilerArgs(
+                                    Arrays.asList(
+                                        "-Xlint:none",
+                                        "-XDcompilePolicy=byfile",
+                                        "-XepPatchChecks:refaster:" + compiledRefasterTemplateFile,
+                                        "-XepPatchLocation:IN_PLACE"));
 
-                                // This is a hack to disable UP-TO-DATE checking, as for some reason
-                                // it doesn't seem to work properly for refasterApply.
-                                task.getOutputs().upToDateWhen(x -> false);
+                            // This is a hack to disable UP-TO-DATE checking, as for some reason
+                            // it doesn't seem to work properly for refasterApply.
+                            task.getOutputs().upToDateWhen(x -> false);
 
-                                task.dependsOn(compileRefasterTemplateSubTaskProvider);
-                              });
-                  baseJavaCompileTask.mustRunAfter(refasterApplySubTaskProvider);
-                  refasterApplyTaskProvider.configure(
-                      task -> task.dependsOn(refasterApplySubTaskProvider));
-                });
+                            task.dependsOn(compileRefasterTemplateSubTaskProvider);
+                          });
+              baseJavaCompileTask.mustRunAfter(refasterApplySubTaskProvider);
+              refasterApplyTaskProvider.configure(t -> t.dependsOn(refasterApplySubTaskProvider));
+            });
       }
     }
   }
