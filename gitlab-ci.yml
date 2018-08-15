@@ -1,0 +1,28 @@
+# This is the Gradle build system for JVM applications.
+# https://gradle.org/
+# https://github.com/gradle/gradle
+image: gradle:4.9-jdk8-alpine
+
+variables:
+  # Disable the Gradle daemon for Continuous Integration servers as correctness
+  # is usually a priority over speed in CI environments. Using a fresh runtime
+  # for each build is more reliable since the runtime is completely isolated
+  # from any previous builds.
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  # Set the location of the dependency cache to a local directory, so that it
+  # can be cached between GitLab CI/CD jobs.
+  GRADLE_USER_HOME: '.gradle'
+
+cache:
+  key: "$CI_COMMIT_REF_NAME"
+  paths:
+    - '$GRADLE_USER_HOME'
+
+build:
+  stage: build
+  script: gradle assemble
+
+
+test:
+  stage: test
+  script: gradle check
