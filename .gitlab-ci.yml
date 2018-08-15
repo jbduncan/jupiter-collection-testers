@@ -16,7 +16,7 @@ variables:
 cache:
   key: "$CI_COMMIT_REF_NAME"
   paths:
-    - '$GRADLE_USER_HOME'
+    - .gradle
 
 build:
   stage: build
