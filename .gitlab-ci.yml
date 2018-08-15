@@ -21,6 +21,8 @@ build:
     paths:
       - .gradle
       - build
+      - buildSrc/.gradle
+      - buildSrc/build
 
 
 test:
@@ -31,3 +33,5 @@ test:
     paths:
       - .gradle
       - build
+      - buildSrc/.gradle
+      - buildSrc/build
