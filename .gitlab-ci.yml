@@ -20,9 +20,6 @@ build:
     key: "$CI_COMMIT_REF_NAME"
     paths:
       - .gradle
-      - build
-      - buildSrc/.gradle
-      - buildSrc/build
 
 
 test:
@@ -32,6 +29,3 @@ test:
     key: "$CI_COMMIT_REF_NAME"
     paths:
       - .gradle
-      - build
-      - buildSrc/.gradle
-      - buildSrc/build
