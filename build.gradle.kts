@@ -59,8 +59,11 @@ pmd {
 }
 
 tasks.withType(Pmd::class.java)
-        .matching { name.contains("refaster", ignoreCase = true) }
-        .configureEach { enabled = false }
+        .configureEach {
+            if (name.contains("refaster", ignoreCase = true)) {
+                enabled = false
+            }
+        }
 // Configuration for PMD - END
 
 // Configuration for error-prone - START (https://github.com/tbroyer/gradle-errorprone-plugin)
