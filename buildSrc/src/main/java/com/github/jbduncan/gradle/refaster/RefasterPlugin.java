@@ -21,17 +21,20 @@ import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.compile.JavaCompile;
 
 // TODO: Consider allowing the user to pass in a graph describing a partial ordering in which the
 // Refaster templates should be executed.
 // TODO: Consider migrating to Kotlin.
-// TODO: Consider using Task Configuration Avoidance
-// (https://docs.gradle.org/4.9-rc-1/userguide/task_configuration_avoidance.html)
+// TODO: Consider using Task Configuration Avoidance:
+// (https://docs.gradle.org/4.9/userguide/task_configuration_avoidance.html)
 public class RefasterPlugin implements Plugin<Project> {
   @Override
   public void apply(Project project) {
-    // TODO: Remove this Java-8-only restriction
+    // TODO: Remove this Java-8-only restriction (see
+    // https://github.com/google/error-prone/commit/0ede1de0a59a6c782a242ca85981b8b71c92f944 and
+    // https://github.com/google/error-prone/issues/535#issuecomment-414165838 for guidance).
     int javaVersion = Integer.parseInt(JavaVersion.current().getMajorVersion());
     if (javaVersion != 8) {
       throw new GradleException(
@@ -112,9 +115,9 @@ public class RefasterPlugin implements Plugin<Project> {
             .getTasks()
             .create(
                 "refasterCheck",
-                j -> {
-                  j.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
-                  j.setDescription("Checks that Java source code satisfies Refaster refactorings.");
+                task -> {
+                  task.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
+                  task.setDescription("Checks that Java source code satisfies Refaster refactorings.");
                 });
     project.getTasks().getByPath("check").dependsOn(refasterCheckTask);
     Task refasterApplyTask =
@@ -122,9 +125,9 @@ public class RefasterPlugin implements Plugin<Project> {
             .getTasks()
             .create(
                 "refasterApply",
-                j -> {
-                  j.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
-                  j.setDescription("Applies Refaster refactorings to source code in-place.");
+                task -> {
+                  task.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
+                  task.setDescription("Applies Refaster refactorings to source code in-place.");
                 });
 
     for (File refasterTemplateFile : refasterTemplates) {
@@ -136,7 +139,7 @@ public class RefasterPlugin implements Plugin<Project> {
 
       Task compileRefasterTemplateSubTask =
           createCompileRefasterTemplateTask(
-              project,
+              project.getTasks(),
               refasterConfiguration,
               refasterTemplateFile,
               refasterTemplateName,
@@ -149,6 +152,8 @@ public class RefasterPlugin implements Plugin<Project> {
         FileTree source = baseJavaCompileTask.getSource();
 
         // TODO: Find a way of suppressing the noisy standard-out logging produced by Refaster.
+        // TODO: Refactor common parts of `refasterCheckSubTask` and
+        // `refasterApplySubTask` into its own method.
         JavaCompile refasterCheckSubTask =
             project
                 .getTasks()
@@ -157,22 +162,23 @@ public class RefasterPlugin implements Plugin<Project> {
                         "refasterCheckFor%sWith%s",
                         javaCompileTaskNameCapitalised, refasterTemplateName),
                     JavaCompile.class,
-                    j -> {
-                      j.setClasspath(classpath);
-                      j.setSource(source);
-                      setDestinationDirToTaskTemporaryDir(j);
+                    task -> {
+                      task.setClasspath(classpath);
+                      task.setSource(source);
+                      setDestinationDirToTaskTemporaryDir(task);
 
-                      j.setToolChain(new ErrorProneToolChain(refasterConfiguration));
+                      task.setToolChain(new ErrorProneToolChain(refasterConfiguration));
 
                       String nullDir = Os.isFamily(Os.FAMILY_WINDOWS) ? "nul" : "/dev/null";
-                      j.getOptions()
+                      task.getOptions()
                           .setCompilerArgs(
                               Arrays.asList(
                                   "-Werror",
+                                  "-XDcompilePolicy=byfile",
                                   "-XepPatchChecks:refaster:" + compiledRefasterTemplateFile,
                                   "-XepPatchLocation:" + nullDir));
 
-                      j.getInputs().file(compiledRefasterTemplateFile);
+                      task.getInputs().file(compiledRefasterTemplateFile);
                     });
         refasterCheckSubTask.dependsOn(compileRefasterTemplateSubTask);
         baseJavaCompileTask.mustRunAfter(refasterCheckSubTask);
@@ -183,7 +189,7 @@ public class RefasterPlugin implements Plugin<Project> {
                 .getTasks()
                 .create(
                     String.format(
-                        "refaster%sApplyWith%s",
+                        "refasterApplyFor%sWith%s",
                         javaCompileTaskNameCapitalised, refasterTemplateName),
                     JavaCompile.class,
                     j -> {
@@ -197,6 +203,7 @@ public class RefasterPlugin implements Plugin<Project> {
                           .setCompilerArgs(
                               Arrays.asList(
                                   "-Xlint:none",
+                                  "-XDcompilePolicy=byfile",
                                   "-XepPatchChecks:refaster:" + compiledRefasterTemplateFile,
                                   "-XepPatchLocation:IN_PLACE"));
 
@@ -212,44 +219,39 @@ public class RefasterPlugin implements Plugin<Project> {
   }
 
   private Task createCompileRefasterTemplateTask(
-      Project project,
+      TaskContainer projectTasks,
       Configuration refasterConfiguration,
       File refasterTemplateFile,
       String refasterTemplateName,
       File compiledRefasterTemplateFile) {
 
-    JavaCompile compileRefasterTemplateSubTask =
-        project
-            .getTasks()
-            .create(
-                String.format("compileRefasterTemplateNamed%s", refasterTemplateName),
-                JavaCompile.class);
-    compileRefasterTemplateSubTask.setSource(refasterTemplateFile);
-    compileRefasterTemplateSubTask.setToolChain(new ErrorProneToolChain(refasterConfiguration));
-    compileRefasterTemplateSubTask.setClasspath(
-        compileRefasterTemplateSubTask.getClasspath() == null
-            ? refasterConfiguration
-            : compileRefasterTemplateSubTask.getClasspath().plus(refasterConfiguration));
-    compileRefasterTemplateSubTask
-        .getOptions()
-        .setAnnotationProcessorPath(
-            compileRefasterTemplateSubTask.getOptions().getAnnotationProcessorPath() == null
-                ? refasterConfiguration
-                : compileRefasterTemplateSubTask
-                    .getOptions()
-                    .getAnnotationProcessorPath()
-                    .plus(refasterConfiguration));
-    setDestinationDirToTaskTemporaryDir(compileRefasterTemplateSubTask);
+    return projectTasks
+        .create(
+            String.format("compileRefasterTemplateNamed%s", refasterTemplateName),
+            JavaCompile.class,
+            task -> {
+              task.setSource(refasterTemplateFile);
+              task.setToolChain(new ErrorProneToolChain(refasterConfiguration));
+              task.setClasspath(
+                  task.getClasspath() == null
+                      ? refasterConfiguration
+                      : task.getClasspath().plus(refasterConfiguration));
+              task.getOptions()
+                  .setAnnotationProcessorPath(
+                      task.getOptions().getAnnotationProcessorPath() == null
+                          ? refasterConfiguration
+                          : task.getOptions()
+                              .getAnnotationProcessorPath()
+                              .plus(refasterConfiguration));
+              setDestinationDirToTaskTemporaryDir(task);
 
-    compileRefasterTemplateSubTask
-        .getOptions()
-        .getCompilerArgs()
-        .add("-Xplugin:RefasterRuleCompiler --out " + compiledRefasterTemplateFile);
+              task.getOptions()
+                  .getCompilerArgs()
+                  .add("-Xplugin:RefasterRuleCompiler --out " + compiledRefasterTemplateFile);
 
-    compileRefasterTemplateSubTask.getInputs().file(refasterTemplateFile);
-    compileRefasterTemplateSubTask.getOutputs().file(compiledRefasterTemplateFile);
-
-    return compileRefasterTemplateSubTask;
+              task.getInputs().file(refasterTemplateFile);
+              task.getOutputs().file(compiledRefasterTemplateFile);
+            });
   }
 
   private static void setDestinationDirToTaskTemporaryDir(JavaCompile task) {
