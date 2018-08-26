@@ -9,8 +9,6 @@ plugins {
     // TODO: Consider swapping out for
     // https://github.com/tbroyer/gradle-errorprone-javacplugin-plugin
     id("net.ltgt.errorprone") // No version needed, as already imported in buildSrc/build.gradle
-
-    // TODO: Add other static analysis and formal verification tools
 }
 
 // Configuration for Java - START
@@ -75,13 +73,66 @@ dependencies {
     compileOnly("com.google.errorprone:error_prone_annotations:$errorProneVersion")
 }
 
-val compileTestJava by tasks.getting(JavaCompile::class) {
-    // error-prone options
-    options.compilerArgs.addAll(
-            // Produces false positives against JUnit Platform @Nested tests
-            listOf("-Xep:ClassCanBeStatic:OFF"))
-    // TODO: Consider turning on experimental error-prone options
+val commonErrorProneOptions =
+    listOf(
+        // TODO: Update these on every new version of error-prone
+        // Experimental ERROR checks
+        "-Xep:ClassName",
+        "-Xep:ComparisonContractViolated",
+        "-Xep:DepAnn",
+        "-Xep:DivZero",
+        "-Xep:EmptyIf",
+        "-Xep:FuzzyEqualsShouldNotBeUsedInEqualsMethod",
+        "-Xep:InjectInvalidTargetingOnScopingAnnotation",
+        "-Xep:InsecureCryptoUsage",
+        "-Xep:IterablePathParameter",
+        "-Xep:LongLiteralLowerCaseSuffix",
+        "-Xep:NumericEquality",
+        "-Xep:ParameterPackage",
+        // Experimental WARNING checks
+        "-Xep:AssertFalse",
+        "-Xep:ConstructorInvokesOverridable",
+        "-Xep:ConstructorLeaksThis",
+        "-Xep:EmptyTopLevelDeclaration",
+        "-Xep:FunctionalInterfaceClash",
+        "-Xep:InconsistentOverloads",
+        "-Xep:MissingDefault",
+        "-Xep:NonCanonicalStaticMemberImport",
+        "-Xep:PrimitiveArrayPassedToVarargsMethod",
+        "-Xep:RedundantThrows",
+        "-Xep:StaticQualifiedUsingExpression",
+        "-Xep:StringEquality",
+        "-Xep:TestExceptionChecker",
+        "-Xep:UnnecessaryDefaultInEnumSwitch",
+        // Experimental SUGGESTION checks
+        "-Xep:ConstantField",
+        "-Xep:FieldCanBeFinal",
+        "-Xep:LambdaFunctionalInterface",
+        "-Xep:MixedArrayDimensions",
+        "-Xep:MultiVariableDeclaration",
+        "-Xep:MultipleTopLevelClasses",
+        "-Xep:MultipleUnaryOperatorsInMethodCall",
+        "-Xep:PackageLocation",
+        "-Xep:ParameterComment",
+        "-Xep:PrivateConstructorForUtilityClass",
+        "-Xep:SwitchDefault",
+        "-Xep:ThrowsUncheckedException",
+        "-Xep:TypeParameterNaming",
+        "-Xep:UngroupedOverloads",
+        "-Xep:UnnecessarySetDefault",
+        "-Xep:UnnecessaryStaticImport",
+        "-Xep:WildcardImport")
+
+val compileJava by tasks.getting(JavaCompile::class) {
+    options.compilerArgs.addAll(commonErrorProneOptions)
 }
+val compileTestJava by tasks.getting(JavaCompile::class) {
+    options.compilerArgs.addAll(
+            commonErrorProneOptions.plus(listOf(
+                    // Produces false positives against JUnit Platform @Nested tests
+                    "-Xep:ClassCanBeStatic:OFF")))
+}
+
 // Configuration for error-prone - END
 
 // Configuration for Refaster - START (http://errorprone.info/docs/refaster)

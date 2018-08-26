@@ -11,12 +11,13 @@
     <exclude name="AccessorClassGeneration"/> <!-- Impractical -->
     <exclude name="AccessorMethodGeneration"/> <!-- Impractical -->
     <exclude name="JUnitAssertionsShouldIncludeMessage"/> <!-- False positive(s) with Truth -->
+    <exclude name="SwitchStmtsShouldHaveDefault"/> <!-- Conflicts with error-prone's 'UnnecessaryDefaultInEnumSwitch' check -->
     <exclude name="UnusedImports"/> <!-- Covered by google-java-format through Spotless -->
     <exclude name="UnusedLocalVariable"/> <!-- Covered by error-prone -->
   </rule>
   <rule ref="category/java/bestpractices.xml/JUnitTestContainsTooManyAsserts">
     <properties>
-      <property name="maximumAsserts" value="5"/>
+      <property name="maximumAsserts" value="5"/> <!-- Reasonably practical number -->
     </properties>
   </rule>
 
@@ -27,7 +28,7 @@
     <exclude name="DataflowAnomalyAnalysis"/> <!-- False positive(s) -->
     <exclude name="BeanMembersShouldSerialize"/> <!-- We avoid serialization; see Effective Java -->
     <exclude name="AvoidFieldNameMatchingMethodName"/> <!-- Impractical -->
-    <exclude name="TestClassWithoutTestCases"/> <!-- False positive(s) on JUnit 5 -->
+    <exclude name="TestClassWithoutTestCases"/> <!-- False positive(s) with JUnit 5 -->
   </rule>
 
   <rule ref="category/java/multithreading.xml">
