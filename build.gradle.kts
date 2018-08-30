@@ -1,14 +1,30 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("com.diffplug.spotless:spotless-plugin-gradle:3.15.0-SNAPSHOT")
+    }
+}
+
 plugins {
     `java-library`
     eclipse
     idea
     pmd
 
-    id("com.diffplug.gradle.spotless") version("3.14.0")
+    // id("com.diffplug.gradle.spotless") version("3.14.0")
     id("com.github.ben-manes.versions") version("0.20.0")
     // TODO: Consider swapping out for
     // https://github.com/tbroyer/gradle-errorprone-javacplugin-plugin
     id("net.ltgt.errorprone") // No version needed, as already imported in buildSrc/build.gradle
+}
+
+apply {
+    plugin("com.diffplug.gradle.spotless")
+    // or:
+    // plugin(com.diffplug.gradle.spotless.SpotlessPlugin::class.java)
 }
 
 // Configuration for Java - START
@@ -133,7 +149,6 @@ tasks.withType(JavaCompile::class.java).named("compileTestJava").configure {
                     // Produces false positives against JUnit Platform @Nested tests
                     "-Xep:ClassCanBeStatic:OFF")))
 }
-
 // Configuration for error-prone - END
 
 // Configuration for Refaster - START (http://errorprone.info/docs/refaster)
@@ -146,7 +161,8 @@ apply {
 val googleJavaFormatVersion: String by project
 val ktlintVersion: String by project
 
-spotless {
+// spotless {
+configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     java {
         googleJavaFormat(googleJavaFormatVersion)
         licenseHeaderFile(file("$rootDir/src/spotless/apache-license-2.0.java"))
@@ -178,6 +194,6 @@ spotless {
 
 // If both Spotless and Refaster are requested, make sure Spotless runs after Refaster so that the
 // code remains formatted as expected.
-afterEvaluate {
-    tasks.named("spotlessApply").configure { mustRunAfter("refasterApply") }
-}
+// afterEvaluate {
+//    tasks.named("spotlessApply").configure { mustRunAfter("refasterApply") }
+// }

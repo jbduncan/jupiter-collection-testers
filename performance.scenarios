@@ -1,0 +1,4 @@
+clean_build {
+    tasks = ["check"]
+    cleanup-tasks = ["clean"]
+}
