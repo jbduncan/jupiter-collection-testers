@@ -40,6 +40,40 @@ class AllRefasterTemplates {
     }
   }
 
+  abstract static class IfElseIf {
+    @Placeholder
+    abstract boolean firstIfCondition();
+
+    @Placeholder
+    abstract boolean secondIfCondition();
+
+    @Placeholder
+    abstract void doInFirstIf();
+
+    @Placeholder
+    abstract void doInSecondIf();
+
+    @BeforeTemplate
+    void before() {
+      if (firstIfCondition()) {
+        doInFirstIf();
+      } else {
+        if (secondIfCondition()) {
+          doInSecondIf();
+        }
+      }
+    }
+
+    @AfterTemplate
+    void after() {
+      if (firstIfCondition()) {
+        doInFirstIf();
+      } else if (secondIfCondition()) {
+        doInSecondIf();
+      }
+    }
+  }
+
   abstract static class IfSetAdd<E> {
     @Placeholder
     abstract void doAfterAdd(@MayOptionallyUse E element);
