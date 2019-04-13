@@ -9,17 +9,7 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '1.8'
-      jdkArchitectureOption: 'x64'
-      publishJUnitResults: true
-      testResultsFiles: '**/TEST-*.xml'
-      tasks: 'build'
+  - template: config/azure/azure-gradle-step.yml
 
 - job: mac
   displayName: macOS
@@ -28,17 +18,7 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '1.8'
-      jdkArchitectureOption: 'x64'
-      publishJUnitResults: true
-      testResultsFiles: '**/TEST-*.xml'
-      tasks: 'build'
+  - template: config/azure/azure-gradle-step.yml
 
 - job: windows
   displayName: Windows
@@ -47,14 +27,4 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '1.8'
-      jdkArchitectureOption: 'x64'
-      publishJUnitResults: true
-      testResultsFiles: '**/TEST-*.xml'
-      tasks: 'build'
+  - template: config/azure/azure-gradle-step.yml
