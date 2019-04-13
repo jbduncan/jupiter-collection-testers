@@ -31,7 +31,7 @@ tasks.withType<Test> {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 val junit5Version: String by project
