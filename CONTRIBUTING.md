@@ -28,30 +28,31 @@ single commit or several logical, self-contained commits. One way to do this is 
 `git rebase -i`, following the instructions in
 ["squashing commits with rebase"](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html).
 
-If your PR resolves one or more issues, please add a respective line at the end of the body of the
-PR text, just above the boilerplate text for the Contributor License Agreement. For example, use
-the following message if issue #42 is fully resolved.
+If your PR fixes one or more issues, please add a respective line at the end of the body of the PR
+text, just above the boilerplate text for the Contributor License Agreement. For example, use the
+following message if issue #42 is fully fixed.
+
 ```
-Resolves: #42
+Fixes #42.
 ```
 
 This will allow the associated issue(s) to be
 [automatically closed](https://help.github.com/articles/closing-issues-using-keywords/) by GitHub
 when the PR is merged in.
 
-However, if your PR only partially resolves or is related to one or more issues, please use the
-words "Issue" or "Issues" instead of or on top of "Resolves". For example, use the following message
-if issue #42 is partially resolved or related.
+However, if your PR only partially fixes or is related to one or more issues, please use the words
+"Issue" or "Issues" instead of or on top of "Fixes". For example, use the following message if
+issue #42 is partially fixed or related.
 ```
-Issue: #42
+Issue #42.
 ```
 
-To give a combined example, use the following message if issues #42 and #43 are resolved and
-issues #6 and #9 are partially resolved or related.
+To give a combined example, use the following message if issues #42 and #43 are fixed and issues #6
+and #9 are partially fixed or related.
 
 ```
-Resolves: #42, #43
-Issues: #6, #99
+Fixes #42, #43.
+Issues #6, #99.
 ```
 
 Commit messages
@@ -75,12 +76,12 @@ This explanation describes _why_ the commit is being introduced, rather than _ho
 implemented. The body can be skipped if the change is so simple that no further context is
 needed.
 
-`${issues}` is a series of one or more lines that describes which issues have been resolved or
-partially resolved or which are related to this commit. See **Pull Requests** above for more
+`${issues}` is a series of one or more lines that describes which issues have been fixed or
+partially fixed or which are related to this commit. See **Pull Requests** above for more
 information on the format of this section.
 
 `${pr}` is a line that says which PR introduced this commit, where `${pr}` is replaced with the
-"PR: " followed by a PR number, e.g. `PR: #321`. This can be skipped if the commit has no
+"PR " followed by a PR number, e.g. `PR #321`. This can be skipped if the commit has no
 associated PR.
 
 (In many ways, this advice matches up with or is very similar to the advice given in
