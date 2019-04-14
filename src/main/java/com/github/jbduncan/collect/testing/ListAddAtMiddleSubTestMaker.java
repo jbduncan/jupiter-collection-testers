@@ -39,15 +39,12 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
   private final TestListGenerator<E> generator;
   private final E newElement;
   private final E existingElement;
-  private final Set<CollectionSize> allSupportedCollectionSizes;
 
   private ListAddAtMiddleSubTestMaker(Builder<E> builder) {
     super(builder.sampleElements, builder.allSupportedCollectionSizesExceptZero);
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
     this.newElement = requireNonNull(builder.newElement, "newElement");
     this.existingElement = requireNonNull(builder.existingElement, "existingElement");
-    this.allSupportedCollectionSizes =
-        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
   }
 
   static <E> Builder<E> builder() {
@@ -61,7 +58,6 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
     private SampleElements<E> sampleElements;
     private E newElement;
     private E existingElement;
-    private Set<CollectionSize> allSupportedCollectionSizes;
     private Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
     Builder<E> testListGenerator(TestListGenerator<E> testListGenerator) {
@@ -81,11 +77,6 @@ final class ListAddAtMiddleSubTestMaker<E> extends BaseListSubTestMaker<E> {
 
     Builder<E> existingElement(E existingElement) {
       this.existingElement = existingElement;
-      return this;
-    }
-
-    Builder<E> allSupportedCollectionSizes(Set<CollectionSize> allSupportedCollectionSizes) {
-      this.allSupportedCollectionSizes = allSupportedCollectionSizes;
       return this;
     }
 
