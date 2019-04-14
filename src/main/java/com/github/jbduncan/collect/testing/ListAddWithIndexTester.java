@@ -66,7 +66,6 @@ final class ListAddWithIndexTester<E> {
             .sampleElements(samples)
             .newElement(newElement)
             .existingElement(existingElement)
-            .allSupportedCollectionSizes(allSupportedCollectionSizes)
             .allSupportedCollectionSizesExceptZero(allSupportedCollectionSizesExceptZero)
             .build();
     this.listAddAtMiddleSubTestMaker =
