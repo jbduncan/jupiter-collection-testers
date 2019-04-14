@@ -19,6 +19,7 @@ import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.stringify;
+import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
@@ -31,18 +32,23 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
+final class ListAddAtEndSubTestMaker<E> {
   private static final String INDEX_TO_ADD_AT = "size()";
 
   private final TestListGenerator<E> generator;
+  private final SampleElements<E> samples;
   private final E newElement;
   private final E existingElement;
+  private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
   private ListAddAtEndSubTestMaker(Builder<E> builder) {
-    super(builder.sampleElements, builder.allSupportedCollectionSizesExceptZero);
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
+    this.samples = requireNonNull(builder.sampleElements, "samples");
     this.newElement = requireNonNull(builder.newElement, "newElement");
     this.existingElement = requireNonNull(builder.existingElement, "existingElement");
+    this.allSupportedCollectionSizesExceptZero =
+        requireNonNull(
+            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
   static <E> Builder<E> builder() {
@@ -127,11 +133,17 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
               expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
         };
 
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
-        "size()",
-        supportsAddAtEndWithExistingNullElement,
-        subTests);
+    DynamicTest.stream(
+            allSupportedCollectionSizesExceptZero.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
+                    "size()",
+                    "null",
+                    stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+            supportsAddAtEndWithExistingNullElement)
+        .forEachOrdered(subTests::add);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
@@ -179,11 +191,17 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-        INDEX_TO_ADD_AT,
-        doesNotSupportAddAtEndWithExistingNullElement,
-        subTests);
+    DynamicTest.stream(
+            allSupportedCollectionSizesExceptZero.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+                    INDEX_TO_ADD_AT,
+                    "null",
+                    stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+            doesNotSupportAddAtEndWithExistingNullElement)
+        .forEachOrdered(subTests::add);
   }
 
   private void appendSupportsAddAtEndImpl(List<DynamicTest> subTests, E elementToAdd) {
@@ -202,16 +220,19 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
                       stringify(elementToAdd)));
         };
 
-    addDynamicSubTests(
-        // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
-        // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
-        // CollectionSize.SUPPORTS_ZERO.
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
-        INDEX_TO_ADD_AT,
-        elementToAdd,
-        supportsAddAtEnd,
-        subTests);
+    // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
+    // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
+    // CollectionSize.SUPPORTS_ZERO.
+    DynamicTest.stream(
+            allSupportedCollectionSizesExceptZero.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
+                    INDEX_TO_ADD_AT,
+                    stringify(elementToAdd),
+                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+            supportsAddAtEnd)
+        .forEachOrdered(subTests::add);
   }
 
   private void appendDoesNotSupportAddAtEndImpl(List<DynamicTest> subTests, E elementToAdd) {
@@ -233,15 +254,18 @@ final class ListAddAtEndSubTestMaker<E> extends BaseListSubTestMaker<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    addDynamicSubTests(
-        // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
-        // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
-        // CollectionSize.SUPPORTS_ZERO.
-        allSupportedCollectionSizesExceptZero,
-        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-        INDEX_TO_ADD_AT,
-        elementToAdd,
-        doesNotSupportAddAtEnd,
-        subTests);
+    // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
+    // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
+    // CollectionSize.SUPPORTS_ZERO.
+    DynamicTest.stream(
+            allSupportedCollectionSizesExceptZero.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+                    INDEX_TO_ADD_AT,
+                    stringify(elementToAdd),
+                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+            doesNotSupportAddAtEnd)
+        .forEachOrdered(subTests::add);
   }
 }

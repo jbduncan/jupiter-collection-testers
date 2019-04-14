@@ -18,6 +18,7 @@ package com.github.jbduncan.collect.testing;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.stringify;
+import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
@@ -30,22 +31,27 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
-final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
+final class ListAddAtMinusOneSubTestMaker<E> {
   private static final String INDEX_TO_ADD_AT = "-1";
 
   private final TestListGenerator<E> generator;
+  private final SampleElements<E> samples;
   private final E newElement;
   private final E existingElement;
   private final Set<CollectionSize> allSupportedCollectionSizes;
+  private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
   private final Class<? extends Throwable> expectedExceptionType;
 
   private ListAddAtMinusOneSubTestMaker(Builder<E> builder) {
-    super(builder.sampleElements, builder.allSupportedCollectionSizesExceptZero);
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
+    this.samples = requireNonNull(builder.sampleElements, "samples");
     this.newElement = requireNonNull(builder.newElement, "newElement");
     this.existingElement = requireNonNull(builder.existingElement, "existingElement");
     this.allSupportedCollectionSizes =
         requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
+    this.allSupportedCollectionSizesExceptZero =
+        requireNonNull(
+            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
     this.expectedExceptionType =
         requireNonNull(builder.expectedExceptionType, "expectedExceptionType");
   }
@@ -154,11 +160,17 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    addDynamicSubTestsForListWithNullElement(
-        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-        INDEX_TO_ADD_AT,
-        doesNotSupportAddAtMinusOneWithExistingNullElement,
-        subTests);
+    DynamicTest.stream(
+            allSupportedCollectionSizesExceptZero.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+                    INDEX_TO_ADD_AT,
+                    "null",
+                    stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+            doesNotSupportAddAtMinusOneWithExistingNullElement)
+        .forEachOrdered(subTests::add);
   }
 
   private void appendDoesNotSupportAddAtMinusOneImpl(
@@ -183,12 +195,15 @@ final class ListAddAtMinusOneSubTestMaker<E> extends BaseListSubTestMaker<E> {
               ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
         };
 
-    addDynamicSubTests(
-        supportedCollectionSizes,
-        ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-        INDEX_TO_ADD_AT,
-        elementToAdd,
-        doesNotSupportAddAtMinusOne,
-        subTests);
+    DynamicTest.stream(
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                String.format(
+                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
+                    INDEX_TO_ADD_AT,
+                    stringify(elementToAdd),
+                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+            doesNotSupportAddAtMinusOne)
+        .forEachOrdered(subTests::add);
   }
 }
