@@ -1,3 +1,5 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 plugins {
     `java-library`
     eclipse
@@ -11,7 +13,7 @@ plugins {
     id("net.ltgt.errorprone") // No version needed, as already imported in buildSrc/build.gradle
 }
 
-// Configuration for Java - START
+// Java
 group = "com.github.jbduncan"
 // TODO: Start at version 0.0.1? Consider following semver.
 version = "1.0-SNAPSHOT"
@@ -47,9 +49,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junit5Version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
 }
-// Configuration for Java - END
 
-// Configuration for PMD - START
+// PMD
 val pmdVersion: String by project
 
 pmd {
@@ -63,9 +64,8 @@ tasks.withType<Pmd> {
         enabled = false
     }
 }
-// Configuration for PMD - END
 
-// Configuration for error-prone - START (https://github.com/tbroyer/gradle-errorprone-plugin)
+// error-prone (https://github.com/tbroyer/gradle-errorprone-plugin)
 val errorProneVersion: String by project
 
 dependencies {
@@ -133,15 +133,12 @@ val compileTestJava by tasks.getting(JavaCompile::class) {
                     "-Xep:ClassCanBeStatic:OFF")))
 }
 
-// Configuration for error-prone - END
-
-// Configuration for Refaster - START (http://errorprone.info/docs/refaster)
+// Refaster (buildSrc/, http://errorprone.info/docs/refaster)
 apply {
     plugin("com.github.jbduncan.gradle.refaster")
 }
-// Configuration for Refaster - END
 
-// Configuration for Spotless: https://github.com/diffplug/spotless
+// Spotless (https://github.com/diffplug/spotless)
 val googleJavaFormatVersion: String by project
 val ktlintVersion: String by project
 
@@ -173,10 +170,25 @@ spotless {
     }
     encoding("UTF-8")
 }
-// Configuration for Spotless - END
 
 // If both Spotless and Refaster are requested, make sure Spotless runs after Refaster so that the
 // code remains formatted as expected.
 afterEvaluate {
     tasks["spotlessApply"].mustRunAfter("refasterApply")
+}
+
+// gradle-versions-plugin (https://github.com/ben-manes/gradle-versions-plugin)
+tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+    resolutionStrategy {
+        componentSelection {
+            all {
+                val rejected = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea").any { qualifier ->
+                    candidate.version.matches(Regex("(?i).*[.-]$qualifier[.\\d-+]*"))
+                }
+                if (rejected) {
+                    reject("Release candidate")
+                }
+            }
+        }
+    }
 }
