@@ -25,6 +25,7 @@
        "category/java/documentation.xml" -->
 
   <rule ref="category/java/errorprone.xml">
+    <exclude name="AvoidDuplicateLiterals"/> <!-- Not always practical to enforce -->
     <exclude name="DataflowAnomalyAnalysis"/> <!-- False positive(s) -->
     <exclude name="BeanMembersShouldSerialize"/> <!-- We avoid serialization; see Effective Java -->
     <exclude name="AvoidFieldNameMatchingMethodName"/> <!-- Impractical -->
