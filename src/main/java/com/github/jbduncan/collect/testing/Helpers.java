@@ -35,8 +35,7 @@ final class Helpers {
   private Helpers() {}
 
   static Set<CollectionSize> extractConcreteSizes(Set<Feature<?>> features) {
-    return features
-        .stream()
+    return features.stream()
         .filter(CollectionSize.class::isInstance)
         .map(CollectionSize.class::cast)
         .filter(Helpers::isConcreteSize)
