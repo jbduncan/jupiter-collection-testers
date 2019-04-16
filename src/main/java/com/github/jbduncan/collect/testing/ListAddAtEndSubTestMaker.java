@@ -33,7 +33,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtEndSubTestMaker<E> {
-  private static final String INDEX_TO_ADD_AT = "size()";
 
   private final TestListGenerator<E> generator;
   private final SampleElements<E> samples;
@@ -129,19 +128,15 @@ final class ListAddAtEndSubTestMaker<E> {
           list.add(list.size(), null);
           List<E> expected =
               append(newCollectionWithNullInMiddleOfSize(collectionSize, samples), null);
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
+          assertIterableEquals(expected, list, "Not true that list was appended with null");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
-                    "size()",
-                    "null",
-                    stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+                "Supports List.add(size(), null) on "
+                    + stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
             supportsAddAtEndWithExistingNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -180,26 +175,19 @@ final class ListAddAtEndSubTestMaker<E> {
           assertThrows(
               UnsupportedOperationException.class,
               () -> list.add(list.size(), null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      "null"));
+              "Not true that list.add(null) threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    "null",
-                    stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+                "Doesn't support List.add(size(), null) on "
+                    + stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
             doesNotSupportAddAtEndWithExistingNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -214,10 +202,7 @@ final class ListAddAtEndSubTestMaker<E> {
           assertIterableEquals(
               expected,
               list,
-              () ->
-                  String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
-                      stringify(elementToAdd)));
+              () -> "Not true that list was appended with " + stringify(elementToAdd));
         };
 
     // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
@@ -226,11 +211,10 @@ final class ListAddAtEndSubTestMaker<E> {
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    stringify(elementToAdd),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Supports List.add(size(), "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             supportsAddAtEnd)
         .forEachOrdered(subTests::add);
   }
@@ -244,14 +228,13 @@ final class ListAddAtEndSubTestMaker<E> {
               UnsupportedOperationException.class,
               () -> list.add(list.size(), elementToAdd),
               () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      stringify(elementToAdd)));
+                  "Not true that list.add("
+                      + stringify(elementToAdd)
+                      + ") threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
@@ -260,11 +243,10 @@ final class ListAddAtEndSubTestMaker<E> {
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    stringify(elementToAdd),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Doesn't support List.add(size(), "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddAtEnd)
         .forEachOrdered(subTests::add);
   }

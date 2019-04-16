@@ -32,7 +32,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtSizePlusOneSubTestMaker<E> {
-  private static final String INDEX_TO_ADD_AT = "size() + 1";
 
   private final TestListGenerator<E> generator;
   private final SampleElements<E> samples;
@@ -148,27 +147,23 @@ final class ListAddAtSizePlusOneSubTestMaker<E> {
               expectedExceptionType,
               () -> list.add(list.size() + 1, null),
               () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      list.size() + 1,
-                      "null",
-                      expectedExceptionType));
+                  "Not true that list.add("
+                      + (list.size() + 1)
+                      + ", null"
+                      + ") threw exception of type "
+                      + expectedExceptionType);
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    "null",
-                    stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+                "Doesn't support List.add(size() + 1, null) on "
+                    + stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
             doesNotSupportAddAtSizePlusOneWithExistingNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -183,27 +178,26 @@ final class ListAddAtSizePlusOneSubTestMaker<E> {
               expectedExceptionType,
               () -> list.add(list.size() + 1, elementToAdd),
               () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_INT_E_THREW_EXPECTED_EXCEPTION_TYPE,
-                      list.size() + 1,
-                      stringify(elementToAdd),
-                      expectedExceptionType));
+                  "Not true that list.add("
+                      + (list.size() + 1)
+                      + ", "
+                      + stringify(elementToAdd)
+                      + ") threw exception of type "
+                      + expectedExceptionType);
 
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    stringify(elementToAdd),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Doesn't support List.add(size() + 1, "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddAtSizePlusOne)
         .forEachOrdered(subTests::add);
   }

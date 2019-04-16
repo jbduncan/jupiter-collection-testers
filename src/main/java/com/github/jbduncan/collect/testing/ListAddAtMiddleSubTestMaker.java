@@ -35,7 +35,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 
 final class ListAddAtMiddleSubTestMaker<E> {
-  private static final String INDEX_TO_ADD_AT = "middleIndex()";
 
   private final TestListGenerator<E> generator;
   private final SampleElements<E> samples;
@@ -137,20 +136,19 @@ final class ListAddAtMiddleSubTestMaker<E> {
               expected,
               list,
               () ->
-                  String.format(
-                      "Not true that %s was inserted at index %s of list, or that elements in list are in expected order",
-                      quote("null"), middleIndex));
+                  "Not true that "
+                      + quote("null")
+                      + " was inserted at index "
+                      + middleIndex
+                      + " of list, or that elements in list are in expected order");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    "null",
-                    stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+                "Supports List.add(middleIndex(), null) on "
+                    + stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
             supportsAddAtMiddleWithExistingNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -189,26 +187,19 @@ final class ListAddAtMiddleSubTestMaker<E> {
           assertThrows(
               UnsupportedOperationException.class,
               () -> list.add(middleIndex(list), null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      "null"));
+              "Not true that list.add(null) threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    "null",
-                    stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+                "Doesn't support List.add(middleIndex(), null) on "
+                    + stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
             doesNotSupportAddAtMiddleWithExistingNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -226,9 +217,11 @@ final class ListAddAtMiddleSubTestMaker<E> {
               expected,
               list,
               () ->
-                  String.format(
-                      "Not true that %s was inserted at index %s of list, or that elements in list are in expected order",
-                      stringify(elementToAdd), middleIndex));
+                  "Not true that "
+                      + stringify(elementToAdd)
+                      + " was inserted at index "
+                      + middleIndex
+                      + " of list, or that elements in list are in expected order");
         };
 
     // [].add(middleIndex(), E) is already indirectly tested by ListAddAtStartSubTestMaker,
@@ -237,11 +230,10 @@ final class ListAddAtMiddleSubTestMaker<E> {
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    stringify(elementToAdd),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Supports List.add(middleIndex(), "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             supportsAddAtMiddle)
         .forEachOrdered(subTests::add);
   }
@@ -255,14 +247,13 @@ final class ListAddAtMiddleSubTestMaker<E> {
               UnsupportedOperationException.class,
               () -> list.add(middleIndex(list), elementToAdd),
               () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      stringify(elementToAdd)));
+                  "Not true that list.add("
+                      + stringify(elementToAdd)
+                      + ") threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     // [].add(middleIndex(), E) is already indirectly tested by ListAddAtStartSubTestMaker,
@@ -271,11 +262,10 @@ final class ListAddAtMiddleSubTestMaker<E> {
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD_WITH_INDEX,
-                    INDEX_TO_ADD_AT,
-                    stringify(elementToAdd),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Doesn't support List.add(middleIndex(), "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddAtMiddle)
         .forEachOrdered(subTests::add);
   }

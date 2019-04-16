@@ -156,24 +156,19 @@ final class ListAddTester<E> {
 
           assertTrue(
               list.add(newElement),
-              () -> String.format("Not true that list.add(%s) returned true", quote(newElement)));
+              () -> "Not true that list.add(" + quote(newElement) + ") returned true");
           List<E> expected = append(newCollectionOfSize(collectionSize, samples), newElement);
           assertIterableEquals(
-              expected,
-              list,
-              () ->
-                  String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
-                      quote(newElement)));
+              expected, list, () -> "Not true that list was appended with " + quote(newElement));
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
-                String.format(
-                    "Supports List.add(%s) on %s",
-                    stringify(newElement),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Supports List.add("
+                    + stringify(newElement)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             supportsAddWithNewElement)
         .forEachOrdered(subTests::add);
   }
@@ -185,26 +180,21 @@ final class ListAddTester<E> {
 
           assertTrue(
               list.add(existingElement),
-              () ->
-                  String.format(
-                      "Not true that list.add(%s) returned true", quote(existingElement)));
+              () -> "Not true that list.add(" + quote(existingElement) + ") returned true");
           List<E> expected = append(newCollectionOfSize(collectionSize, samples), existingElement);
           assertIterableEquals(
               expected,
               list,
-              () ->
-                  String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_APPENDED,
-                      quote(existingElement)));
+              () -> "Not true that list was appended with " + quote(existingElement));
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    "Supports List.add(%s) on %s",
-                    stringify(existingElement),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Supports List.add("
+                    + stringify(existingElement)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             supportsAddWithExistingElement)
         .forEachOrdered(subTests::add);
   }
@@ -216,17 +206,16 @@ final class ListAddTester<E> {
 
           assertTrue(list.add(null), "Not true that list.add(null) returned true");
           List<E> expected = append(newCollectionOfSize(collectionSize, samples), null);
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
+          assertIterableEquals(expected, list, "Not true that list was appended with null");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
-                String.format(
-                    "Supports List.add(%s) on %s",
-                    stringify(null),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Supports List.add("
+                    + stringify(null)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             supportsAddWithNewNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -239,18 +228,15 @@ final class ListAddTester<E> {
           assertTrue(list.add(null), "Not true that list.add(null) returned true");
           List<E> expected =
               append(newCollectionWithNullInMiddleOfSize(collectionSize, samples), null);
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
+          assertIterableEquals(expected, list, "Not true that list was appended with null");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    "Supports List.add(%s) on %s",
-                    "null",
-                    stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+                "Supports List.add(null) on "
+                    + stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
             supportsAddWithExistingNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -264,23 +250,22 @@ final class ListAddTester<E> {
               UnsupportedOperationException.class,
               () -> list.add(newElement),
               () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      quote(newElement)));
+                  "Not true that list.add("
+                      + quote(newElement)
+                      + ") threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
-                String.format(
-                    "Doesn't support List.add(%s) on %s",
-                    stringify(newElement),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Doesn't support List.add("
+                    + stringify(newElement)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddWithNewElement)
         .forEachOrdered(subTests::add);
   }
@@ -294,23 +279,22 @@ final class ListAddTester<E> {
               UnsupportedOperationException.class,
               () -> list.add(existingElement),
               () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      quote(existingElement)));
+                  "Not true that list.add("
+                      + quote(existingElement)
+                      + ") threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    "Doesn't support List.add(%s) on %s",
-                    stringify(existingElement),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Doesn't support List.add("
+                    + stringify(existingElement)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddWithExistingElement)
         .forEachOrdered(subTests::add);
   }
@@ -323,24 +307,20 @@ final class ListAddTester<E> {
           assertThrows(
               UnsupportedOperationException.class,
               () -> list.add(null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      "null"));
+              "Not true that list.add(null) threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
-                String.format(
-                    "Doesn't support List.add(%s) on %s",
-                    stringify(null),
-                    stringifyElements(newCollectionOfSize(collectionSize, samples))),
+                "Doesn't support List.add("
+                    + stringify(null)
+                    + ") on "
+                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddWithNewNullElement)
         .forEachOrdered(subTests::add);
   }
@@ -353,25 +333,19 @@ final class ListAddTester<E> {
           assertThrows(
               UnsupportedOperationException.class,
               () -> list.add(null),
-              () ->
-                  String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_THAT_LIST_ADD_THREW_UNSUPPORTED_OPERATION_EXCEPTION,
-                      "null"));
+              "Not true that list.add(null) threw UnsupportedOperationException");
           assertIterableEquals(
               newCollectionWithNullInMiddleOfSize(collectionSize, samples),
               list,
-              ListContractConstants.NOT_TRUE_THAT_LIST_REMAINED_UNCHANGED);
+              "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
-                String.format(
-                    "Doesn't support List.add(%s) on %s",
-                    "null",
-                    stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
+                "Doesn't support List.add(null) on "
+                    + stringifyElements(
+                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
             doesNotSupportAddWithExistingNullElement)
         .forEachOrdered(subTests::add);
   }
