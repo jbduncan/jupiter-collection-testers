@@ -138,10 +138,8 @@ final class ListAddAtMiddleSubTestMaker<E> {
               list,
               () ->
                   String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
-                      quote("null"),
-                      middleIndex));
+                      "Not true that %s was inserted at index %s of list, or that elements in list are in expected order",
+                      quote("null"), middleIndex));
         };
 
     DynamicTest.stream(
@@ -229,10 +227,8 @@ final class ListAddAtMiddleSubTestMaker<E> {
               list,
               () ->
                   String.format(
-                      ListContractConstants
-                          .FORMAT_NOT_TRUE_WAS_INSERTED_AT_INDEX_OR_IN_EXPECTED_ORDER,
-                      stringify(elementToAdd),
-                      middleIndex));
+                      "Not true that %s was inserted at index %s of list, or that elements in list are in expected order",
+                      stringify(elementToAdd), middleIndex));
         };
 
     // [].add(middleIndex(), E) is already indirectly tested by ListAddAtStartSubTestMaker,

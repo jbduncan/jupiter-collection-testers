@@ -103,15 +103,14 @@ final class ListAddTester<E> {
       appendSupportsAddWithNewElementTests(subTests);
       appendSupportsAddWithExistingElementTests(subTests);
 
-      tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_E, subTests));
+      tests.add(dynamicContainer("Supports List.add(E)", subTests));
 
       if (!features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
         List<DynamicTest> innerSubTests = new ArrayList<>();
 
         appendDoesNotSupportAddWithNewNullElementTests(innerSubTests);
 
-        tests.add(
-            dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_NULL, innerSubTests));
+        tests.add(dynamicContainer("Doesn't support List.add(null)", innerSubTests));
       }
     }
   }
@@ -124,8 +123,7 @@ final class ListAddTester<E> {
       appendSupportsAddWithNewNullElementTests(subTests);
       appendSupportsAddWithExistingNullElementTests(subTests);
 
-      tests.add(
-          dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_E_WITH_NULL_ELEMENT, subTests));
+      tests.add(dynamicContainer("Supports List.add(null)", subTests));
     }
   }
 
@@ -136,7 +134,7 @@ final class ListAddTester<E> {
       appendDoesNotSupportAddWithNewElementTests(subTests);
       appendDoesNotSupportAddWithExistingElementTests(subTests);
 
-      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_E, subTests));
+      tests.add(dynamicContainer("Doesn't support List.add(E)", subTests));
     }
   }
 
@@ -147,7 +145,7 @@ final class ListAddTester<E> {
       appendDoesNotSupportAddWithNewNullElementTests(subTests);
       appendDoesNotSupportAddWithExistingNullElementTests(subTests);
 
-      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_NULL, subTests));
+      tests.add(dynamicContainer("Doesn't support List.add(null)", subTests));
     }
   }
 
@@ -158,10 +156,7 @@ final class ListAddTester<E> {
 
           assertTrue(
               list.add(newElement),
-              () ->
-                  String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE,
-                      quote(newElement)));
+              () -> String.format("Not true that list.add(%s) returned true", quote(newElement)));
           List<E> expected = append(newCollectionOfSize(collectionSize, samples), newElement);
           assertIterableEquals(
               expected,
@@ -176,7 +171,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
+                    "Supports List.add(%s) on %s",
                     stringify(newElement),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
             supportsAddWithNewElement)
@@ -192,8 +187,7 @@ final class ListAddTester<E> {
               list.add(existingElement),
               () ->
                   String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_ADD_RETURNED_TRUE,
-                      quote(existingElement)));
+                      "Not true that list.add(%s) returned true", quote(existingElement)));
           List<E> expected = append(newCollectionOfSize(collectionSize, samples), existingElement);
           assertIterableEquals(
               expected,
@@ -208,7 +202,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
+                    "Supports List.add(%s) on %s",
                     stringify(existingElement),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
             supportsAddWithExistingElement)
@@ -220,8 +214,7 @@ final class ListAddTester<E> {
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
 
-          assertTrue(
-              list.add(null), ListContractConstants.NOT_TRUE_THAT_LIST_ADD_NULL_RETURNED_TRUE);
+          assertTrue(list.add(null), "Not true that list.add(null) returned true");
           List<E> expected = append(newCollectionOfSize(collectionSize, samples), null);
           assertIterableEquals(
               expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_APPENDED_WITH_NULL);
@@ -231,7 +224,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
+                    "Supports List.add(%s) on %s",
                     stringify(null),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
             supportsAddWithNewNullElement)
@@ -243,8 +236,7 @@ final class ListAddTester<E> {
         collectionSize -> {
           List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
 
-          assertTrue(
-              list.add(null), ListContractConstants.NOT_TRUE_THAT_LIST_ADD_NULL_RETURNED_TRUE);
+          assertTrue(list.add(null), "Not true that list.add(null) returned true");
           List<E> expected =
               append(newCollectionWithNullInMiddleOfSize(collectionSize, samples), null);
           assertIterableEquals(
@@ -255,7 +247,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_SUPPORTS_LIST_ADD,
+                    "Supports List.add(%s) on %s",
                     "null",
                     stringifyElements(
                         newCollectionWithNullInMiddleOfSize(collectionSize, samples))),
@@ -286,7 +278,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
+                    "Doesn't support List.add(%s) on %s",
                     stringify(newElement),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
             doesNotSupportAddWithNewElement)
@@ -316,7 +308,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
+                    "Doesn't support List.add(%s) on %s",
                     stringify(existingElement),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
             doesNotSupportAddWithExistingElement)
@@ -346,7 +338,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
+                    "Doesn't support List.add(%s) on %s",
                     stringify(null),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
             doesNotSupportAddWithNewNullElement)
@@ -376,7 +368,7 @@ final class ListAddTester<E> {
             allSupportedCollectionSizesExceptZero.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_DOESNT_SUPPORT_LIST_ADD,
+                    "Doesn't support List.add(%s) on %s",
                     "null",
                     stringifyElements(
                         newCollectionWithNullInMiddleOfSize(collectionSize, samples))),

@@ -150,7 +150,7 @@ final class ListAddWithIndexTester<E> {
         }
       }
 
-      tests.add(dynamicContainer(ListContractConstants.SUPPORTS_LIST_ADD_INT_E, subTests));
+      tests.add(dynamicContainer("Supports List.add(int, E)", subTests));
 
       if (!features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
         List<DynamicTest> innerSubTests = new ArrayList<>();
@@ -159,9 +159,7 @@ final class ListAddWithIndexTester<E> {
         innerSubTests.addAll(listAddAtEndSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
         innerSubTests.addAll(
             listAddAtMiddleSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
-        tests.add(
-            dynamicContainer(
-                ListContractConstants.DOESNT_SUPPORT_LIST_ADD_INT_NULL, innerSubTests));
+        tests.add(dynamicContainer("Doesn't support List.add(int, null)", innerSubTests));
       }
     }
   }
@@ -195,9 +193,7 @@ final class ListAddWithIndexTester<E> {
               .expectedExceptionType(IndexOutOfBoundsException.class)
               .build()
               .doesNotSupportAddWithIndexForNullsSubTests());
-      tests.add(
-          dynamicContainer(
-              ListContractConstants.SUPPORTS_LIST_ADD_INT_E_WITH_NULL_ELEMENT, subTests));
+      tests.add(dynamicContainer("Supports List.add(int, null)", subTests));
     }
   }
 
@@ -229,7 +225,7 @@ final class ListAddWithIndexTester<E> {
               .expectedExceptionType(UnsupportedOperationException.class)
               .build()
               .doesNotSupportAddWithIndexSubTests());
-      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_INT_E, subTests));
+      tests.add(dynamicContainer("Doesn't support List.add(int, E)", subTests));
     }
   }
 
@@ -261,7 +257,7 @@ final class ListAddWithIndexTester<E> {
               .expectedExceptionType(UnsupportedOperationException.class)
               .build()
               .doesNotSupportAddWithIndexForNullsSubTests());
-      tests.add(dynamicContainer(ListContractConstants.DOESNT_SUPPORT_LIST_ADD_INT_NULL, subTests));
+      tests.add(dynamicContainer("Doesn't support List.add(int, null)", subTests));
     }
   }
 }

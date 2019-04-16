@@ -140,8 +140,7 @@ final class ListAddAtStartSubTestMaker<E> {
           list.add(0, null);
           List<E> expected =
               prepend(null, newCollectionWithNullInMiddleOfSize(collectionSize, samples));
-          assertIterableEquals(
-              expected, list, ListContractConstants.NOT_TRUE_THAT_LIST_WAS_PREPENDED_WITH_NULL);
+          assertIterableEquals(expected, list, "Not true that list was prepended with null");
         };
 
     DynamicTest.stream(
@@ -229,8 +228,7 @@ final class ListAddAtStartSubTestMaker<E> {
               list,
               () ->
                   String.format(
-                      ListContractConstants.FORMAT_NOT_TRUE_THAT_LIST_WAS_PREPENDED,
-                      stringify(elementToAdd)));
+                      "Not true that list was prepended with %s", stringify(elementToAdd)));
         };
 
     DynamicTest.stream(
@@ -297,7 +295,7 @@ final class ListAddAtStartSubTestMaker<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION,
+                    "List.add(%s, %s) fails fast when concurrently modifying %s",
                     INDEX_TO_ADD_AT,
                     stringify(newElement),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
@@ -327,7 +325,7 @@ final class ListAddAtStartSubTestMaker<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 String.format(
-                    ListContractConstants.FORMAT_FAILS_FAST_ON_CONCURRENT_MODIFICATION,
+                    "List.add(%s, %s) fails fast when concurrently modifying %s",
                     INDEX_TO_ADD_AT,
                     stringify(null),
                     stringifyElements(newCollectionOfSize(collectionSize, samples))),
