@@ -38,12 +38,8 @@ final class Helpers {
     return features.stream()
         .filter(CollectionSize.class::isInstance)
         .map(CollectionSize.class::cast)
-        .filter(Helpers::isConcreteSize)
+        .filter(collectionSize -> collectionSize != CollectionSize.SUPPORTS_ANY_SIZE)
         .collect(toUnmodifiableInsertionOrderSet());
-  }
-
-  private static boolean isConcreteSize(CollectionSize collectionSize) {
-    return collectionSize != CollectionSize.SUPPORTS_ANY_SIZE;
   }
 
   private static <T> Collector<T, ?, Set<T>> toUnmodifiableInsertionOrderSet() {
@@ -122,7 +118,7 @@ final class Helpers {
     return Collections.unmodifiableList(result);
   }
 
-  static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
+  private static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
     return collectingAndThen(toList(), Collections::unmodifiableList);
   }
 
