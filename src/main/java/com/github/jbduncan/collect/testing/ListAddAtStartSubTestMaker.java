@@ -307,9 +307,7 @@ final class ListAddAtStartSubTestMaker<E> {
     DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
-                "List.add(0, "
-                    + stringify(null)
-                    + ") fails fast when concurrently modifying "
+                "List.add(0, null) fails fast when concurrently modifying "
                     + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             failsFastOnCme)
         .forEachOrdered(subTests::add);

@@ -46,8 +46,6 @@ final class ListAddTester<E> {
   private final E newElement;
   private final E existingElement;
   private final Set<Feature<?>> features;
-  private final Set<CollectionSize> allSupportedCollectionSizes;
-  private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
   private ListAddTester(TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
     this.generator = requireNonNull(testListGenerator, "testListGenerator");
@@ -55,9 +53,6 @@ final class ListAddTester<E> {
     this.newElement = samples.e3();
     this.existingElement = samples.e0();
     this.features = requireNonNull(features, "features");
-    this.allSupportedCollectionSizes = extractConcreteSizes(features);
-    this.allSupportedCollectionSizesExceptZero =
-        minus(allSupportedCollectionSizes, CollectionSize.SUPPORTS_ZERO);
   }
 
   static <E> Builder<E> builder() {
@@ -163,7 +158,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizes.iterator(),
+            extractConcreteSizes(features).iterator(),
             collectionSize ->
                 "Supports List.add("
                     + stringify(newElement)
@@ -189,7 +184,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
+            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
             collectionSize ->
                 "Supports List.add("
                     + stringify(existingElement)
@@ -210,11 +205,9 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizes.iterator(),
+            extractConcreteSizes(features).iterator(),
             collectionSize ->
-                "Supports List.add("
-                    + stringify(null)
-                    + ") on "
+                "Supports List.add(null) on "
                     + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             supportsAddWithNewNullElement)
         .forEachOrdered(subTests::add);
@@ -232,7 +225,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
+            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
             collectionSize ->
                 "Supports List.add(null) on "
                     + stringifyElements(
@@ -260,7 +253,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizes.iterator(),
+            extractConcreteSizes(features).iterator(),
             collectionSize ->
                 "Doesn't support List.add("
                     + stringify(newElement)
@@ -289,7 +282,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
+            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
             collectionSize ->
                 "Doesn't support List.add("
                     + stringify(existingElement)
@@ -315,11 +308,9 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizes.iterator(),
+            extractConcreteSizes(features).iterator(),
             collectionSize ->
-                "Doesn't support List.add("
-                    + stringify(null)
-                    + ") on "
+                "Doesn't support List.add(null) on "
                     + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             doesNotSupportAddWithNewNullElement)
         .forEachOrdered(subTests::add);
@@ -341,7 +332,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
+            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
             collectionSize ->
                 "Doesn't support List.add(null) on "
                     + stringifyElements(
