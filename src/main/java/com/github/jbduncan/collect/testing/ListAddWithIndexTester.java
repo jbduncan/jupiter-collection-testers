@@ -16,7 +16,7 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
-import static com.github.jbduncan.collect.testing.Helpers.minus;
+import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizesExceptZero;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 
@@ -35,45 +35,12 @@ final class ListAddWithIndexTester<E> {
   private final E newElement;
   private final E existingElement;
 
-  private final ListAddAtStartSubTestMaker<E> listAddAtStartSubTestMaker;
-  private final ListAddAtEndSubTestMaker<E> listAddAtEndSubTestMaker;
-  private final ListAddAtMiddleSubTestMaker<E> listAddAtMiddleSubTestMaker;
-
   private ListAddWithIndexTester(TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
     this.testListGenerator = requireNonNull(testListGenerator, "testListGenerator");
     this.features = requireNonNull(features, "features");
     this.samples = requireNonNull(testListGenerator.samples(), "samples");
     this.newElement = samples.e3();
     this.existingElement = samples.e0();
-
-    this.listAddAtStartSubTestMaker =
-        ListAddAtStartSubTestMaker.<E>builder()
-            .testListGenerator(testListGenerator)
-            .sampleElements(samples)
-            .newElement(newElement)
-            .existingElement(existingElement)
-            .allSupportedCollectionSizes(extractConcreteSizes(features))
-            .allSupportedCollectionSizesExceptZero(
-                minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
-            .build();
-    this.listAddAtEndSubTestMaker =
-        ListAddAtEndSubTestMaker.<E>builder()
-            .testListGenerator(testListGenerator)
-            .sampleElements(samples)
-            .newElement(newElement)
-            .existingElement(existingElement)
-            .allSupportedCollectionSizesExceptZero(
-                minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
-            .build();
-    this.listAddAtMiddleSubTestMaker =
-        ListAddAtMiddleSubTestMaker.<E>builder()
-            .testListGenerator(testListGenerator)
-            .sampleElements(samples)
-            .newElement(newElement)
-            .existingElement(existingElement)
-            .allSupportedCollectionSizesExceptZero(
-                minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
-            .build();
   }
 
   static <E> Builder<E> builder() {
@@ -113,9 +80,34 @@ final class ListAddWithIndexTester<E> {
   private void generateSupportsAddWithIndexTests(List<DynamicNode> tests) {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
-      subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexSubTests());
-      subTests.addAll(listAddAtEndSubTestMaker.supportsAddWithIndexSubTests());
-      subTests.addAll(listAddAtMiddleSubTestMaker.supportsAddWithIndexSubTests());
+      subTests.addAll(
+          ListAddAtStartSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(extractConcreteSizes(features))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .supportsAddWithIndexSubTests());
+      subTests.addAll(
+          ListAddAtEndSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .supportsAddWithIndexSubTests());
+      subTests.addAll(
+          ListAddAtMiddleSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .supportsAddWithIndexSubTests());
       subTests.addAll(
           ListAddAtMinusOneSubTestMaker.<E>builder()
               .testListGenerator(testListGenerator)
@@ -123,8 +115,7 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(IndexOutOfBoundsException.class)
               .build()
               .doesNotSupportAddWithIndexSubTests());
@@ -135,17 +126,32 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(IndexOutOfBoundsException.class)
               .build()
               .doesNotSupportAddWithIndexSubTests());
 
       if (features.contains(CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION)) {
-        subTests.addAll(listAddAtStartSubTestMaker.failsFastOnConcurrentModificationSubTests());
+        subTests.addAll(
+            ListAddAtStartSubTestMaker.<E>builder()
+                .testListGenerator(testListGenerator)
+                .sampleElements(samples)
+                .newElement(newElement)
+                .existingElement(existingElement)
+                .allSupportedCollectionSizes(extractConcreteSizes(features))
+                .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+                .build()
+                .failsFastOnConcurrentModificationSubTests());
         if (features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
           subTests.addAll(
-              listAddAtStartSubTestMaker
+              ListAddAtStartSubTestMaker.<E>builder()
+                  .testListGenerator(testListGenerator)
+                  .sampleElements(samples)
+                  .newElement(newElement)
+                  .existingElement(existingElement)
+                  .allSupportedCollectionSizes(extractConcreteSizes(features))
+                  .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+                  .build()
                   .failsFastOnConcurrentModificationInvolvingNullElementSubTests());
         }
       }
@@ -155,10 +161,33 @@ final class ListAddWithIndexTester<E> {
       if (!features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
         List<DynamicTest> innerSubTests = new ArrayList<>();
         innerSubTests.addAll(
-            listAddAtStartSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
-        innerSubTests.addAll(listAddAtEndSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
+            ListAddAtStartSubTestMaker.<E>builder()
+                .testListGenerator(testListGenerator)
+                .sampleElements(samples)
+                .newElement(newElement)
+                .existingElement(existingElement)
+                .allSupportedCollectionSizes(extractConcreteSizes(features))
+                .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+                .build()
+                .doesNotSupportAddWithIndexForNullsSubTests());
         innerSubTests.addAll(
-            listAddAtMiddleSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
+            ListAddAtEndSubTestMaker.<E>builder()
+                .testListGenerator(testListGenerator)
+                .sampleElements(samples)
+                .newElement(newElement)
+                .existingElement(existingElement)
+                .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+                .build()
+                .doesNotSupportAddWithIndexForNullsSubTests());
+        innerSubTests.addAll(
+            ListAddAtMiddleSubTestMaker.<E>builder()
+                .testListGenerator(testListGenerator)
+                .sampleElements(samples)
+                .newElement(newElement)
+                .existingElement(existingElement)
+                .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+                .build()
+                .doesNotSupportAddWithIndexForNullsSubTests());
         tests.add(dynamicContainer("Doesn't support List.add(int, null)", innerSubTests));
       }
     }
@@ -168,9 +197,34 @@ final class ListAddWithIndexTester<E> {
     if (features.containsAll(
         Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
       List<DynamicTest> subTests = new ArrayList<>();
-      subTests.addAll(listAddAtStartSubTestMaker.supportsAddWithIndexForNullsSubTests());
-      subTests.addAll(listAddAtEndSubTestMaker.supportsAddWithIndexForNullsSubTests());
-      subTests.addAll(listAddAtMiddleSubTestMaker.supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(
+          ListAddAtStartSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(extractConcreteSizes(features))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(
+          ListAddAtEndSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(
+          ListAddAtMiddleSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .supportsAddWithIndexForNullsSubTests());
       subTests.addAll(
           ListAddAtMinusOneSubTestMaker.<E>builder()
               .testListGenerator(testListGenerator)
@@ -178,8 +232,7 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(IndexOutOfBoundsException.class)
               .build()
               .doesNotSupportAddWithIndexForNullsSubTests());
@@ -190,8 +243,7 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(IndexOutOfBoundsException.class)
               .build()
               .doesNotSupportAddWithIndexForNullsSubTests());
@@ -202,9 +254,34 @@ final class ListAddWithIndexTester<E> {
   private void generateDoesNotSupportAddWithIndexTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
-      subTests.addAll(listAddAtStartSubTestMaker.doesNotSupportAddWithIndexSubTests());
-      subTests.addAll(listAddAtEndSubTestMaker.doesNotSupportAddWithIndexSubTests());
-      subTests.addAll(listAddAtMiddleSubTestMaker.doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(
+          ListAddAtStartSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(extractConcreteSizes(features))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(
+          ListAddAtEndSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(
+          ListAddAtMiddleSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .doesNotSupportAddWithIndexSubTests());
       subTests.addAll(
           ListAddAtMinusOneSubTestMaker.<E>builder()
               .testListGenerator(testListGenerator)
@@ -212,8 +289,7 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(UnsupportedOperationException.class)
               .build()
               .doesNotSupportAddWithIndexSubTests());
@@ -224,8 +300,7 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(UnsupportedOperationException.class)
               .build()
               .doesNotSupportAddWithIndexSubTests());
@@ -236,9 +311,34 @@ final class ListAddWithIndexTester<E> {
   private void generateDoesNotSupportAddWithIndexWithNullElementsTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
-      subTests.addAll(listAddAtStartSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
-      subTests.addAll(listAddAtEndSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
-      subTests.addAll(listAddAtMiddleSubTestMaker.doesNotSupportAddWithIndexForNullsSubTests());
+      subTests.addAll(
+          ListAddAtStartSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizes(extractConcreteSizes(features))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .doesNotSupportAddWithIndexForNullsSubTests());
+      subTests.addAll(
+          ListAddAtEndSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .doesNotSupportAddWithIndexForNullsSubTests());
+      subTests.addAll(
+          ListAddAtMiddleSubTestMaker.<E>builder()
+              .testListGenerator(testListGenerator)
+              .sampleElements(samples)
+              .newElement(newElement)
+              .existingElement(existingElement)
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
+              .build()
+              .doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(
           ListAddAtMinusOneSubTestMaker.<E>builder()
               .testListGenerator(testListGenerator)
@@ -246,8 +346,7 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(UnsupportedOperationException.class)
               .build()
               .doesNotSupportAddWithIndexForNullsSubTests());
@@ -258,8 +357,7 @@ final class ListAddWithIndexTester<E> {
               .newElement(newElement)
               .existingElement(existingElement)
               .allSupportedCollectionSizes(extractConcreteSizes(features))
-              .allSupportedCollectionSizesExceptZero(
-                  minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO))
+              .allSupportedCollectionSizesExceptZero(extractConcreteSizesExceptZero(features))
               .expectedExceptionType(UnsupportedOperationException.class)
               .build()
               .doesNotSupportAddWithIndexForNullsSubTests());

@@ -42,6 +42,12 @@ final class Helpers {
         .collect(toUnmodifiableInsertionOrderSet());
   }
 
+  static Set<CollectionSize> extractConcreteSizesExceptZero(Set<Feature<?>> features) {
+    return extractConcreteSizes(features).stream()
+        .filter(element -> !element.equals(CollectionSize.SUPPORTS_ZERO))
+        .collect(toUnmodifiableInsertionOrderSet());
+  }
+
   private static <T> Collector<T, ?, Set<T>> toUnmodifiableInsertionOrderSet() {
     return collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet);
   }
@@ -120,12 +126,6 @@ final class Helpers {
 
   private static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
     return collectingAndThen(toList(), Collections::unmodifiableList);
-  }
-
-  static <E> Set<E> minus(Set<E> set, E toRemove) {
-    return set.stream()
-        .filter(element -> !element.equals(toRemove))
-        .collect(toUnmodifiableInsertionOrderSet());
   }
 
   static <E> Stream<E> stream(Iterable<E> iterable) {

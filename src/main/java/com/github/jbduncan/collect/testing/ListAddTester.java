@@ -17,7 +17,7 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
-import static com.github.jbduncan.collect.testing.Helpers.minus;
+import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizesExceptZero;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.quote;
@@ -184,7 +184,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
+            extractConcreteSizesExceptZero(features).iterator(),
             collectionSize ->
                 "Supports List.add("
                     + stringify(existingElement)
@@ -225,7 +225,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
+            extractConcreteSizesExceptZero(features).iterator(),
             collectionSize ->
                 "Supports List.add(null) on "
                     + stringifyElements(
@@ -282,7 +282,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
+            extractConcreteSizesExceptZero(features).iterator(),
             collectionSize ->
                 "Doesn't support List.add("
                     + stringify(existingElement)
@@ -332,7 +332,7 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-            minus(extractConcreteSizes(features), CollectionSize.SUPPORTS_ZERO).iterator(),
+            extractConcreteSizesExceptZero(features).iterator(),
             collectionSize ->
                 "Doesn't support List.add(null) on "
                     + stringifyElements(
