@@ -41,6 +41,26 @@ final class ListAddAtSizePlusOneSubTestMaker<E> {
   private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
   private final Class<? extends Throwable> expectedExceptionType;
 
+  ListAddAtSizePlusOneSubTestMaker(
+      TestListGenerator<E> generator,
+      SampleElements<E> samples,
+      E newElement,
+      E existingElement,
+      Set<CollectionSize> allSupportedCollectionSizes,
+      Set<CollectionSize> allSupportedCollectionSizesExceptZero,
+      Class<? extends Throwable> expectedExceptionType) {
+    this.generator = requireNonNull(generator, "testListGenerator");
+    this.samples = requireNonNull(samples, "samples");
+    this.newElement = requireNonNull(newElement, "newElement");
+    this.existingElement = requireNonNull(existingElement, "existingElement");
+    this.allSupportedCollectionSizes =
+        requireNonNull(allSupportedCollectionSizes, "allSupportedCollectionSizes");
+    this.allSupportedCollectionSizesExceptZero =
+        requireNonNull(
+            allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
+    this.expectedExceptionType = requireNonNull(expectedExceptionType, "expectedExceptionType");
+  }
+
   private ListAddAtSizePlusOneSubTestMaker(Builder<E> builder) {
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
     this.samples = requireNonNull(builder.sampleElements, "samples");

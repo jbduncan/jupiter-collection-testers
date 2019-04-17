@@ -41,74 +41,24 @@ final class ListAddAtMinusOneSubTestMaker<E> {
   private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
   private final Class<? extends Throwable> expectedExceptionType;
 
-  private ListAddAtMinusOneSubTestMaker(Builder<E> builder) {
-    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(builder.sampleElements, "samples");
-    this.newElement = requireNonNull(builder.newElement, "newElement");
-    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
+  ListAddAtMinusOneSubTestMaker(
+      TestListGenerator<E> generator,
+      SampleElements<E> samples,
+      E newElement,
+      E existingElement,
+      Set<CollectionSize> allSupportedCollectionSizes,
+      Set<CollectionSize> allSupportedCollectionSizesExceptZero,
+      Class<? extends Throwable> expectedExceptionType) {
+    this.generator = requireNonNull(generator, "testListGenerator");
+    this.samples = requireNonNull(samples, "samples");
+    this.newElement = requireNonNull(newElement, "newElement");
+    this.existingElement = requireNonNull(existingElement, "existingElement");
     this.allSupportedCollectionSizes =
-        requireNonNull(builder.allSupportedCollectionSizes, "allSupportedCollectionSizes");
+        requireNonNull(allSupportedCollectionSizes, "allSupportedCollectionSizes");
     this.allSupportedCollectionSizesExceptZero =
         requireNonNull(
-            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
-    this.expectedExceptionType =
-        requireNonNull(builder.expectedExceptionType, "expectedExceptionType");
-  }
-
-  static <E> Builder<E> builder() {
-    return new Builder<>();
-  }
-
-  static final class Builder<E> {
-    private Builder() {}
-
-    private TestListGenerator<E> testListGenerator;
-    private SampleElements<E> sampleElements;
-    private E newElement;
-    private E existingElement;
-    private Set<CollectionSize> allSupportedCollectionSizes;
-    private Set<CollectionSize> allSupportedCollectionSizesExceptZero;
-    private Class<? extends Throwable> expectedExceptionType;
-
-    Builder<E> testListGenerator(TestListGenerator<E> testListGenerator) {
-      this.testListGenerator = testListGenerator;
-      return this;
-    }
-
-    Builder<E> sampleElements(SampleElements<E> sampleElements) {
-      this.sampleElements = sampleElements;
-      return this;
-    }
-
-    Builder<E> newElement(E newElement) {
-      this.newElement = newElement;
-      return this;
-    }
-
-    Builder<E> existingElement(E existingElement) {
-      this.existingElement = existingElement;
-      return this;
-    }
-
-    Builder<E> allSupportedCollectionSizes(Set<CollectionSize> allSupportedCollectionSizes) {
-      this.allSupportedCollectionSizes = allSupportedCollectionSizes;
-      return this;
-    }
-
-    Builder<E> allSupportedCollectionSizesExceptZero(
-        Set<CollectionSize> allSupportedCollectionSizesExceptZero) {
-      this.allSupportedCollectionSizesExceptZero = allSupportedCollectionSizesExceptZero;
-      return this;
-    }
-
-    Builder<E> expectedExceptionType(Class<? extends Throwable> expectedExceptionType) {
-      this.expectedExceptionType = expectedExceptionType;
-      return this;
-    }
-
-    ListAddAtMinusOneSubTestMaker<E> build() {
-      return new ListAddAtMinusOneSubTestMaker<>(this);
-    }
+            allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
+    this.expectedExceptionType = requireNonNull(expectedExceptionType, "expectedExceptionType");
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {

@@ -40,58 +40,19 @@ final class ListAddAtEndSubTestMaker<E> {
   private final E existingElement;
   private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
-  private ListAddAtEndSubTestMaker(Builder<E> builder) {
-    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(builder.sampleElements, "samples");
-    this.newElement = requireNonNull(builder.newElement, "newElement");
-    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
+  ListAddAtEndSubTestMaker(
+      TestListGenerator<E> generator,
+      SampleElements<E> samples,
+      E newElement,
+      E existingElement,
+      Set<CollectionSize> allSupportedCollectionSizesExceptZero) {
+    this.generator = requireNonNull(generator, "generator");
+    this.samples = requireNonNull(samples, "samples");
+    this.newElement = requireNonNull(newElement, "newElement");
+    this.existingElement = requireNonNull(existingElement, "existingElement");
     this.allSupportedCollectionSizesExceptZero =
         requireNonNull(
-            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
-  }
-
-  static <E> Builder<E> builder() {
-    return new Builder<>();
-  }
-
-  static final class Builder<E> {
-    private Builder() {}
-
-    private TestListGenerator<E> testListGenerator;
-    private SampleElements<E> sampleElements;
-    private E newElement;
-    private E existingElement;
-    private Set<CollectionSize> allSupportedCollectionSizesExceptZero;
-
-    Builder<E> testListGenerator(TestListGenerator<E> testListGenerator) {
-      this.testListGenerator = testListGenerator;
-      return this;
-    }
-
-    Builder<E> sampleElements(SampleElements<E> sampleElements) {
-      this.sampleElements = sampleElements;
-      return this;
-    }
-
-    Builder<E> newElement(E newElement) {
-      this.newElement = newElement;
-      return this;
-    }
-
-    Builder<E> existingElement(E existingElement) {
-      this.existingElement = existingElement;
-      return this;
-    }
-
-    Builder<E> allSupportedCollectionSizesExceptZero(
-        Set<CollectionSize> allSupportedCollectionSizesExceptZero) {
-      this.allSupportedCollectionSizesExceptZero = allSupportedCollectionSizesExceptZero;
-      return this;
-    }
-
-    ListAddAtEndSubTestMaker<E> build() {
-      return new ListAddAtEndSubTestMaker<>(this);
-    }
+            allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
   List<DynamicTest> supportsAddWithIndexSubTests() {

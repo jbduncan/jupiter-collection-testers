@@ -42,6 +42,21 @@ final class ListAddAtMiddleSubTestMaker<E> {
   private final E existingElement;
   private final Set<CollectionSize> allSupportedCollectionSizesExceptZero;
 
+  ListAddAtMiddleSubTestMaker(
+      TestListGenerator<E> generator,
+      SampleElements<E> samples,
+      E newElement,
+      E existingElement,
+      Set<CollectionSize> allSupportedCollectionSizesExceptZero) {
+    this.generator = requireNonNull(generator, "generator");
+    this.samples = requireNonNull(samples, "samples");
+    this.newElement = requireNonNull(newElement, "newElement");
+    this.existingElement = requireNonNull(existingElement, "existingElement");
+    this.allSupportedCollectionSizesExceptZero =
+        requireNonNull(
+            allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
+  }
+
   private ListAddAtMiddleSubTestMaker(Builder<E> builder) {
     this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
     this.samples = requireNonNull(builder.sampleElements, "samples");
