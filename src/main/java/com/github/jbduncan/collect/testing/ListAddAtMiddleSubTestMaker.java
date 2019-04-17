@@ -57,60 +57,6 @@ final class ListAddAtMiddleSubTestMaker<E> {
             allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
-  private ListAddAtMiddleSubTestMaker(Builder<E> builder) {
-    this.generator = requireNonNull(builder.testListGenerator, "testListGenerator");
-    this.samples = requireNonNull(builder.sampleElements, "samples");
-    this.newElement = requireNonNull(builder.newElement, "newElement");
-    this.existingElement = requireNonNull(builder.existingElement, "existingElement");
-    this.allSupportedCollectionSizesExceptZero =
-        requireNonNull(
-            builder.allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
-  }
-
-  static <E> Builder<E> builder() {
-    return new Builder<>();
-  }
-
-  static final class Builder<E> {
-    private Builder() {}
-
-    private TestListGenerator<E> testListGenerator;
-    private SampleElements<E> sampleElements;
-    private E newElement;
-    private E existingElement;
-    private Set<CollectionSize> allSupportedCollectionSizesExceptZero;
-
-    Builder<E> testListGenerator(TestListGenerator<E> testListGenerator) {
-      this.testListGenerator = testListGenerator;
-      return this;
-    }
-
-    Builder<E> sampleElements(SampleElements<E> sampleElements) {
-      this.sampleElements = sampleElements;
-      return this;
-    }
-
-    Builder<E> newElement(E newElement) {
-      this.newElement = newElement;
-      return this;
-    }
-
-    Builder<E> existingElement(E existingElement) {
-      this.existingElement = existingElement;
-      return this;
-    }
-
-    Builder<E> allSupportedCollectionSizesExceptZero(
-        Set<CollectionSize> allSupportedCollectionSizesExceptZero) {
-      this.allSupportedCollectionSizesExceptZero = allSupportedCollectionSizesExceptZero;
-      return this;
-    }
-
-    ListAddAtMiddleSubTestMaker<E> build() {
-      return new ListAddAtMiddleSubTestMaker<>(this);
-    }
-  }
-
   List<DynamicTest> supportsAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
     appendSupportsAddAtMiddleWithNewElement(subTests);
