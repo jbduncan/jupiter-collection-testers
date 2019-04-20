@@ -64,9 +64,12 @@ final class ListAddAtStartSubTestMaker<E> {
 
   List<DynamicTest> supportsAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendSupportsAddAtStartImpl(
-        subTests, newElement, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-    appendSupportsAddAtStartImpl(
+    appendTestsForSupportsAddAtStart(
+        subTests, //
+        newElement,
+        allSupportedCollectionSizes,
+        /* nullInMiddle= */ false);
+    appendTestsForSupportsAddAtStart(
         subTests,
         existingElement,
         allSupportedCollectionSizesExceptZero,
@@ -76,9 +79,9 @@ final class ListAddAtStartSubTestMaker<E> {
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendSupportsAddAtStartImpl(
+    appendTestsForSupportsAddAtStart(
         subTests, null, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-    appendSupportsAddAtStartImpl(
+    appendTestsForSupportsAddAtStart(
         subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
     return subTests;
   }
@@ -107,7 +110,7 @@ final class ListAddAtStartSubTestMaker<E> {
     return subTests;
   }
 
-  private void appendSupportsAddAtStartImpl(
+  private void appendTestsForSupportsAddAtStart(
       List<DynamicTest> subTests,
       E elementToAdd,
       Set<CollectionSize> supportedCollectionSizes,
