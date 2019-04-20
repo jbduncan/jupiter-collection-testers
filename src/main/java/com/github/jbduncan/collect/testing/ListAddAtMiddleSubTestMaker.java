@@ -185,8 +185,7 @@ final class ListAddAtMiddleSubTestMaker<E> {
                       + " of list, or that elements in list are in expected order");
         };
 
-    // [].add(middleIndex(), E) is already indirectly tested by ListAddAtStartSubTestMaker,
-    // because it tests [].add(0, E), and middleIndex() == 0 for empty lists, so we skip
+    // [].add(middleIndex(), E) is indirectly tested by ListAddAtStartSubTestMaker, so skip
     // CollectionSize.SUPPORTS_ZERO.
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
@@ -217,8 +216,7 @@ final class ListAddAtMiddleSubTestMaker<E> {
               "Not true that list remained unchanged");
         };
 
-    // [].add(middleIndex(), E) is already indirectly tested by ListAddAtStartSubTestMaker,
-    // because it tests [].add(0, E), and middleIndex() == 0 for empty lists, so we skip
+    // [].add(middleIndex(), E) is indirectly tested by ListAddAtStartSubTestMaker, so skip
     // CollectionSize.SUPPORTS_ZERO.
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),

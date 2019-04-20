@@ -166,8 +166,7 @@ final class ListAddAtEndSubTestMaker<E> {
               () -> "Not true that list was appended with " + stringify(elementToAdd));
         };
 
-    // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
-    // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
+    // [].add(size(), E) is indirectly tested by ListAddAtStartSubTestMaker, so skip
     // CollectionSize.SUPPORTS_ZERO.
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
@@ -198,8 +197,7 @@ final class ListAddAtEndSubTestMaker<E> {
               "Not true that list remained unchanged");
         };
 
-    // [].add(size(), E) is already indirectly tested by ListAddAtStartSubTestMaker, because it
-    // tests [].add(0, E), and List.size() == 0 for empty lists, so we skip
+    // [].add(size(), E) is indirectly tested by ListAddAtStartSubTestMaker, so skip
     // CollectionSize.SUPPORTS_ZERO.
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
