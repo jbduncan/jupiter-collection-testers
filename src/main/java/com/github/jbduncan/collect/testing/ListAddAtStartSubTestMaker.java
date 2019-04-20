@@ -86,6 +86,44 @@ final class ListAddAtStartSubTestMaker<E> {
     return subTests;
   }
 
+  private void appendTestsForSupportsAddAtStart(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      boolean nullInMiddle) {
+    ThrowingConsumer<CollectionSize> test =
+        collectionSize -> {
+          List<E> list =
+              nullInMiddle
+                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
+                  : newListToTest(generator, collectionSize);
+
+          list.add(0, elementToAdd);
+          Iterable<E> expected =
+              nullInMiddle
+                  ? prepend(
+                  elementToAdd, newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                  : prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
+          assertIterableEquals(
+              expected,
+              list,
+              () -> "Not true that list was prepended with " + stringify(elementToAdd));
+        };
+
+    DynamicTest.stream(
+        supportedCollectionSizes.iterator(),
+        collectionSize -> {
+          String testListToString =
+              nullInMiddle
+                  ? stringifyElements(
+                  newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                  : stringifyElements(newCollectionOfSize(collectionSize, samples));
+          return "Supports List.add(0, " + stringify(elementToAdd) + ") on " + testListToString;
+        },
+        test)
+        .forEachOrdered(subTests::add);
+  }
+
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
     appendDoesNotSupportAddAtStartImpl(
@@ -108,44 +146,6 @@ final class ListAddAtStartSubTestMaker<E> {
     appendDoesNotSupportAddAtStartImpl(
         subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
     return subTests;
-  }
-
-  private void appendTestsForSupportsAddAtStart(
-      List<DynamicTest> subTests,
-      E elementToAdd,
-      Set<CollectionSize> supportedCollectionSizes,
-      boolean nullInMiddle) {
-    ThrowingConsumer<CollectionSize> test =
-        collectionSize -> {
-          List<E> list =
-              nullInMiddle
-                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
-                  : newListToTest(generator, collectionSize);
-
-          list.add(0, elementToAdd);
-          Iterable<E> expected =
-              nullInMiddle
-                  ? prepend(
-                      elementToAdd, newCollectionWithNullInMiddleOfSize(collectionSize, samples))
-                  : prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
-          assertIterableEquals(
-              expected,
-              list,
-              () -> "Not true that list was prepended with " + stringify(elementToAdd));
-        };
-
-    DynamicTest.stream(
-            supportedCollectionSizes.iterator(),
-            collectionSize -> {
-              String testListToString =
-                  nullInMiddle
-                      ? stringifyElements(
-                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
-                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
-              return "Supports List.add(0, " + stringify(elementToAdd) + ") on " + testListToString;
-            },
-            test)
-        .forEachOrdered(subTests::add);
   }
 
   private void appendDoesNotSupportAddAtStartImpl(
