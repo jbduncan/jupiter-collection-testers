@@ -87,6 +87,9 @@ final class ListAddAtEndSubTestMaker<E> {
           assertIterableEquals(
               expected,
               list,
+              // TODO: Replace with message like:
+              //    "Not true that " + stringify(elementToAdd) + " was inserted at index 0 of"
+              //    + "list, or that elements in list are in expected order"
               () -> "Not true that list was appended with " + stringify(elementToAdd));
         };
 

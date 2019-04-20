@@ -18,7 +18,6 @@ package com.github.jbduncan.collect.testing;
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
 import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.quote;
 import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.middleIndex;
@@ -59,159 +58,101 @@ final class ListAddAtMiddleSubTestMaker<E> {
 
   List<DynamicTest> supportsAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendSupportsAddAtMiddleWithNewElement(subTests);
-    appendSupportsAddAtMiddleWithExistingElement(subTests);
+    appendTestsForSupportsAddAtMiddle(subTests, newElement, /* nullInMiddle= */ false);
+    appendTestsForSupportsAddAtMiddle(subTests, existingElement, /* nullInMiddle= */ false);
     return subTests;
-  }
-
-  private void appendSupportsAddAtMiddleWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtMiddleImpl(subTests, newElement);
-  }
-
-  private void appendSupportsAddAtMiddleWithExistingElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtMiddleImpl(subTests, existingElement);
   }
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendSupportsAddAtMiddleWithNewNull(subTests);
-    appendSupportsAddAtMiddleWithExistingNull(subTests);
+    appendTestsForSupportsAddAtMiddle(subTests, null, /* nullInMiddle= */ false);
+    appendTestsForSupportsAddAtMiddle(subTests, null, /* nullInMiddle= */ true);
     return subTests;
   }
 
-  private void appendSupportsAddAtMiddleWithNewNull(List<DynamicTest> subTests) {
-    appendSupportsAddAtMiddleImpl(subTests, null);
-  }
-
-  private void appendSupportsAddAtMiddleWithExistingNull(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtMiddleWithExistingNullElement =
+  private void appendTestsForSupportsAddAtMiddle(
+      List<DynamicTest> subTests, E elementToAdd, boolean nullInMiddle) {
+    ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
+          List<E> list =
+              nullInMiddle
+                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
+                  : newListToTest(generator, collectionSize);
           int middleIndex = middleIndex(list);
 
-          list.add(middleIndex, null);
+          list.add(middleIndex, elementToAdd);
           Iterable<E> expected =
-              insert(
-                  newCollectionWithNullInMiddleOfSize(collectionSize, samples), middleIndex, null);
+              nullInMiddle
+                  ? insert(
+                      newCollectionWithNullInMiddleOfSize(collectionSize, samples),
+                      middleIndex,
+                      elementToAdd)
+                  : insert(newCollectionOfSize(collectionSize, samples), middleIndex, elementToAdd);
           assertIterableEquals(
               expected,
               list,
               () ->
                   "Not true that "
-                      + quote("null")
+                      + stringify(elementToAdd)
                       + " was inserted at index "
                       + middleIndex
                       + " of list, or that elements in list are in expected order");
         };
 
+    // [].add(middleIndex(), E) is indirectly tested by ListAddAtStartSubTestMaker, so skip
+    // CollectionSize.SUPPORTS_ZERO.
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                "Supports List.add(middleIndex(), null) on "
-                    + stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-            supportsAddAtMiddleWithExistingNullElement)
+            collectionSize -> {
+              String testListToString =
+                  nullInMiddle
+                      ? stringifyElements(
+                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+              return "Supports List.add(middleIndex(), "
+                  + stringify(elementToAdd)
+                  + ") on "
+                  + testListToString;
+            },
+            testTemplate)
         .forEachOrdered(subTests::add);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendDoesNotSupportAddAtMiddleWithNewElement(subTests);
-    appendDoesNotSupportAddAtMiddleWithExistingElement(subTests);
+    appendTestsForDoesNotSupportAddAtMiddle(subTests, newElement, /* nullInMiddle= */ false);
+    appendTestsForDoesNotSupportAddAtMiddle(subTests, existingElement, /* nullInMiddle= */ false);
     return subTests;
-  }
-
-  private void appendDoesNotSupportAddAtMiddleWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleImpl(subTests, newElement);
-  }
-
-  private void appendDoesNotSupportAddAtMiddleWithExistingElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleImpl(subTests, existingElement);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendDoesNotSupportAddAtMiddleWithNewNull(subTests);
-    appendDoesNotSupportAddAtMiddleWithExistingNull(subTests);
+    appendTestsForDoesNotSupportAddAtMiddle(subTests, null, /* nullInMiddle= */ false);
+    appendTestsForDoesNotSupportAddAtMiddle(subTests, null, /* nullInMiddle= */ true);
     return subTests;
   }
 
-  private void appendDoesNotSupportAddAtMiddleWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMiddleImpl(subTests, null);
-  }
-
-  private void appendDoesNotSupportAddAtMiddleWithExistingNull(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddleWithExistingNullElement =
+  private void appendTestsForDoesNotSupportAddAtMiddle(
+      List<DynamicTest> subTests, E elementToAdd, boolean nullInMiddle) {
+    ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          assertThrows(
-              UnsupportedOperationException.class,
-              () -> list.add(middleIndex(list), null),
-              "Not true that list.add(null) threw UnsupportedOperationException");
-          assertIterableEquals(
-              newCollectionWithNullInMiddleOfSize(collectionSize, samples),
-              list,
-              "Not true that list remained unchanged");
-        };
-
-    DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                "Doesn't support List.add(middleIndex(), null) on "
-                    + stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-            doesNotSupportAddAtMiddleWithExistingNullElement)
-        .forEachOrdered(subTests::add);
-  }
-
-  private void appendSupportsAddAtMiddleImpl(List<DynamicTest> subTests, E elementToAdd) {
-    ThrowingConsumer<CollectionSize> supportsAddAtMiddle =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
-          int middleIndex = middleIndex(list);
-
-          list.add(middleIndex, elementToAdd);
-          Iterable<E> expected =
-              insert(newCollectionOfSize(collectionSize, samples), middleIndex, elementToAdd);
-          assertIterableEquals(
-              expected,
-              list,
-              () ->
-                  "Not true that "
-                      + stringify(elementToAdd)
-                      + " was inserted at index "
-                      + middleIndex
-                      + " of list, or that elements in list are in expected order");
-        };
-
-    // [].add(middleIndex(), E) is indirectly tested by ListAddAtStartSubTestMaker, so skip
-    // CollectionSize.SUPPORTS_ZERO.
-    DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                "Supports List.add(middleIndex(), "
-                    + stringify(elementToAdd)
-                    + ") on "
-                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
-            supportsAddAtMiddle)
-        .forEachOrdered(subTests::add);
-  }
-
-  private void appendDoesNotSupportAddAtMiddleImpl(List<DynamicTest> subTests, E elementToAdd) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMiddle =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
+          List<E> list =
+              nullInMiddle
+                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
+                  : newListToTest(generator, collectionSize);
 
           assertThrows(
               UnsupportedOperationException.class,
               () -> list.add(middleIndex(list), elementToAdd),
+              // TODO: Should say "Not true that list.add(0, " + stringify(elementToAdd) + ... ?
               () ->
                   "Not true that list.add("
                       + stringify(elementToAdd)
                       + ") threw UnsupportedOperationException");
           assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
+              nullInMiddle
+                  ? newCollectionWithNullInMiddleOfSize(collectionSize, samples)
+                  : newCollectionOfSize(collectionSize, samples),
               list,
               "Not true that list remained unchanged");
         };
@@ -220,12 +161,18 @@ final class ListAddAtMiddleSubTestMaker<E> {
     // CollectionSize.SUPPORTS_ZERO.
     DynamicTest.stream(
             allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                "Doesn't support List.add(middleIndex(), "
-                    + stringify(elementToAdd)
-                    + ") on "
-                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtMiddle)
+            collectionSize -> {
+              String testListToString =
+                  nullInMiddle
+                      ? stringifyElements(
+                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+              return "Doesn't support List.add(middleIndex(), "
+                  + stringify(elementToAdd)
+                  + ") on "
+                  + testListToString;
+            },
+            testTemplate)
         .forEachOrdered(subTests::add);
   }
 }
