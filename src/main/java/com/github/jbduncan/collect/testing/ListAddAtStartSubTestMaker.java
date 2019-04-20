@@ -23,6 +23,7 @@ import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -218,8 +219,6 @@ final class ListAddAtStartSubTestMaker<E> {
   }
 
   List<DynamicTest> failsFastOnConcurrentModificationSubTests() {
-    List<DynamicTest> subTests = new ArrayList<>();
-
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -233,7 +232,7 @@ final class ListAddAtStartSubTestMaker<E> {
               });
         };
 
-    DynamicTest.stream(
+    return DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 "List.add(0, "
@@ -241,14 +240,10 @@ final class ListAddAtStartSubTestMaker<E> {
                     + ") fails fast when concurrently modifying "
                     + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             failsFastOnCme)
-        .forEachOrdered(subTests::add);
-
-    return subTests;
+        .collect(toList());
   }
 
   List<DynamicTest> failsFastOnConcurrentModificationInvolvingNullElementSubTests() {
-    List<DynamicTest> subTests = new ArrayList<>();
-
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
           List<E> list = newListToTest(generator, collectionSize);
@@ -262,14 +257,12 @@ final class ListAddAtStartSubTestMaker<E> {
               });
         };
 
-    DynamicTest.stream(
+    return DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 "List.add(0, null) fails fast when concurrently modifying "
                     + stringifyElements(newCollectionOfSize(collectionSize, samples)),
             failsFastOnCme)
-        .forEachOrdered(subTests::add);
-
-    return subTests;
+        .collect(toList());
   }
 }
