@@ -64,76 +64,47 @@ final class ListAddAtStartSubTestMaker<E> {
 
   List<DynamicTest> supportsAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendSupportsAddAtStartWithNewElement(subTests);
-    appendSupportsAddAtStartWithExistingElement(subTests);
-    return subTests;
-  }
-
-  private void appendSupportsAddAtStartWithNewElement(List<DynamicTest> subTests) {
     appendSupportsAddAtStartImpl(
         subTests, newElement, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-  }
-
-  private void appendSupportsAddAtStartWithExistingElement(List<DynamicTest> subTests) {
     appendSupportsAddAtStartImpl(
         subTests,
         existingElement,
         allSupportedCollectionSizesExceptZero,
         /* nullInMiddle= */ false);
+    return subTests;
   }
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendSupportsAddAtStartWithNewNull(subTests);
-    appendSupportsAddAtStartWithExistingNull(subTests);
-    return subTests;
-  }
-
-  private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
     appendSupportsAddAtStartImpl(
         subTests, null, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-  }
-
-  private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
     appendSupportsAddAtStartImpl(
         subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
+    return subTests;
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendDoesNotSupportAddAtStartWithNewElement(subTests);
-    appendDoesNotSupportAddAtStartWithExistingElement(subTests);
-    return subTests;
-  }
-
-  private void appendDoesNotSupportAddAtStartWithNewElement(List<DynamicTest> subTests) {
     appendDoesNotSupportAddAtStartImpl(
-        subTests, newElement, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-  }
-
-  private void appendDoesNotSupportAddAtStartWithExistingElement(List<DynamicTest> subTests) {
+        subTests, //
+        newElement,
+        allSupportedCollectionSizes,
+        /* nullInMiddle= */ false);
     appendDoesNotSupportAddAtStartImpl(
         subTests,
         existingElement,
         allSupportedCollectionSizesExceptZero,
         /* nullInMiddle= */ false);
+    return subTests;
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendDoesNotSupportAddAtStartWithNewNull(subTests);
-    appendDoesNotSupportAddAtStartWithExistingNull(subTests);
-    return subTests;
-  }
-
-  private void appendDoesNotSupportAddAtStartWithNewNull(List<DynamicTest> subTests) {
     appendDoesNotSupportAddAtStartImpl(
         subTests, null, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-  }
-
-  private void appendDoesNotSupportAddAtStartWithExistingNull(List<DynamicTest> subTests) {
     appendDoesNotSupportAddAtStartImpl(
         subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
+    return subTests;
   }
 
   private void appendSupportsAddAtStartImpl(
