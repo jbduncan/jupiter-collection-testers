@@ -106,12 +106,16 @@ final class ListAddAtStartSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtStartWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtStartImpl(subTests, newElement, allSupportedCollectionSizes);
+    appendDoesNotSupportAddAtStartImpl(
+        subTests, newElement, allSupportedCollectionSizes, /* nullInMiddle= */ false);
   }
 
   private void appendDoesNotSupportAddAtStartWithExistingElement(List<DynamicTest> subTests) {
     appendDoesNotSupportAddAtStartImpl(
-        subTests, existingElement, allSupportedCollectionSizesExceptZero);
+        subTests,
+        existingElement,
+        allSupportedCollectionSizesExceptZero,
+        /* nullInMiddle= */ false);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
@@ -122,32 +126,13 @@ final class ListAddAtStartSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtStartWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtStartImpl(subTests, null, allSupportedCollectionSizes);
+    appendDoesNotSupportAddAtStartImpl(
+        subTests, null, allSupportedCollectionSizes, /* nullInMiddle= */ false);
   }
 
   private void appendDoesNotSupportAddAtStartWithExistingNull(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtStartWithExistingNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          assertThrows(
-              UnsupportedOperationException.class,
-              () -> list.add(0, null),
-              "Not true that list.add(null) threw UnsupportedOperationException");
-          assertIterableEquals(
-              newCollectionWithNullInMiddleOfSize(collectionSize, samples),
-              list,
-              "Not true that list remained unchanged");
-        };
-
-    DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                "Doesn't support List.add(0, null) on "
-                    + stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-            doesNotSupportAddAtStartWithExistingNullElement)
-        .forEachOrdered(subTests::add);
+    appendDoesNotSupportAddAtStartImpl(
+        subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
   }
 
   private void appendSupportsAddAtStartImpl(
@@ -189,10 +174,16 @@ final class ListAddAtStartSubTestMaker<E> {
   }
 
   private void appendDoesNotSupportAddAtStartImpl(
-      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtStart =
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      boolean nullInMiddle) {
+    ThrowingConsumer<CollectionSize> test =
         collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
+          List<E> list =
+              nullInMiddle
+                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
+                  : newListToTest(generator, collectionSize);
 
           assertThrows(
               UnsupportedOperationException.class,
@@ -202,19 +193,27 @@ final class ListAddAtStartSubTestMaker<E> {
                       + stringify(elementToAdd)
                       + ") threw UnsupportedOperationException");
           assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
+              nullInMiddle
+                  ? newCollectionWithNullInMiddleOfSize(collectionSize, samples)
+                  : newCollectionOfSize(collectionSize, samples),
               list,
               "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
-            collectionSize ->
-                "Doesn't support List.add(0, "
-                    + stringify(elementToAdd)
-                    + ") on "
-                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtStart)
+            collectionSize -> {
+              String testListToString =
+                  nullInMiddle
+                      ? stringifyElements(
+                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+              return "Doesn't support List.add(0, "
+                  + stringify(elementToAdd)
+                  + ") on "
+                  + testListToString;
+            },
+            test)
         .forEachOrdered(subTests::add);
   }
 
