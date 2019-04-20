@@ -299,7 +299,7 @@ final class ListAddWithIndexTester<E> {
     }
 
     @Override
-    int index(List<E> list) {
+    int index(int listSize) {
       return -1;
     }
 
@@ -324,8 +324,8 @@ final class ListAddWithIndexTester<E> {
     }
 
     @Override
-    int index(List<E> list) {
-      return list.size() + 1;
+    int index(int listSize) {
+      return listSize + 1;
     }
 
     @Override

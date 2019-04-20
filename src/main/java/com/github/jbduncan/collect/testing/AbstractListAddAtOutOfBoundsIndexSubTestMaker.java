@@ -61,7 +61,7 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
     this.expectedExceptionType = requireNonNull(expectedExceptionType, "expectedExceptionType");
   }
 
-  abstract int index(List<E> list);
+  abstract int index(int listSize);
 
   abstract String indexName();
 
@@ -100,10 +100,10 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
 
           assertThrows(
               expectedExceptionType,
-              () -> list.add(index(list), elementToAdd),
+              () -> list.add(index(collectionSize.size()), elementToAdd),
               () ->
                   "Not true that list.add("
-                      + index(list)
+                      + index(collectionSize.size())
                       + ", "
                       + stringify(elementToAdd)
                       + ") threw exception of type "
