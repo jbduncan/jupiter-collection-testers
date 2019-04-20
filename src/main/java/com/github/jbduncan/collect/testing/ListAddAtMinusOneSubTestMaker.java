@@ -63,63 +63,39 @@ final class ListAddAtMinusOneSubTestMaker<E> {
 
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendDoesNotSupportAddAtMinusOneWithNewElement(subTests);
-    appendDoesNotSupportAddAtMinusOneWithExistingElement(subTests);
+    appendTestsForDoesNotSupportAddAtMinusOne(
+        subTests, //
+        newElement,
+        allSupportedCollectionSizes,
+        /* nullInMiddle= */ false);
+    appendTestsForDoesNotSupportAddAtMinusOne(
+        subTests,
+        existingElement,
+        allSupportedCollectionSizesExceptZero,
+        /* nullInMiddle= */ false);
     return subTests;
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneWithNewElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMinusOneImpl(subTests, newElement, allSupportedCollectionSizes);
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneWithExistingElement(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMinusOneImpl(
-        subTests, existingElement, allSupportedCollectionSizesExceptZero);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendDoesNotSupportAddAtMinusOneWithNewNull(subTests);
-    appendDoesNotSupportAddAtMinusOneWithExistingNull(subTests);
+    appendTestsForDoesNotSupportAddAtMinusOne(
+        subTests, null, allSupportedCollectionSizes, /* nullInMiddle= */ false);
+    appendTestsForDoesNotSupportAddAtMinusOne(
+        subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
     return subTests;
   }
 
-  private void appendDoesNotSupportAddAtMinusOneWithNewNull(List<DynamicTest> subTests) {
-    appendDoesNotSupportAddAtMinusOneImpl(subTests, null, allSupportedCollectionSizes);
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneWithExistingNull(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOneWithExistingNullElement =
+  private void appendTestsForDoesNotSupportAddAtMinusOne(
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      boolean nullInMiddle) {
+    ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          assertThrows(
-              expectedExceptionType,
-              () -> list.add(-1, null),
-              () ->
-                  "Not true that list.add(-1, null) threw exception of type "
-                      + expectedExceptionType);
-          assertIterableEquals(
-              newCollectionWithNullInMiddleOfSize(collectionSize, samples),
-              list,
-              "Not true that list remained unchanged");
-        };
-
-    DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                "Doesn't support List.add(-1, null) on "
-                    + stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-            doesNotSupportAddAtMinusOneWithExistingNullElement)
-        .forEachOrdered(subTests::add);
-  }
-
-  private void appendDoesNotSupportAddAtMinusOneImpl(
-      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
-    ThrowingConsumer<CollectionSize> doesNotSupportAddAtMinusOne =
-        collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
+          List<E> list =
+              nullInMiddle
+                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
+                  : newListToTest(generator, collectionSize);
 
           assertThrows(
               expectedExceptionType,
@@ -130,19 +106,27 @@ final class ListAddAtMinusOneSubTestMaker<E> {
                       + ") threw exception of type "
                       + expectedExceptionType);
           assertIterableEquals(
-              newCollectionOfSize(collectionSize, samples),
+              nullInMiddle
+                  ? newCollectionWithNullInMiddleOfSize(collectionSize, samples)
+                  : newCollectionOfSize(collectionSize, samples),
               list,
               "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
-            collectionSize ->
-                "Doesn't support List.add(-1, "
-                    + stringify(elementToAdd)
-                    + ") on "
-                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
-            doesNotSupportAddAtMinusOne)
+            collectionSize -> {
+              String testListToString =
+                  nullInMiddle
+                      ? stringifyElements(
+                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+              return "Doesn't support List.add(-1, "
+                  + stringify(elementToAdd)
+                  + ") on "
+                  + testListToString;
+            },
+            testTemplate)
         .forEachOrdered(subTests::add);
   }
 }
