@@ -91,7 +91,7 @@ final class ListAddAtStartSubTestMaker<E> {
       E elementToAdd,
       Set<CollectionSize> supportedCollectionSizes,
       boolean nullInMiddle) {
-    ThrowingConsumer<CollectionSize> test =
+    ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
           List<E> list =
               nullInMiddle
@@ -102,7 +102,7 @@ final class ListAddAtStartSubTestMaker<E> {
           Iterable<E> expected =
               nullInMiddle
                   ? prepend(
-                  elementToAdd, newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                      elementToAdd, newCollectionWithNullInMiddleOfSize(collectionSize, samples))
                   : prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
           assertIterableEquals(
               expected,
@@ -111,16 +111,16 @@ final class ListAddAtStartSubTestMaker<E> {
         };
 
     DynamicTest.stream(
-        supportedCollectionSizes.iterator(),
-        collectionSize -> {
-          String testListToString =
-              nullInMiddle
-                  ? stringifyElements(
-                  newCollectionWithNullInMiddleOfSize(collectionSize, samples))
-                  : stringifyElements(newCollectionOfSize(collectionSize, samples));
-          return "Supports List.add(0, " + stringify(elementToAdd) + ") on " + testListToString;
-        },
-        test)
+            supportedCollectionSizes.iterator(),
+            collectionSize -> {
+              String testListToString =
+                  nullInMiddle
+                      ? stringifyElements(
+                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+              return "Supports List.add(0, " + stringify(elementToAdd) + ") on " + testListToString;
+            },
+            testTemplate)
         .forEachOrdered(subTests::add);
   }
 
@@ -153,7 +153,7 @@ final class ListAddAtStartSubTestMaker<E> {
       E elementToAdd,
       Set<CollectionSize> supportedCollectionSizes,
       boolean nullInMiddle) {
-    ThrowingConsumer<CollectionSize> test =
+    ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
           List<E> list =
               nullInMiddle
@@ -188,7 +188,7 @@ final class ListAddAtStartSubTestMaker<E> {
                   + ") on "
                   + testListToString;
             },
-            test)
+            testTemplate)
         .forEachOrdered(subTests::add);
   }
 
