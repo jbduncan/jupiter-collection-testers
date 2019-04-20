@@ -106,24 +106,10 @@ final class ListAddWithIndexTester<E> {
                   extractConcreteSizesExceptZero(features))
               .supportsAddWithIndexSubTests());
       subTests.addAll(
-          new ListAddAtMinusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  IndexOutOfBoundsException.class)
+          new ListAddAtMinusOneSubTestMaker(IndexOutOfBoundsException.class)
               .doesNotSupportAddWithIndexSubTests());
       subTests.addAll(
-          new ListAddAtSizePlusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  IndexOutOfBoundsException.class)
+          new ListAddAtSizePlusOneSubTestMaker(IndexOutOfBoundsException.class)
               .doesNotSupportAddWithIndexSubTests());
 
       if (features.contains(CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION)) {
@@ -213,24 +199,10 @@ final class ListAddWithIndexTester<E> {
                   extractConcreteSizesExceptZero(features))
               .supportsAddWithIndexForNullsSubTests());
       subTests.addAll(
-          new ListAddAtMinusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  IndexOutOfBoundsException.class)
+          new ListAddAtMinusOneSubTestMaker(IndexOutOfBoundsException.class)
               .doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(
-          new ListAddAtSizePlusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  IndexOutOfBoundsException.class)
+          new ListAddAtSizePlusOneSubTestMaker(IndexOutOfBoundsException.class)
               .doesNotSupportAddWithIndexForNullsSubTests());
       tests.add(dynamicContainer("Supports List.add(int, null)", subTests));
     }
@@ -265,24 +237,10 @@ final class ListAddWithIndexTester<E> {
                   extractConcreteSizesExceptZero(features))
               .doesNotSupportAddWithIndexSubTests());
       subTests.addAll(
-          new ListAddAtMinusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  UnsupportedOperationException.class)
+          new ListAddAtMinusOneSubTestMaker(UnsupportedOperationException.class)
               .doesNotSupportAddWithIndexSubTests());
       subTests.addAll(
-          new ListAddAtSizePlusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  UnsupportedOperationException.class)
+          new ListAddAtSizePlusOneSubTestMaker(UnsupportedOperationException.class)
               .doesNotSupportAddWithIndexSubTests());
       tests.add(dynamicContainer("Doesn't support List.add(int, E)", subTests));
     }
@@ -317,26 +275,62 @@ final class ListAddWithIndexTester<E> {
                   extractConcreteSizesExceptZero(features))
               .doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(
-          new ListAddAtMinusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  UnsupportedOperationException.class)
+          new ListAddAtMinusOneSubTestMaker(UnsupportedOperationException.class)
               .doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(
-          new ListAddAtSizePlusOneSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features),
-                  UnsupportedOperationException.class)
+          new ListAddAtSizePlusOneSubTestMaker(UnsupportedOperationException.class)
               .doesNotSupportAddWithIndexForNullsSubTests());
       tests.add(dynamicContainer("Doesn't support List.add(int, null)", subTests));
+    }
+  }
+
+  private class ListAddAtMinusOneSubTestMaker
+      extends AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
+
+    ListAddAtMinusOneSubTestMaker(Class<? extends Throwable> expectedExceptionType) {
+      super(
+          ListAddWithIndexTester.this.testListGenerator,
+          ListAddWithIndexTester.this.samples,
+          ListAddWithIndexTester.this.newElement,
+          ListAddWithIndexTester.this.existingElement,
+          extractConcreteSizes(ListAddWithIndexTester.this.features),
+          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features),
+          expectedExceptionType);
+    }
+
+    @Override
+    int index(List<E> list) {
+      return -1;
+    }
+
+    @Override
+    String indexName() {
+      return "-1";
+    }
+  }
+
+  private class ListAddAtSizePlusOneSubTestMaker
+      extends AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
+
+    ListAddAtSizePlusOneSubTestMaker(Class<? extends Throwable> expectedExceptionType) {
+      super(
+          ListAddWithIndexTester.this.testListGenerator,
+          ListAddWithIndexTester.this.samples,
+          ListAddWithIndexTester.this.newElement,
+          ListAddWithIndexTester.this.existingElement,
+          extractConcreteSizes(ListAddWithIndexTester.this.features),
+          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features),
+          expectedExceptionType);
+    }
+
+    @Override
+    int index(List<E> list) {
+      return list.size() + 1;
+    }
+
+    @Override
+    String indexName() {
+      return "size() + 1";
     }
   }
 }
