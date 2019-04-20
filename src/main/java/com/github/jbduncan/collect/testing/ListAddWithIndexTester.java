@@ -82,14 +82,7 @@ final class ListAddWithIndexTester<E> {
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(new ListAddAtStartSubTestMaker().supportsAddWithIndexSubTests());
       subTests.addAll(new ListAddAtEndSubTestMaker().supportsAddWithIndexSubTests());
-      subTests.addAll(
-          new ListAddAtMiddleSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .supportsAddWithIndexSubTests());
+      subTests.addAll(new ListAddAtMiddleSubTestMaker().supportsAddWithIndexSubTests());
       subTests.addAll(
           new ListAddAtMinusOneSubTestMaker(IndexOutOfBoundsException.class)
               .doesNotSupportAddWithIndexSubTests());
@@ -116,13 +109,7 @@ final class ListAddWithIndexTester<E> {
         innerSubTests.addAll(
             new ListAddAtEndSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
         innerSubTests.addAll(
-            new ListAddAtMiddleSubTestMaker<>(
-                    testListGenerator,
-                    samples,
-                    newElement,
-                    existingElement,
-                    extractConcreteSizesExceptZero(features))
-                .doesNotSupportAddWithIndexForNullsSubTests());
+            new ListAddAtMiddleSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
         tests.add(dynamicContainer("Doesn't support List.add(int, null)", innerSubTests));
       }
     }
@@ -134,14 +121,7 @@ final class ListAddWithIndexTester<E> {
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(new ListAddAtStartSubTestMaker().supportsAddWithIndexForNullsSubTests());
       subTests.addAll(new ListAddAtEndSubTestMaker().supportsAddWithIndexForNullsSubTests());
-      subTests.addAll(
-          new ListAddAtMiddleSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(new ListAddAtMiddleSubTestMaker().supportsAddWithIndexForNullsSubTests());
       subTests.addAll(
           new ListAddAtMinusOneSubTestMaker(IndexOutOfBoundsException.class)
               .doesNotSupportAddWithIndexForNullsSubTests());
@@ -157,14 +137,7 @@ final class ListAddWithIndexTester<E> {
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(new ListAddAtStartSubTestMaker().doesNotSupportAddWithIndexSubTests());
       subTests.addAll(new ListAddAtEndSubTestMaker().doesNotSupportAddWithIndexSubTests());
-      subTests.addAll(
-          new ListAddAtMiddleSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(new ListAddAtMiddleSubTestMaker().doesNotSupportAddWithIndexSubTests());
       subTests.addAll(
           new ListAddAtMinusOneSubTestMaker(UnsupportedOperationException.class)
               .doesNotSupportAddWithIndexSubTests());
@@ -182,13 +155,7 @@ final class ListAddWithIndexTester<E> {
           new ListAddAtStartSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(new ListAddAtEndSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(
-          new ListAddAtMiddleSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .doesNotSupportAddWithIndexForNullsSubTests());
+          new ListAddAtMiddleSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(
           new ListAddAtMinusOneSubTestMaker(UnsupportedOperationException.class)
               .doesNotSupportAddWithIndexForNullsSubTests());
@@ -214,7 +181,7 @@ final class ListAddWithIndexTester<E> {
     }
 
     @Override
-    int index(int listSize) {
+    int index(CollectionSize listSize) {
       return -1;
     }
 
@@ -239,8 +206,8 @@ final class ListAddWithIndexTester<E> {
     }
 
     @Override
-    int index(int listSize) {
-      return listSize + 1;
+    int index(CollectionSize listSize) {
+      return listSize.size() + 1;
     }
 
     @Override
@@ -262,7 +229,7 @@ final class ListAddWithIndexTester<E> {
     }
 
     @Override
-    int index(int listSize) {
+    int index(CollectionSize listSize) {
       return 0;
     }
 
@@ -285,13 +252,36 @@ final class ListAddWithIndexTester<E> {
     }
 
     @Override
-    int index(int listSize) {
-      return listSize;
+    int index(CollectionSize listSize) {
+      return listSize.size();
     }
 
     @Override
     String indexName() {
       return "size()";
+    }
+  }
+
+  class ListAddAtMiddleSubTestMaker extends AbstractListAddAtValidIndexSubTestMaker<E> {
+
+    ListAddAtMiddleSubTestMaker() {
+      super(
+          ListAddWithIndexTester.this.testListGenerator,
+          ListAddWithIndexTester.this.samples,
+          ListAddWithIndexTester.this.newElement,
+          ListAddWithIndexTester.this.existingElement,
+          extractConcreteSizes(ListAddWithIndexTester.this.features),
+          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features));
+    }
+
+    @Override
+    int index(CollectionSize listSize) {
+      return listSize.size() / 2;
+    }
+
+    @Override
+    String indexName() {
+      return "middleIndex()";
     }
   }
 }

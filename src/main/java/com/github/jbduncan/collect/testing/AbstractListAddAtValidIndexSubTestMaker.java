@@ -62,7 +62,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
             allSupportedCollectionSizesExceptZero, "allSupportedCollectionSizesExceptZero");
   }
 
-  abstract int index(int listSize);
+  abstract int index(CollectionSize listSize);
 
   abstract String indexName();
 
@@ -108,7 +108,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
               nullInMiddle
                   ? newListToTestWithNullElementInMiddle(generator, collectionSize)
                   : newListToTest(generator, collectionSize);
-          int index = index(collectionSize.size());
+          int index = index(collectionSize);
 
           list.add(index, elementToAdd);
           Iterable<E> expected =
@@ -191,7 +191,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
               nullInMiddle
                   ? newListToTestWithNullElementInMiddle(generator, collectionSize)
                   : newListToTest(generator, collectionSize);
-          int index = index(collectionSize.size());
+          int index = index(collectionSize);
 
           assertThrows(
               UnsupportedOperationException.class,
