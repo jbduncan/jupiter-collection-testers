@@ -69,11 +69,16 @@ final class ListAddAtStartSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartWithNewElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(subTests, newElement, allSupportedCollectionSizes);
+    appendSupportsAddAtStartImpl(
+        subTests, newElement, allSupportedCollectionSizes, /* nullInMiddle= */ false);
   }
 
   private void appendSupportsAddAtStartWithExistingElement(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(subTests, existingElement, allSupportedCollectionSizesExceptZero);
+    appendSupportsAddAtStartImpl(
+        subTests,
+        existingElement,
+        allSupportedCollectionSizesExceptZero,
+        /* nullInMiddle= */ false);
   }
 
   List<DynamicTest> supportsAddWithIndexForNullsSubTests() {
@@ -84,28 +89,13 @@ final class ListAddAtStartSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartWithNewNull(List<DynamicTest> subTests) {
-    appendSupportsAddAtStartImpl(subTests, null, allSupportedCollectionSizes);
+    appendSupportsAddAtStartImpl(
+        subTests, null, allSupportedCollectionSizes, /* nullInMiddle= */ false);
   }
 
   private void appendSupportsAddAtStartWithExistingNull(List<DynamicTest> subTests) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStartWithExistingNullElement =
-        collectionSize -> {
-          List<E> list = newListToTestWithNullElementInMiddle(generator, collectionSize);
-
-          list.add(0, null);
-          List<E> expected =
-              prepend(null, newCollectionWithNullInMiddleOfSize(collectionSize, samples));
-          assertIterableEquals(expected, list, "Not true that list was prepended with null");
-        };
-
-    DynamicTest.stream(
-            allSupportedCollectionSizesExceptZero.iterator(),
-            collectionSize ->
-                "Supports List.add(0, null) on "
-                    + stringifyElements(
-                        newCollectionWithNullInMiddleOfSize(collectionSize, samples)),
-            supportsAddAtStartWithExistingNullElement)
-        .forEachOrdered(subTests::add);
+    appendSupportsAddAtStartImpl(
+        subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
   }
 
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
@@ -161,13 +151,23 @@ final class ListAddAtStartSubTestMaker<E> {
   }
 
   private void appendSupportsAddAtStartImpl(
-      List<DynamicTest> subTests, E elementToAdd, Set<CollectionSize> supportedCollectionSizes) {
-    ThrowingConsumer<CollectionSize> supportsAddAtStart =
+      List<DynamicTest> subTests,
+      E elementToAdd,
+      Set<CollectionSize> supportedCollectionSizes,
+      boolean nullInMiddle) {
+    ThrowingConsumer<CollectionSize> test =
         collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
+          List<E> list =
+              nullInMiddle
+                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
+                  : newListToTest(generator, collectionSize);
 
           list.add(0, elementToAdd);
-          List<E> expected = prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
+          Iterable<E> expected =
+              nullInMiddle
+                  ? prepend(
+                      elementToAdd, newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                  : prepend(elementToAdd, newCollectionOfSize(collectionSize, samples));
           assertIterableEquals(
               expected,
               list,
@@ -176,12 +176,15 @@ final class ListAddAtStartSubTestMaker<E> {
 
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
-            collectionSize ->
-                "Supports List.add(0, "
-                    + stringify(elementToAdd)
-                    + ") on "
-                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
-            supportsAddAtStart)
+            collectionSize -> {
+              String testListToString =
+                  nullInMiddle
+                      ? stringifyElements(
+                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
+                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+              return "Supports List.add(0, " + stringify(elementToAdd) + ") on " + testListToString;
+            },
+            test)
         .forEachOrdered(subTests::add);
   }
 
