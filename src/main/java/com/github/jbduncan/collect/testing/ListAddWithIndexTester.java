@@ -80,23 +80,8 @@ final class ListAddWithIndexTester<E> {
   private void generateSupportsAddWithIndexTests(List<DynamicNode> tests) {
     if (features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
-      subTests.addAll(
-          new ListAddAtStartSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features))
-              .supportsAddWithIndexSubTests());
-      subTests.addAll(
-          new ListAddAtEndSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .supportsAddWithIndexSubTests());
+      subTests.addAll(new ListAddAtStartSubTestMaker().supportsAddWithIndexSubTests());
+      subTests.addAll(new ListAddAtEndSubTestMaker().supportsAddWithIndexSubTests());
       subTests.addAll(
           new ListAddAtMiddleSubTestMaker<>(
                   testListGenerator,
@@ -114,23 +99,10 @@ final class ListAddWithIndexTester<E> {
 
       if (features.contains(CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION)) {
         subTests.addAll(
-            new ListAddAtStartSubTestMaker<>(
-                    testListGenerator,
-                    samples,
-                    newElement,
-                    existingElement,
-                    extractConcreteSizes(features),
-                    extractConcreteSizesExceptZero(features))
-                .failsFastOnConcurrentModificationSubTests());
+            new ListAddAtStartSubTestMaker().failsFastOnConcurrentModificationSubTests());
         if (features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
           subTests.addAll(
-              new ListAddAtStartSubTestMaker<>(
-                      testListGenerator,
-                      samples,
-                      newElement,
-                      existingElement,
-                      extractConcreteSizes(features),
-                      extractConcreteSizesExceptZero(features))
+              new ListAddAtStartSubTestMaker()
                   .failsFastOnConcurrentModificationInvolvingNullElementSubTests());
         }
       }
@@ -140,22 +112,9 @@ final class ListAddWithIndexTester<E> {
       if (!features.contains(CollectionFeature.ALLOWS_NULL_VALUES)) {
         List<DynamicTest> innerSubTests = new ArrayList<>();
         innerSubTests.addAll(
-            new ListAddAtStartSubTestMaker<>(
-                    testListGenerator,
-                    samples,
-                    newElement,
-                    existingElement,
-                    extractConcreteSizes(features),
-                    extractConcreteSizesExceptZero(features))
-                .doesNotSupportAddWithIndexForNullsSubTests());
+            new ListAddAtStartSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
         innerSubTests.addAll(
-            new ListAddAtEndSubTestMaker<>(
-                    testListGenerator,
-                    samples,
-                    newElement,
-                    existingElement,
-                    extractConcreteSizesExceptZero(features))
-                .doesNotSupportAddWithIndexForNullsSubTests());
+            new ListAddAtEndSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
         innerSubTests.addAll(
             new ListAddAtMiddleSubTestMaker<>(
                     testListGenerator,
@@ -173,23 +132,8 @@ final class ListAddWithIndexTester<E> {
     if (features.containsAll(
         Arrays.asList(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.ALLOWS_NULL_VALUES))) {
       List<DynamicTest> subTests = new ArrayList<>();
-      subTests.addAll(
-          new ListAddAtStartSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features))
-              .supportsAddWithIndexForNullsSubTests());
-      subTests.addAll(
-          new ListAddAtEndSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(new ListAddAtStartSubTestMaker().supportsAddWithIndexForNullsSubTests());
+      subTests.addAll(new ListAddAtEndSubTestMaker().supportsAddWithIndexForNullsSubTests());
       subTests.addAll(
           new ListAddAtMiddleSubTestMaker<>(
                   testListGenerator,
@@ -211,23 +155,8 @@ final class ListAddWithIndexTester<E> {
   private void generateDoesNotSupportAddWithIndexTests(List<DynamicNode> tests) {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
-      subTests.addAll(
-          new ListAddAtStartSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features))
-              .doesNotSupportAddWithIndexSubTests());
-      subTests.addAll(
-          new ListAddAtEndSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(new ListAddAtStartSubTestMaker().doesNotSupportAddWithIndexSubTests());
+      subTests.addAll(new ListAddAtEndSubTestMaker().doesNotSupportAddWithIndexSubTests());
       subTests.addAll(
           new ListAddAtMiddleSubTestMaker<>(
                   testListGenerator,
@@ -250,22 +179,8 @@ final class ListAddWithIndexTester<E> {
     if (!features.contains(ListFeature.SUPPORTS_ADD_WITH_INDEX)) {
       List<DynamicTest> subTests = new ArrayList<>();
       subTests.addAll(
-          new ListAddAtStartSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizes(features),
-                  extractConcreteSizesExceptZero(features))
-              .doesNotSupportAddWithIndexForNullsSubTests());
-      subTests.addAll(
-          new ListAddAtEndSubTestMaker<>(
-                  testListGenerator,
-                  samples,
-                  newElement,
-                  existingElement,
-                  extractConcreteSizesExceptZero(features))
-              .doesNotSupportAddWithIndexForNullsSubTests());
+          new ListAddAtStartSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
+      subTests.addAll(new ListAddAtEndSubTestMaker().doesNotSupportAddWithIndexForNullsSubTests());
       subTests.addAll(
           new ListAddAtMiddleSubTestMaker<>(
                   testListGenerator,
@@ -331,6 +246,52 @@ final class ListAddWithIndexTester<E> {
     @Override
     String indexName() {
       return "size() + 1";
+    }
+  }
+
+  class ListAddAtStartSubTestMaker extends AbstractListAddAtValidIndexSubTestMaker<E> {
+
+    ListAddAtStartSubTestMaker() {
+      super(
+          ListAddWithIndexTester.this.testListGenerator,
+          ListAddWithIndexTester.this.samples,
+          ListAddWithIndexTester.this.newElement,
+          ListAddWithIndexTester.this.existingElement,
+          extractConcreteSizes(ListAddWithIndexTester.this.features),
+          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features));
+    }
+
+    @Override
+    int index(int listSize) {
+      return 0;
+    }
+
+    @Override
+    String indexName() {
+      return "0";
+    }
+  }
+
+  class ListAddAtEndSubTestMaker extends AbstractListAddAtValidIndexSubTestMaker<E> {
+
+    ListAddAtEndSubTestMaker() {
+      super(
+          ListAddWithIndexTester.this.testListGenerator,
+          ListAddWithIndexTester.this.samples,
+          ListAddWithIndexTester.this.newElement,
+          ListAddWithIndexTester.this.existingElement,
+          extractConcreteSizes(ListAddWithIndexTester.this.features),
+          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features));
+    }
+
+    @Override
+    int index(int listSize) {
+      return listSize;
+    }
+
+    @Override
+    String indexName() {
+      return "size()";
     }
   }
 }
