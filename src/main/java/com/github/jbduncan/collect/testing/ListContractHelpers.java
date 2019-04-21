@@ -16,7 +16,6 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newIterable;
-import static com.github.jbduncan.collect.testing.Helpers.newIterableWithNullElement;
 
 import java.util.List;
 
@@ -25,19 +24,6 @@ final class ListContractHelpers {
 
   static <E> List<E> newTestList(
       TestListGenerator<E> listGenerator, CollectionSize collectionSize, boolean nullInMiddle) {
-    return nullInMiddle
-        ? newTestListWithNullElement(listGenerator, collectionSize)
-        : newTestList(listGenerator, collectionSize);
-  }
-
-  private static <E> List<E> newTestList(
-      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    return listGenerator.create(newIterable(listGenerator.samples(), collectionSize));
-  }
-
-  private static <E> List<E> newTestListWithNullElement(
-      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    return listGenerator.create(
-        newIterableWithNullElement(listGenerator.samples(), collectionSize));
+    return listGenerator.create(newIterable(listGenerator.samples(), collectionSize, nullInMiddle));
   }
 }
