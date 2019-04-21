@@ -15,28 +15,29 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newIterable;
+import static com.github.jbduncan.collect.testing.Helpers.newIterableWithNullElement;
 
 import java.util.List;
 
 final class ListContractHelpers {
   private ListContractHelpers() {}
 
-  static <E> List<E> newListToTest(
-      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    SampleElements<E> samples = listGenerator.samples();
-    return listGenerator.create(newCollectionOfSize(collectionSize, samples));
+  static <E> List<E> newTestList(
+      TestListGenerator<E> listGenerator, CollectionSize collectionSize, boolean nullInMiddle) {
+    return nullInMiddle
+        ? newTestListWithNullElement(listGenerator, collectionSize)
+        : newTestList(listGenerator, collectionSize);
   }
 
-  static <E> List<E> newListToTestWithNullElementInMiddle(
+  private static <E> List<E> newTestList(
       TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    Iterable<E> elements =
-        newCollectionWithNullInMiddleOfSize(collectionSize, listGenerator.samples());
-    return listGenerator.create(elements);
+    return listGenerator.create(newIterable(listGenerator.samples(), collectionSize));
   }
 
-  static int middleIndex(List<?> list) {
-    return list.size() / 2;
+  private static <E> List<E> newTestListWithNullElement(
+      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
+    return listGenerator.create(
+        newIterableWithNullElement(listGenerator.samples(), collectionSize));
   }
 }

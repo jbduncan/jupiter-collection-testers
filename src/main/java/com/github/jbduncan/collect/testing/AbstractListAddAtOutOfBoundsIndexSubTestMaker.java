@@ -15,12 +15,11 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newIterable;
+import static com.github.jbduncan.collect.testing.Helpers.newIterableWithNullElement;
 import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newTestList;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -93,10 +92,7 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
       boolean nullInMiddle) {
     ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
-          List<E> list =
-              nullInMiddle
-                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
-                  : newListToTest(generator, collectionSize);
+          List<E> list = newTestList(generator, collectionSize, nullInMiddle);
 
           assertThrows(
               expectedExceptionType,
@@ -111,8 +107,8 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
 
           assertIterableEquals(
               nullInMiddle
-                  ? newCollectionWithNullInMiddleOfSize(collectionSize, samples)
-                  : newCollectionOfSize(collectionSize, samples),
+                  ? newIterableWithNullElement(samples, collectionSize)
+                  : newIterable(samples, collectionSize),
               list,
               "Not true that list remained unchanged");
         };
@@ -122,9 +118,8 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
             collectionSize -> {
               String testListToString =
                   nullInMiddle
-                      ? stringifyElements(
-                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
-                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+                      ? stringifyElements(newIterableWithNullElement(samples, collectionSize))
+                      : stringifyElements(newIterable(samples, collectionSize));
               return "Doesn't support List.add("
                   + indexName()
                   + ", "

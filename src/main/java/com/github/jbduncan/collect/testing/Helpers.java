@@ -70,16 +70,25 @@ final class Helpers {
     return new LinkedHashSet<>(elements);
   }
 
-  static <E> Collection<E> newCollectionOfSize(
-      CollectionSize collectionSize, SampleElements<E> sampleElements) {
+  static <E> Iterable<E> newIterable(
+      SampleElements<E> sampleElements, CollectionSize collectionSize, boolean nullInMiddle) {
+    return nullInMiddle
+        ? newIterableWithNullElement(sampleElements, collectionSize)
+        : newIterable(sampleElements, collectionSize);
+  }
+
+  static <E> Iterable<E> newIterable(
+      SampleElements<E> sampleElements, CollectionSize collectionSize) {
     switch (collectionSize) {
       case SUPPORTS_ZERO:
-        return Collections.emptyList();
+        return () -> Collections.<E>emptyList().iterator();
       case SUPPORTS_ONE:
-        return Collections.singletonList(sampleElements.e0());
+        return () -> Collections.singletonList(sampleElements.e0()).iterator();
       case SUPPORTS_MULTIPLE:
-        return Collections.unmodifiableList(
-            Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2()));
+        return () ->
+            Collections.unmodifiableList(
+                    Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2()))
+                .iterator();
       case SUPPORTS_ANY_SIZE:
         throw new IllegalArgumentException(
             "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "
@@ -89,8 +98,8 @@ final class Helpers {
         String.format("'collectionSize' %s is unrecognized", collectionSize));
   }
 
-  static <E> Collection<E> newCollectionWithNullInMiddleOfSize(
-      CollectionSize collectionSize, SampleElements<E> sampleElements) {
+  static <E> Collection<E> newIterableWithNullElement(
+      SampleElements<E> sampleElements, CollectionSize collectionSize) {
     switch (collectionSize) {
       case SUPPORTS_ZERO:
         throw new IllegalArgumentException(
@@ -109,17 +118,16 @@ final class Helpers {
         String.format("'collectionSize' %s is unrecognized", collectionSize));
   }
 
-  static <E> List<E> append(Collection<E> collection, E toAppend) {
-    return Stream.concat(collection.stream(), Stream.of(toAppend)).collect(toUnmodifiableList());
+  static <E> List<E> append(Iterable<E> iterable, E toAppend) {
+    return Stream.concat(stream(iterable), Stream.of(toAppend)).collect(toUnmodifiableList());
   }
 
-  static <E> List<E> prepend(E toPrepend, Collection<E> collection) {
-    return Stream.concat(Stream.of(toPrepend), collection.stream()).collect(toUnmodifiableList());
-  }
-
-  static <E> List<E> insert(Collection<E> collection, int index, E toInsert) {
-    List<E> result = new ArrayList<>(collection.size() + 1);
-    result.addAll(collection);
+  static <E> List<E> insert(Iterable<E> iterable, int index, E toInsert) {
+    List<E> result =
+        iterable instanceof Collection<?>
+            ? new ArrayList<>(((Collection<?>) iterable).size() + 1)
+            : new ArrayList<>();
+    iterable.forEach(result::add);
     result.add(index, toInsert);
     return Collections.unmodifiableList(result);
   }
@@ -132,12 +140,8 @@ final class Helpers {
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
-  static <E> String quote(E value) {
-    return '"' + value.toString() + '"';
-  }
-
   static <E> String stringify(E value) {
-    return value == null ? "null" : quote(value);
+    return value == null ? "null" : '"' + value.toString() + '"';
   }
 
   static String stringifyElements(Iterable<?> iterable) {

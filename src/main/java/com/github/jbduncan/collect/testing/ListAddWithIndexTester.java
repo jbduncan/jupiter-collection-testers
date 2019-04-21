@@ -166,56 +166,6 @@ final class ListAddWithIndexTester<E> {
     }
   }
 
-  private class ListAddAtMinusOneSubTestMaker
-      extends AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
-
-    ListAddAtMinusOneSubTestMaker(Class<? extends Throwable> expectedExceptionType) {
-      super(
-          ListAddWithIndexTester.this.testListGenerator,
-          ListAddWithIndexTester.this.samples,
-          ListAddWithIndexTester.this.newElement,
-          ListAddWithIndexTester.this.existingElement,
-          extractConcreteSizes(ListAddWithIndexTester.this.features),
-          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features),
-          expectedExceptionType);
-    }
-
-    @Override
-    int index(CollectionSize listSize) {
-      return -1;
-    }
-
-    @Override
-    String indexName() {
-      return "-1";
-    }
-  }
-
-  private class ListAddAtSizePlusOneSubTestMaker
-      extends AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
-
-    ListAddAtSizePlusOneSubTestMaker(Class<? extends Throwable> expectedExceptionType) {
-      super(
-          ListAddWithIndexTester.this.testListGenerator,
-          ListAddWithIndexTester.this.samples,
-          ListAddWithIndexTester.this.newElement,
-          ListAddWithIndexTester.this.existingElement,
-          extractConcreteSizes(ListAddWithIndexTester.this.features),
-          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features),
-          expectedExceptionType);
-    }
-
-    @Override
-    int index(CollectionSize listSize) {
-      return listSize.size() + 1;
-    }
-
-    @Override
-    String indexName() {
-      return "size() + 1";
-    }
-  }
-
   class ListAddAtStartSubTestMaker extends AbstractListAddAtValidIndexSubTestMaker<E> {
 
     ListAddAtStartSubTestMaker() {
@@ -282,6 +232,56 @@ final class ListAddWithIndexTester<E> {
     @Override
     String indexName() {
       return "middleIndex()";
+    }
+  }
+
+  private class ListAddAtMinusOneSubTestMaker
+      extends AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
+
+    ListAddAtMinusOneSubTestMaker(Class<? extends Throwable> expectedExceptionType) {
+      super(
+          ListAddWithIndexTester.this.testListGenerator,
+          ListAddWithIndexTester.this.samples,
+          ListAddWithIndexTester.this.newElement,
+          ListAddWithIndexTester.this.existingElement,
+          extractConcreteSizes(ListAddWithIndexTester.this.features),
+          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features),
+          expectedExceptionType);
+    }
+
+    @Override
+    int index(CollectionSize listSize) {
+      return -1;
+    }
+
+    @Override
+    String indexName() {
+      return "-1";
+    }
+  }
+
+  private class ListAddAtSizePlusOneSubTestMaker
+      extends AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
+
+    ListAddAtSizePlusOneSubTestMaker(Class<? extends Throwable> expectedExceptionType) {
+      super(
+          ListAddWithIndexTester.this.testListGenerator,
+          ListAddWithIndexTester.this.samples,
+          ListAddWithIndexTester.this.newElement,
+          ListAddWithIndexTester.this.existingElement,
+          extractConcreteSizes(ListAddWithIndexTester.this.features),
+          extractConcreteSizesExceptZero(ListAddWithIndexTester.this.features),
+          expectedExceptionType);
+    }
+
+    @Override
+    int index(CollectionSize listSize) {
+      return listSize.size() + 1;
+    }
+
+    @Override
+    String indexName() {
+      return "size() + 1";
     }
   }
 }

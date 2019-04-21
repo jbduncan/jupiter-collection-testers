@@ -16,12 +16,11 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.insert;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newIterable;
+import static com.github.jbduncan.collect.testing.Helpers.newIterableWithNullElement;
 import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTest;
-import static com.github.jbduncan.collect.testing.ListContractHelpers.newListToTestWithNullElementInMiddle;
+import static com.github.jbduncan.collect.testing.ListContractHelpers.newTestList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -104,20 +103,14 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
       boolean nullInMiddle) {
     ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
-          List<E> list =
-              nullInMiddle
-                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
-                  : newListToTest(generator, collectionSize);
+          List<E> list = newTestList(generator, collectionSize, nullInMiddle);
           int index = index(collectionSize);
 
           list.add(index, elementToAdd);
           Iterable<E> expected =
               nullInMiddle
-                  ? insert(
-                      newCollectionWithNullInMiddleOfSize(collectionSize, samples),
-                      index,
-                      elementToAdd)
-                  : insert(newCollectionOfSize(collectionSize, samples), index, elementToAdd);
+                  ? insert(newIterableWithNullElement(samples, collectionSize), index, elementToAdd)
+                  : insert(newIterable(samples, collectionSize), index, elementToAdd);
 
           assertIterableEquals(
               expected,
@@ -135,9 +128,8 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
             collectionSize -> {
               String testListToString =
                   nullInMiddle
-                      ? stringifyElements(
-                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
-                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+                      ? stringifyElements(newIterableWithNullElement(samples, collectionSize))
+                      : stringifyElements(newIterable(samples, collectionSize));
               return "Supports List.add("
                   + indexName()
                   + ", "
@@ -187,10 +179,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
       boolean nullInMiddle) {
     ThrowingConsumer<CollectionSize> testTemplate =
         collectionSize -> {
-          List<E> list =
-              nullInMiddle
-                  ? newListToTestWithNullElementInMiddle(generator, collectionSize)
-                  : newListToTest(generator, collectionSize);
+          List<E> list = newTestList(generator, collectionSize, nullInMiddle);
           int index = index(collectionSize);
 
           assertThrows(
@@ -204,8 +193,8 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
                       + ") threw UnsupportedOperationException");
           assertIterableEquals(
               nullInMiddle
-                  ? newCollectionWithNullInMiddleOfSize(collectionSize, samples)
-                  : newCollectionOfSize(collectionSize, samples),
+                  ? newIterableWithNullElement(samples, collectionSize)
+                  : newIterable(samples, collectionSize),
               list,
               "Not true that list remained unchanged");
         };
@@ -215,9 +204,8 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
             collectionSize -> {
               String testListToString =
                   nullInMiddle
-                      ? stringifyElements(
-                          newCollectionWithNullInMiddleOfSize(collectionSize, samples))
-                      : stringifyElements(newCollectionOfSize(collectionSize, samples));
+                      ? stringifyElements(newIterableWithNullElement(samples, collectionSize))
+                      : stringifyElements(newIterable(samples, collectionSize));
               return "Doesn't support List.add("
                   + indexName()
                   + ", "
@@ -232,7 +220,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
   List<DynamicTest> failsFastOnConcurrentModificationSubTests() {
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
+          List<E> list = newTestList(generator, collectionSize, /* nullInMiddle= */ false);
 
           Iterator<E> iterator = list.iterator();
           assertThrows(
@@ -249,7 +237,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
                 "List.add(0, "
                     + stringify(newElement)
                     + ") fails fast when concurrently modifying "
-                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
+                    + stringifyElements(newIterable(samples, collectionSize)),
             failsFastOnCme)
         .collect(toList());
   }
@@ -257,7 +245,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
   List<DynamicTest> failsFastOnConcurrentModificationInvolvingNullElementSubTests() {
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
-          List<E> list = newListToTest(generator, collectionSize);
+          List<E> list = newTestList(generator, collectionSize, /* nullInMiddle= */ false);
 
           Iterator<E> iterator = list.iterator();
           assertThrows(
@@ -272,7 +260,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 "List.add(0, null) fails fast when concurrently modifying "
-                    + stringifyElements(newCollectionOfSize(collectionSize, samples)),
+                    + stringifyElements(newIterable(samples, collectionSize)),
             failsFastOnCme)
         .collect(toList());
   }
