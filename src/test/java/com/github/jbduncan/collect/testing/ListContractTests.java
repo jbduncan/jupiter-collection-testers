@@ -26,6 +26,7 @@ import com.google.common.graph.SuccessorsFunction;
 import com.google.common.graph.Traverser;
 import com.google.common.truth.Correspondence;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -150,16 +151,16 @@ class ListContractTests {
                       "null) on [null]",
                       "null) on [\"a\", null, \"c\"]"))
               .stream()
+              .map(tuple -> tuple.get(0) + ", " + tuple.get(1))
               // Filter out display names for all redundant dynamic tests.
               .filter(
-                  tuple ->
-                      !(tuple.get(0).equals("Supports List.add(size()")
-                          && tuple.get(1).endsWith("[]")))
-              .filter(
-                  tuple ->
-                      !(tuple.get(0).equals("Supports List.add(middleIndex()")
-                          && tuple.get(1).endsWith("[]")))
-              .map(tuple -> tuple.get(0) + ", " + tuple.get(1));
+                  displayName ->
+                      !Arrays.asList(
+                              "Supports List.add(middleIndex(), \"d\") on []",
+                              "Supports List.add(middleIndex(), null) on []",
+                              "Supports List.add(size(), \"d\") on []",
+                              "Supports List.add(size(), null) on []")
+                          .contains(displayName));
 
       Stream<String> displayNamesForConcurrentModificationTests =
           Sets.cartesianProduct(

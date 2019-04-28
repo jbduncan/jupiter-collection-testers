@@ -22,5 +22,6 @@ public interface TestContainerGenerator<T, E> {
 
   T create(Iterable<E> elements);
 
+  // TODO: Decide if we need this method
   Iterable<E> order(List<E> insertionOrder);
 }

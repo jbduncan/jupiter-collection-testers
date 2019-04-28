@@ -201,7 +201,6 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
         .forEachOrdered(subTests::add);
   }
 
-  // TODO: Move to ListAddAtStartSubTestMaker.java
   List<DynamicTest> failsFastOnConcurrentModificationSubTests() {
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
@@ -211,7 +210,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
           assertThrows(
               ConcurrentModificationException.class,
               () -> {
-                list.add(0, newElement);
+                list.add(index(collectionSize), newElement);
                 iterator.next();
               });
         };
@@ -219,7 +218,9 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
     return DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
-                "List.add(0, "
+                "List.add("
+                    + indexName()
+                    + ", "
                     + stringify(newElement)
                     + ") fails fast when concurrently modifying "
                     + stringifyElements(
@@ -228,7 +229,6 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
         .collect(toList());
   }
 
-  // TODO: Move to ListAddAtStartSubTestMaker.java
   List<DynamicTest> failsFastOnConcurrentModificationInvolvingNullElementSubTests() {
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
@@ -238,7 +238,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
           assertThrows(
               ConcurrentModificationException.class,
               () -> {
-                list.add(0, null);
+                list.add(index(collectionSize), null);
                 iterator.next();
               });
         };
@@ -246,7 +246,9 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
     return DynamicTest.stream(
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
-                "List.add(0, null) fails fast when concurrently modifying "
+                "List.add("
+                    + indexName()
+                    + ", null) fails fast when concurrently modifying "
                     + stringifyElements(
                         newIterable(samples, collectionSize, /* nullInMiddle= */ false)),
             failsFastOnCme)
