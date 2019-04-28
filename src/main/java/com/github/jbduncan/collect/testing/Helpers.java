@@ -72,43 +72,22 @@ final class Helpers {
 
   static <E> Iterable<E> newIterable(
       SampleElements<E> sampleElements, CollectionSize collectionSize, boolean nullInMiddle) {
-    return nullInMiddle
-        ? newIterableWithNullElement(sampleElements, collectionSize)
-        : newIterable(sampleElements, collectionSize);
-  }
-
-  static <E> Iterable<E> newIterable(
-      SampleElements<E> sampleElements, CollectionSize collectionSize) {
     switch (collectionSize) {
       case SUPPORTS_ZERO:
         return () -> Collections.<E>emptyList().iterator();
       case SUPPORTS_ONE:
-        return () -> Collections.singletonList(sampleElements.e0()).iterator();
-      case SUPPORTS_MULTIPLE:
         return () ->
-            Collections.unmodifiableList(
-                    Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2()))
-                .iterator();
-      case SUPPORTS_ANY_SIZE:
-        throw new IllegalArgumentException(
-            "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "
-                + "it must be a specific size");
-    }
-    throw new IllegalStateException(
-        String.format("'collectionSize' %s is unrecognized", collectionSize));
-  }
-
-  static <E> Collection<E> newIterableWithNullElement(
-      SampleElements<E> sampleElements, CollectionSize collectionSize) {
-    switch (collectionSize) {
-      case SUPPORTS_ZERO:
-        throw new IllegalArgumentException(
-            "Cannot create iterable that is both of size 0 and contains 'null'");
-      case SUPPORTS_ONE:
-        return Collections.singletonList(null);
+            nullInMiddle
+                ? Collections.<E>singletonList(null).iterator()
+                : Collections.singletonList(sampleElements.e0()).iterator();
       case SUPPORTS_MULTIPLE:
-        return Collections.unmodifiableList(
-            Arrays.asList(sampleElements.e0(), null, sampleElements.e2()));
+        return () -> {
+          List<E> elements =
+              nullInMiddle
+                  ? Arrays.asList(sampleElements.e0(), null, sampleElements.e2())
+                  : Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2());
+          return Collections.unmodifiableList(elements).iterator();
+        };
       case SUPPORTS_ANY_SIZE:
         throw new IllegalArgumentException(
             "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "

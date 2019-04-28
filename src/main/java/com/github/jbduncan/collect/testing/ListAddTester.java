@@ -72,6 +72,8 @@ final class ListAddTester<E> {
       return this;
     }
 
+    // TODO: Consider inlining `ListAddTester#dynamicTestsGraph` into this method and returning
+    //   `List<DynamicNode>` rather than `ListAddTester<E>`.
     ListAddTester<E> build() {
       return new ListAddTester<>(testListGenerator, features);
     }
@@ -183,13 +185,13 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-        supportedCollectionSizes.iterator(),
-        collectionSize ->
-            "Supports List.add("
-                + stringify(elementToAdd)
-                + ") on "
-                + stringifyElements(newIterable(samples, collectionSize, nullInMiddle)),
-        testTemplate)
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                "Supports List.add("
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newIterable(samples, collectionSize, nullInMiddle)),
+            testTemplate)
         .forEachOrdered(subTests::add);
   }
 
@@ -241,13 +243,13 @@ final class ListAddTester<E> {
         };
 
     DynamicTest.stream(
-        supportedCollectionSizes.iterator(),
-        collectionSize ->
-            "Doesn't support List.add("
-                + stringify(elementToAdd)
-                + ") on "
-                + stringifyElements(newIterable(samples, collectionSize, nullInMiddle)),
-        testTemplate)
+            supportedCollectionSizes.iterator(),
+            collectionSize ->
+                "Doesn't support List.add("
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newIterable(samples, collectionSize, nullInMiddle)),
+            testTemplate)
         .forEachOrdered(subTests::add);
   }
 }

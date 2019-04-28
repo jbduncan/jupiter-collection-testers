@@ -17,7 +17,6 @@ package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.insert;
 import static com.github.jbduncan.collect.testing.Helpers.newIterable;
-import static com.github.jbduncan.collect.testing.Helpers.newIterableWithNullElement;
 import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newTestList;
@@ -108,9 +107,7 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
 
           list.add(index, elementToAdd);
           Iterable<E> expected =
-              nullInMiddle
-                  ? insert(newIterableWithNullElement(samples, collectionSize), index, elementToAdd)
-                  : insert(newIterable(samples, collectionSize), index, elementToAdd);
+              insert(newIterable(samples, collectionSize, nullInMiddle), index, elementToAdd);
 
           assertIterableEquals(
               expected,
@@ -125,18 +122,13 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
 
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
-            collectionSize -> {
-              String testListToString =
-                  nullInMiddle
-                      ? stringifyElements(newIterableWithNullElement(samples, collectionSize))
-                      : stringifyElements(newIterable(samples, collectionSize));
-              return "Supports List.add("
-                  + indexName()
-                  + ", "
-                  + stringify(elementToAdd)
-                  + ") on "
-                  + testListToString;
-            },
+            collectionSize ->
+                "Supports List.add("
+                    + indexName()
+                    + ", "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newIterable(samples, collectionSize, nullInMiddle)),
             testTemplate)
         .forEachOrdered(subTests::add);
   }
@@ -192,31 +184,25 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
                       + stringify(elementToAdd)
                       + ") threw UnsupportedOperationException");
           assertIterableEquals(
-              nullInMiddle
-                  ? newIterableWithNullElement(samples, collectionSize)
-                  : newIterable(samples, collectionSize),
+              newIterable(samples, collectionSize, nullInMiddle),
               list,
               "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
-            collectionSize -> {
-              String testListToString =
-                  nullInMiddle
-                      ? stringifyElements(newIterableWithNullElement(samples, collectionSize))
-                      : stringifyElements(newIterable(samples, collectionSize));
-              return "Doesn't support List.add("
-                  + indexName()
-                  + ", "
-                  + stringify(elementToAdd)
-                  + ") on "
-                  + testListToString;
-            },
+            collectionSize ->
+                "Doesn't support List.add("
+                    + indexName()
+                    + ", "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newIterable(samples, collectionSize, nullInMiddle)),
             testTemplate)
         .forEachOrdered(subTests::add);
   }
 
+  // TODO: Move to ListAddAtStartSubTestMaker.java
   List<DynamicTest> failsFastOnConcurrentModificationSubTests() {
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
@@ -237,11 +223,13 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
                 "List.add(0, "
                     + stringify(newElement)
                     + ") fails fast when concurrently modifying "
-                    + stringifyElements(newIterable(samples, collectionSize)),
+                    + stringifyElements(
+                        newIterable(samples, collectionSize, /* nullInMiddle= */ false)),
             failsFastOnCme)
         .collect(toList());
   }
 
+  // TODO: Move to ListAddAtStartSubTestMaker.java
   List<DynamicTest> failsFastOnConcurrentModificationInvolvingNullElementSubTests() {
     ThrowingConsumer<CollectionSize> failsFastOnCme =
         collectionSize -> {
@@ -260,7 +248,8 @@ abstract class AbstractListAddAtValidIndexSubTestMaker<E> {
             allSupportedCollectionSizes.iterator(),
             collectionSize ->
                 "List.add(0, null) fails fast when concurrently modifying "
-                    + stringifyElements(newIterable(samples, collectionSize)),
+                    + stringifyElements(
+                        newIterable(samples, collectionSize, /* nullInMiddle= */ false)),
             failsFastOnCme)
         .collect(toList());
   }

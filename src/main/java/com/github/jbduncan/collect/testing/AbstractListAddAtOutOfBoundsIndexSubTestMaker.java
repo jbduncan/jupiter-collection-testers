@@ -16,7 +16,6 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.github.jbduncan.collect.testing.Helpers.newIterable;
-import static com.github.jbduncan.collect.testing.Helpers.newIterableWithNullElement;
 import static com.github.jbduncan.collect.testing.Helpers.stringify;
 import static com.github.jbduncan.collect.testing.Helpers.stringifyElements;
 import static com.github.jbduncan.collect.testing.ListContractHelpers.newTestList;
@@ -106,27 +105,20 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
                       + expectedExceptionType);
 
           assertIterableEquals(
-              nullInMiddle
-                  ? newIterableWithNullElement(samples, collectionSize)
-                  : newIterable(samples, collectionSize),
+              newIterable(samples, collectionSize, nullInMiddle),
               list,
               "Not true that list remained unchanged");
         };
 
     DynamicTest.stream(
             supportedCollectionSizes.iterator(),
-            collectionSize -> {
-              String testListToString =
-                  nullInMiddle
-                      ? stringifyElements(newIterableWithNullElement(samples, collectionSize))
-                      : stringifyElements(newIterable(samples, collectionSize));
-              return "Doesn't support List.add("
-                  + indexName()
-                  + ", "
-                  + stringify(elementToAdd)
-                  + ") on "
-                  + testListToString;
-            },
+            collectionSize ->
+                "Doesn't support List.add("
+                    + indexName()
+                    + ", "
+                    + stringify(elementToAdd)
+                    + ") on "
+                    + stringifyElements(newIterable(samples, collectionSize, nullInMiddle)),
             testTemplate)
         .forEachOrdered(subTests::add);
   }
