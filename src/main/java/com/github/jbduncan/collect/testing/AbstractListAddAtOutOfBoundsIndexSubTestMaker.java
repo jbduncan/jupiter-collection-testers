@@ -65,9 +65,9 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
 
   List<DynamicTest> doesNotSupportAddWithIndexSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendTestsForDoesNotSupportAddAtPlusOne(
+    appendTestsForDoesNotSupportAddAtOutOfBoundsIndex(
         subTests, newElement, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-    appendTestsForDoesNotSupportAddAtPlusOne(
+    appendTestsForDoesNotSupportAddAtOutOfBoundsIndex(
         subTests,
         existingElement,
         allSupportedCollectionSizesExceptZero,
@@ -77,14 +77,14 @@ abstract class AbstractListAddAtOutOfBoundsIndexSubTestMaker<E> {
 
   List<DynamicTest> doesNotSupportAddWithIndexForNullsSubTests() {
     List<DynamicTest> subTests = new ArrayList<>();
-    appendTestsForDoesNotSupportAddAtPlusOne(
+    appendTestsForDoesNotSupportAddAtOutOfBoundsIndex(
         subTests, null, allSupportedCollectionSizes, /* nullInMiddle= */ false);
-    appendTestsForDoesNotSupportAddAtPlusOne(
+    appendTestsForDoesNotSupportAddAtOutOfBoundsIndex(
         subTests, null, allSupportedCollectionSizesExceptZero, /* nullInMiddle= */ true);
     return subTests;
   }
 
-  private void appendTestsForDoesNotSupportAddAtPlusOne(
+  private void appendTestsForDoesNotSupportAddAtOutOfBoundsIndex(
       List<DynamicTest> subTests,
       E elementToAdd,
       Set<CollectionSize> supportedCollectionSizes,
