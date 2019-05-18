@@ -24,11 +24,14 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import com.google.common.graph.SuccessorsFunction;
 import com.google.common.graph.Traverser;
+import com.google.common.truth.Correspondence;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,6 +48,17 @@ import org.junit.jupiter.api.Test;
 // TODO: Consider testing with JUnit 5's `junit-platform-testkit`
 // (https://github.com/junit-team/junit5/pull/1392)
 class ListContractTests {
+
+  private static final Correspondence<DynamicNode, String>
+      DYNAMIC_NODE_TO_DISPLAY_NAME_CORRESPONDENCE =
+          Correspondence.from(
+              (actualDynamicNode, expectedDisplayName) -> {
+                Objects.requireNonNull(actualDynamicNode, "actualDynamicNode");
+                Objects.requireNonNull(expectedDisplayName, "expectedDisplayName");
+                return actualDynamicNode.getDisplayName().equals(expectedDisplayName);
+              },
+              "has a display name equal to");
+
   private static List<String> elements;
 
   @BeforeAll
@@ -137,16 +151,16 @@ class ListContractTests {
                       "null) on [null]",
                       "null) on [\"a\", null, \"c\"]"))
               .stream()
+              .map(tuple -> tuple.get(0) + ", " + tuple.get(1))
               // Filter out display names for all redundant dynamic tests.
               .filter(
-                  tuple ->
-                      !(tuple.get(0).equals("Supports List.add(size()")
-                          && tuple.get(1).endsWith("[]")))
-              .filter(
-                  tuple ->
-                      !(tuple.get(0).equals("Supports List.add(middleIndex()")
-                          && tuple.get(1).endsWith("[]")))
-              .map(tuple -> tuple.get(0) + ", " + tuple.get(1));
+                  displayName ->
+                      !Arrays.asList(
+                              "Supports List.add(middleIndex(), \"d\") on []",
+                              "Supports List.add(middleIndex(), null) on []",
+                              "Supports List.add(size(), \"d\") on []",
+                              "Supports List.add(size(), null) on []")
+                          .contains(displayName));
 
       Stream<String> displayNamesForConcurrentModificationTests =
           Sets.cartesianProduct(
@@ -316,11 +330,11 @@ class ListContractTests {
       Iterable<String> expectedDynamicTestDisplayNames) {
 
     assertThat(dynamicNodesSupplier.get())
-        .comparingElementsUsing(Correspondences.DYNAMIC_NODE_TO_DISPLAY_NAME_CORRESPONDENCE)
+        .comparingElementsUsing(DYNAMIC_NODE_TO_DISPLAY_NAME_CORRESPONDENCE)
         .containsExactlyElementsIn(expectedDynamicContainerDisplayNames);
 
     assertThat(extractDynamicTests(dynamicNodesSupplier.get()))
-        .comparingElementsUsing(Correspondences.DYNAMIC_NODE_TO_DISPLAY_NAME_CORRESPONDENCE)
+        .comparingElementsUsing(DYNAMIC_NODE_TO_DISPLAY_NAME_CORRESPONDENCE)
         .containsExactlyElementsIn(expectedDynamicTestDisplayNames);
   }
 

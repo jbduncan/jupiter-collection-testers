@@ -19,14 +19,18 @@ import java.util.Set;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
-// TODO: Consider using custom list impls to test that each assertion passes & fails as expected
+// TODO: Consider using custom list impls to test that each assertion passes & fails as expected.
+// TODO: Write the Javdoc for this interface.
 public interface ListContract<E> extends CollectionContract<E> {
   @Override
   TestListGenerator<E> generator();
 
   @Override
   default Set<Feature<?>> features() {
-    return Feature.allFeaturesRecursively(ListFeature.GENERAL_PURPOSE);
+    // TODO: Introduce ListFeature.KNOWN_ORDER, and refer to guava-testlib's ListTestSuiteBuilder
+    //   for an explanation of why we need it.
+    return Feature.allFeaturesRecursively(
+        ListFeature.GENERAL_PURPOSE /*, ListFeature.KNOWN_ORDER*/);
   }
 
   @TestFactory

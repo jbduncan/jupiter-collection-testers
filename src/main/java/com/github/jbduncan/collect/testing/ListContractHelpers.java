@@ -15,28 +15,15 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionOfSize;
-import static com.github.jbduncan.collect.testing.Helpers.newCollectionWithNullInMiddleOfSize;
+import static com.github.jbduncan.collect.testing.Helpers.newIterable;
 
 import java.util.List;
 
 final class ListContractHelpers {
   private ListContractHelpers() {}
 
-  static <E> List<E> newListToTest(
-      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    SampleElements<E> samples = listGenerator.samples();
-    return listGenerator.create(newCollectionOfSize(collectionSize, samples));
-  }
-
-  static <E> List<E> newListToTestWithNullElementInMiddle(
-      TestListGenerator<E> listGenerator, CollectionSize collectionSize) {
-    Iterable<E> elements =
-        newCollectionWithNullInMiddleOfSize(collectionSize, listGenerator.samples());
-    return listGenerator.create(elements);
-  }
-
-  static int middleIndex(List<?> list) {
-    return list.size() / 2;
+  static <E> List<E> newTestList(
+      TestListGenerator<E> listGenerator, CollectionSize collectionSize, boolean nullInMiddle) {
+    return listGenerator.create(newIterable(listGenerator.samples(), collectionSize, nullInMiddle));
   }
 }

@@ -35,16 +35,17 @@ final class Helpers {
   private Helpers() {}
 
   static Set<CollectionSize> extractConcreteSizes(Set<Feature<?>> features) {
-    return features
-        .stream()
+    return features.stream()
         .filter(CollectionSize.class::isInstance)
         .map(CollectionSize.class::cast)
-        .filter(Helpers::isConcreteSize)
+        .filter(collectionSize -> collectionSize != CollectionSize.SUPPORTS_ANY_SIZE)
         .collect(toUnmodifiableInsertionOrderSet());
   }
 
-  private static boolean isConcreteSize(CollectionSize collectionSize) {
-    return collectionSize != CollectionSize.SUPPORTS_ANY_SIZE;
+  static Set<CollectionSize> extractConcreteSizesExceptZero(Set<Feature<?>> features) {
+    return extractConcreteSizes(features).stream()
+        .filter(element -> !element.equals(CollectionSize.SUPPORTS_ZERO))
+        .collect(toUnmodifiableInsertionOrderSet());
   }
 
   private static <T> Collector<T, ?, Set<T>> toUnmodifiableInsertionOrderSet() {
@@ -69,16 +70,24 @@ final class Helpers {
     return new LinkedHashSet<>(elements);
   }
 
-  static <E> Collection<E> newCollectionOfSize(
-      CollectionSize collectionSize, SampleElements<E> sampleElements) {
+  static <E> Iterable<E> newIterable(
+      SampleElements<E> sampleElements, CollectionSize collectionSize, boolean nullInMiddle) {
     switch (collectionSize) {
       case SUPPORTS_ZERO:
-        return Collections.emptyList();
+        return () -> Collections.<E>emptyList().iterator();
       case SUPPORTS_ONE:
-        return Collections.singletonList(sampleElements.e0());
+        return () ->
+            nullInMiddle
+                ? Collections.<E>singletonList(null).iterator()
+                : Collections.singletonList(sampleElements.e0()).iterator();
       case SUPPORTS_MULTIPLE:
-        return Collections.unmodifiableList(
-            Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2()));
+        return () -> {
+          List<E> elements =
+              nullInMiddle
+                  ? Arrays.asList(sampleElements.e0(), null, sampleElements.e2())
+                  : Arrays.asList(sampleElements.e0(), sampleElements.e1(), sampleElements.e2());
+          return Collections.unmodifiableList(elements).iterator();
+        };
       case SUPPORTS_ANY_SIZE:
         throw new IllegalArgumentException(
             "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "
@@ -88,61 +97,30 @@ final class Helpers {
         String.format("'collectionSize' %s is unrecognized", collectionSize));
   }
 
-  static <E> Collection<E> newCollectionWithNullInMiddleOfSize(
-      CollectionSize collectionSize, SampleElements<E> sampleElements) {
-    switch (collectionSize) {
-      case SUPPORTS_ZERO:
-        throw new IllegalArgumentException(
-            "Cannot create iterable that is both of size 0 and contains 'null'");
-      case SUPPORTS_ONE:
-        return Collections.singletonList(null);
-      case SUPPORTS_MULTIPLE:
-        return Collections.unmodifiableList(
-            Arrays.asList(sampleElements.e0(), null, sampleElements.e2()));
-      case SUPPORTS_ANY_SIZE:
-        throw new IllegalArgumentException(
-            "'collectionSize' cannot be CollectionSize.SUPPORTS_ANY_SIZE; "
-                + "it must be a specific size");
-    }
-    throw new IllegalStateException(
-        String.format("'collectionSize' %s is unrecognized", collectionSize));
+  static <E> List<E> append(Iterable<E> iterable, E toAppend) {
+    return Stream.concat(stream(iterable), Stream.of(toAppend)).collect(toUnmodifiableList());
   }
 
-  static <E> List<E> append(Collection<E> collection, E toAppend) {
-    return Stream.concat(collection.stream(), Stream.of(toAppend)).collect(toUnmodifiableList());
-  }
-
-  static <E> List<E> prepend(E toPrepend, Collection<E> collection) {
-    return Stream.concat(Stream.of(toPrepend), collection.stream()).collect(toUnmodifiableList());
-  }
-
-  static <E> List<E> insert(Collection<E> collection, int index, E toInsert) {
-    List<E> result = new ArrayList<>(collection.size() + 1);
-    result.addAll(collection);
+  static <E> List<E> insert(Iterable<E> iterable, int index, E toInsert) {
+    List<E> result =
+        iterable instanceof Collection<?>
+            ? new ArrayList<>(((Collection<?>) iterable).size() + 1)
+            : new ArrayList<>();
+    iterable.forEach(result::add);
     result.add(index, toInsert);
     return Collections.unmodifiableList(result);
   }
 
-  static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
+  private static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
     return collectingAndThen(toList(), Collections::unmodifiableList);
-  }
-
-  static <E> Set<E> minus(Set<E> set, E toRemove) {
-    return set.stream()
-        .filter(element -> !element.equals(toRemove))
-        .collect(toUnmodifiableInsertionOrderSet());
   }
 
   static <E> Stream<E> stream(Iterable<E> iterable) {
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
-  static <E> String quote(E value) {
-    return '"' + value.toString() + '"';
-  }
-
   static <E> String stringify(E value) {
-    return value == null ? "null" : quote(value);
+    return value == null ? "null" : '"' + value.toString() + '"';
   }
 
   static String stringifyElements(Iterable<?> iterable) {
