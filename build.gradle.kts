@@ -6,8 +6,8 @@ plugins {
     idea
     pmd
 
-    id("com.diffplug.gradle.spotless") version("3.14.0")
-    id("com.github.ben-manes.versions") version("0.20.0")
+    id("com.diffplug.gradle.spotless") version("3.23.0")
+    id("com.github.ben-manes.versions") version("0.21.0")
     // TODO: Consider swapping out for
     // https://github.com/tbroyer/gradle-errorprone-javacplugin-plugin
     id("net.ltgt.errorprone") // No version needed, as already imported in buildSrc/build.gradle
