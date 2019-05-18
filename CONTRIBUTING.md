@@ -28,64 +28,25 @@ single commit or several logical, self-contained commits. One way to do this is 
 `git rebase -i`, following the instructions in
 ["squashing commits with rebase"](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html).
 
-If your PR fixes one or more issues, please add a respective line at the end of the body of the PR
-text, just above the boilerplate text for the Contributor License Agreement. For example, use the
-following message if issue #42 is fully fixed.
-
-```
-Fixes #42.
-```
-
-This will allow the associated issue(s) to be
+If your PR fixes an issue, e.g. issue #42, please add the following text anywhere in the PR body:
+`This PR closes #42.`. This will allow the issue to be
 [automatically closed](https://help.github.com/articles/closing-issues-using-keywords/) by GitHub
 when the PR is merged in.
-
-However, if your PR only partially fixes or is related to one or more issues, please use the words
-"Issue" or "Issues" instead of or on top of "Fixes". For example, use the following message if
-issue #42 is partially fixed or related.
-```
-Issue #42.
-```
-
-To give a combined example, use the following message if issues #42 and #43 are fixed and issues #6
-and #9 are partially fixed or related.
-
-```
-Fixes #42, #43.
-Issues #6, #99.
-```
 
 Commit messages
 ===
 
-Each commit should have the following structure:
+Please follow the advice in
+["How to Write a Git Commit Message"](https://chris.beams.io/posts/git-commit/).
+
+Please also add a line at the end of the body in its own paragraph that references your PR. For
+example, if your PR is number #43, add the following:
+
 ```
-${subject}
-
-${body}
-
-${issues}
-${pr}
+Closes #43.
 ```
 
-`${subject}` is a line up to 70 characters (ideally up to 50 characters) that summarises the
-change(s).
-
-`${body}` is an _optional_, more detailed explanation where each line is wrapped at 72 characters.
-This explanation describes _why_ the commit is being introduced, rather than _how_ it is
-implemented. The body can be skipped if the change is so simple that no further context is
-needed.
-
-`${issues}` is a series of one or more lines that describes which issues have been fixed or
-partially fixed or which are related to this commit. See **Pull Requests** above for more
-information on the format of this section.
-
-`${pr}` is a line that says which PR introduced this commit, where `${pr}` is replaced with the
-"PR " followed by a PR number, e.g. `PR #321`. This can be skipped if the commit has no
-associated PR.
-
-(In many ways, this advice matches up with or is very similar to the advice given in
-["How to Write a Git Commit Message"](https://chris.beams.io/posts/git-commit/).)
+This will make it easy to go back and read the PR and the relevant issue if ever needed.
 
 Guidelines for code contributions
 ===
@@ -106,8 +67,8 @@ All files must have a copy of the boilerplate license comment, which can be auto
 with the `gradlew spotlessApply` Gradle command.
 
 Files must be formatted and refactored with the Gradle commands `gradlew spotlessApply` and `gradlew
-refasterApply`, and should additionally be formatted as best as you can according to
-[Google's Java style guide](https://google.github.io/styleguide/javaguide.html).
+refasterApply`, and should additionally follow
+[Google's Java style guide](https://google.github.io/styleguide/javaguide.html) as best as you can.
 
 Do not use `@author` tags in Javadocs. Instead, contributors are listed on
 [GitHub](https://github.com/jbduncan/jupiter-collection-testers).
