@@ -133,7 +133,7 @@ val compileTestJava by tasks.getting(JavaCompile::class) {
                     "-Xep:ClassCanBeStatic:OFF")))
 }
 
-// Refaster (buildSrc/, http://errorprone.info/docs/refaster)
+// Refaster (buildSrc/, https://errorprone.info/docs/refaster)
 apply {
     plugin("com.github.jbduncan.gradle.refaster")
 }

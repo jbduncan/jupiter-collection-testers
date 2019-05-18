@@ -26,7 +26,7 @@ Pull Requests
 Before a Pull Request can be accepted, all commits it contains must be squashed and merged into a
 single commit or several logical, self-contained commits. One way to do this is to use
 `git rebase -i`, following the instructions in
-["squashing commits with rebase"](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html).
+["Git Interactive Rebase, Squash, Amend and Other Ways of Rewriting History"](https://thoughtbot.com/blog/git-interactive-rebase-squash-amend-rewriting-history).
 
 If your PR fixes an issue, e.g. issue #42, please add the following text anywhere in the PR body:
 `This PR closes #42.`. This will allow the issue to be
