@@ -200,7 +200,7 @@ class ListContractTests {
     }
 
     @Test
-    void theGeneratedListIsEmpty() {
+    void theGeneratedListHasExpectedElements() {
       assertThat(generatedList).isEmpty();
     }
 
@@ -257,7 +257,7 @@ class ListContractTests {
     }
 
     @Test
-    void theGeneratedListIsEmpty() {
+    void theGeneratedListHasExpectedElements() {
       assertThat(generatedList).containsExactly(elements.get(0));
     }
 
