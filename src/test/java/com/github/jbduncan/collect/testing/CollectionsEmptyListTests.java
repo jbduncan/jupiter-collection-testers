@@ -26,7 +26,7 @@ class CollectionsEmptyListTests implements ListContract<String> {
 
   @Override
   public Set<Feature<?>> features() {
-    return Feature.allFeaturesRecursively(
+    return Features.allFeaturesRecursively(
         CollectionFeature.SERIALIZABLE, CollectionSize.SUPPORTS_ZERO);
   }
 }

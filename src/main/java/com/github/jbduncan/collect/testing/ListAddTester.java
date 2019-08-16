@@ -15,6 +15,7 @@
  */
 package com.github.jbduncan.collect.testing;
 
+import static com.github.jbduncan.collect.testing.Features.allFeaturesRecursively;
 import static com.github.jbduncan.collect.testing.Helpers.append;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizesExceptZero;
@@ -47,9 +48,9 @@ final class ListAddTester<E> {
   private ListAddTester(TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
     this.generator = requireNonNull(testListGenerator, "testListGenerator");
     this.samples = requireNonNull(testListGenerator.samples(), "samples");
-    this.newElement = samples.e3();
+    this.newElement = samples.missing();
     this.existingElement = samples.e0();
-    this.features = requireNonNull(features, "features");
+    this.features = allFeaturesRecursively(requireNonNull(features, "features"));
   }
 
   static <E> Builder<E> builder() {

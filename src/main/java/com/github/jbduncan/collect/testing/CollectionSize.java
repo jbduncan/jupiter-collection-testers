@@ -15,12 +15,10 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-@SuppressWarnings("unchecked")
-public enum CollectionSize implements Feature<Collection<?>>, Comparable<CollectionSize> {
+public enum CollectionSize {
   SUPPORTS_ZERO(0),
   SUPPORTS_ONE(1),
   SUPPORTS_MULTIPLE(3),
@@ -31,19 +29,19 @@ public enum CollectionSize implements Feature<Collection<?>>, Comparable<Collect
   private final int size;
 
   // We don't have access to Guava's immutable collections, so we're forced to use
-  // Collections.unmodifiable* instead. However, we ensure that features are themselves
+  // Collections.unmodifiable* instead. However, we ensure that sizes are themselves
   // effectively immutable, so we can suppress this warning.
   @SuppressWarnings("ImmutableEnumChecker")
-  private final Set<Feature<? super Collection<?>>> impliedFeatures;
+  private final Set<CollectionSize> impliedSizes;
 
   CollectionSize(int size) {
     this.size = checkNonNegative(size);
-    this.impliedFeatures = Collections.emptySet();
+    this.impliedSizes = Collections.emptySet();
   }
 
-  CollectionSize(Feature<? super Collection<?>>... impliedSizes) {
+  CollectionSize(CollectionSize... impliedSizes) {
     this.size = NO_SIZE;
-    this.impliedFeatures = Helpers.copyToUnmodifiableInsertionOrderSet(impliedSizes);
+    this.impliedSizes = Helpers.copyToUnmodifiableInsertionOrderSet(impliedSizes);
   }
 
   private int checkNonNegative(int size) {
@@ -62,8 +60,7 @@ public enum CollectionSize implements Feature<Collection<?>>, Comparable<Collect
     return size;
   }
 
-  @Override
-  public Set<Feature<? super Collection<?>>> impliedFeatures() {
-    return impliedFeatures;
+  public Set<CollectionSize> impliedSizes() {
+    return impliedSizes;
   }
 }

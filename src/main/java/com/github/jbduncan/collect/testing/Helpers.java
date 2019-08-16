@@ -66,7 +66,7 @@ final class Helpers {
     return copyToMutableInsertionOrderSet(Arrays.asList(elements));
   }
 
-  private static <E> Set<E> copyToMutableInsertionOrderSet(Collection<E> elements) {
+  static <E> Set<E> copyToMutableInsertionOrderSet(Collection<E> elements) {
     return new LinkedHashSet<>(elements);
   }
 
@@ -74,7 +74,7 @@ final class Helpers {
       SampleElements<E> sampleElements, CollectionSize collectionSize, boolean nullInMiddle) {
     switch (collectionSize) {
       case SUPPORTS_ZERO:
-        return () -> Collections.<E>emptyList().iterator();
+        return Collections::emptyIterator;
       case SUPPORTS_ONE:
         return () ->
             nullInMiddle

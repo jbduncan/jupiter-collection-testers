@@ -27,7 +27,7 @@ class ListFeatureTests {
 
   @Test
   void supportsSetHasExpectedExpandedFeatures() {
-    assertThat(Feature.allFeaturesRecursively(ListFeature.SUPPORTS_SET))
+    assertThat(Features.allFeaturesRecursively(ListFeature.SUPPORTS_SET))
         .containsExactly(ListFeature.SUPPORTS_SET);
   }
 
@@ -39,7 +39,7 @@ class ListFeatureTests {
 
   @Test
   void supportsAddWithIndexHasExpectedExpandedFeatures() {
-    assertThat(Feature.allFeaturesRecursively(ListFeature.SUPPORTS_ADD_WITH_INDEX))
+    assertThat(Features.allFeaturesRecursively(ListFeature.SUPPORTS_ADD_WITH_INDEX))
         .containsExactly(ListFeature.SUPPORTS_ADD_WITH_INDEX, CollectionFeature.SUPPORTS_ADD);
   }
 
@@ -51,7 +51,7 @@ class ListFeatureTests {
 
   @Test
   void supportsRemoveWithIndexHasExpectedExpandedFeatures() {
-    assertThat(Feature.allFeaturesRecursively(ListFeature.SUPPORTS_REMOVE_WITH_INDEX))
+    assertThat(Features.allFeaturesRecursively(ListFeature.SUPPORTS_REMOVE_WITH_INDEX))
         .containsExactly(ListFeature.SUPPORTS_REMOVE_WITH_INDEX, CollectionFeature.SUPPORTS_REMOVE);
   }
 
@@ -67,7 +67,7 @@ class ListFeatureTests {
 
   @Test
   void generalPurposeHasExpectedExpandedFeatures() {
-    assertThat(Feature.allFeaturesRecursively(ListFeature.GENERAL_PURPOSE))
+    assertThat(Features.allFeaturesRecursively(ListFeature.GENERAL_PURPOSE))
         .containsExactly(
             ListFeature.GENERAL_PURPOSE,
             CollectionFeature.GENERAL_PURPOSE,
@@ -88,7 +88,7 @@ class ListFeatureTests {
 
   @Test
   void removeOperationsHasExpectedExpandedFeatures() {
-    assertThat(Feature.allFeaturesRecursively(ListFeature.REMOVE_OPERATIONS))
+    assertThat(Features.allFeaturesRecursively(ListFeature.REMOVE_OPERATIONS))
         .containsExactly(
             ListFeature.REMOVE_OPERATIONS,
             CollectionFeature.REMOVE_OPERATIONS,

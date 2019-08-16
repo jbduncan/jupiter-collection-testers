@@ -63,7 +63,7 @@ class ListContractTests {
 
   @BeforeAll
   static void beforeAll() {
-    elements = SampleElements.strings().asList();
+    elements = SampleElements.strings().toList();
   }
 
   @Nested

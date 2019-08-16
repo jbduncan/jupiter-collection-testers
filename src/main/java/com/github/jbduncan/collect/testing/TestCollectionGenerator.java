@@ -17,4 +17,8 @@ package com.github.jbduncan.collect.testing;
 
 import java.util.Collection;
 
-public interface TestCollectionGenerator<E> extends TestContainerGenerator<Collection<E>, E> {}
+public interface TestCollectionGenerator<E> {
+  Collection<E> create(Collection<E> elements);
+
+  SampleElements<E> samples();
+}

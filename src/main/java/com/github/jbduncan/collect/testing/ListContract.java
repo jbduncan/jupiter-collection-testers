@@ -15,7 +15,6 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import java.util.Set;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
@@ -28,21 +27,6 @@ import org.junit.jupiter.api.TestFactory;
 // TODO: Consider using custom list impls to test that each assertion passes & fails as expected.
 // TODO: Write the Javdoc for this interface.
 public interface ListContract<E> extends CollectionContract<E> {
-  /**
-   * Returns a factory of type {@link TestListGenerator} that will construct an instance of your
-   * custom list implementation from a given arbitrary collection of elements.
-   *
-   * <p>The way to implement this method to test {@code ArrayList} is as follows:
-   *
-   * <pre>
-   * &#64;Override
-   * public TestListGenerator&lt;E&gt; generator() {
-   *   return (TestStringListGenerator) elements -> new ArrayList&lt;String&gt;(elements);
-   * }
-   * </pre>
-   *
-   * @return the {@link TestListGenerator}
-   */
   @Override
   TestListGenerator<E> generator();
 
@@ -51,22 +35,22 @@ public interface ListContract<E> extends CollectionContract<E> {
    * specified in {@link #generator}.
    *
    * <p>When the list implementation is being tested, it will check not only that it satisfies the
-   * given features but the features' implied features, the implied features own implied features,
-   * and so on and so forth in a recursive fashion.
+   * given features but also the features' implied features, the implied features' own implied
+   * features, and so on and so forth in a recursive fashion.
    *
    * @return the features that {@code this} should test for in the list implementation specified in
    *     {@link #generator()}.
    */
   @Override
-  default Set<Feature<?>> features() {
-    // TODO: Introduce ListFeature.KNOWN_ORDER, and refer to guava-testlib's ListTestSuiteBuilder
-    //   for an explanation of why we need it.
-    return Feature.allFeaturesRecursively(
-        ListFeature.GENERAL_PURPOSE /*, ListFeature.KNOWN_ORDER*/);
-  }
+  Iterable<Feature<?>> features();
 
   @TestFactory
-  default Iterable<DynamicNode> add() {
+  default Iterable<DynamicNode> listAddTests() {
+    // TODO: Change implementation to be something like:
+    // return ListAddTester.generator(generator())
+    //     .features(features())
+    //     .buildTests();
+
     return ListAddTester.<E>builder()
         .testListGenerator(generator())
         .features(features())
@@ -75,7 +59,12 @@ public interface ListContract<E> extends CollectionContract<E> {
   }
 
   @TestFactory
-  default Iterable<DynamicNode> addWithIndex() {
+  default Iterable<DynamicNode> listAddAllTests() {
+    // TODO: Change implementation to be something like:
+    // return ListAddWithIndexTester.generator(generator())
+    //     .features(features())
+    //     .buildTests();
+    
     return ListAddWithIndexTester.<E>builder()
         .testListGenerator(generator())
         .features(features())
@@ -83,5 +72,90 @@ public interface ListContract<E> extends CollectionContract<E> {
         .dynamicTestsGraph();
   }
 
-  // TODO: Add tests for all other methods of List interface
+  // TODO: Write tests for all other methods of List interface
+
+  @TestFactory
+  default Iterable<DynamicNode> listAddAllWithIndexTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listAddWithIndexTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listCreationTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listEqualsTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listGetTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listHashCodeTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listIndexOfTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listLastIndexOfTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listListIteratorTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listRemoveTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listRemoveAllTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listRemoveWithIndexTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listReplaceAllTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listRetainAllTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listSetTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listSubListTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  @TestFactory
+  default Iterable<DynamicNode> listToArrayTests() {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
 }

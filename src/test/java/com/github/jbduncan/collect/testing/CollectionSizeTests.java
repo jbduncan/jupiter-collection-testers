@@ -47,22 +47,22 @@ class CollectionSizeTests {
 
   @Test
   void impliedFeaturesForSupportsZero() {
-    assertThat(CollectionSize.SUPPORTS_ZERO.impliedFeatures()).isEmpty();
+    assertThat(CollectionSize.SUPPORTS_ZERO.impliedSizes()).isEmpty();
   }
 
   @Test
   void impliedFeaturesForSupportsOne() {
-    assertThat(CollectionSize.SUPPORTS_ONE.impliedFeatures()).isEmpty();
+    assertThat(CollectionSize.SUPPORTS_ONE.impliedSizes()).isEmpty();
   }
 
   @Test
   void impliedFeaturesForSupportsMultiple() {
-    assertThat(CollectionSize.SUPPORTS_MULTIPLE.impliedFeatures()).isEmpty();
+    assertThat(CollectionSize.SUPPORTS_MULTIPLE.impliedSizes()).isEmpty();
   }
 
   @Test
   void impliedFeaturesForSupportsAnySize() {
-    assertThat(CollectionSize.SUPPORTS_ANY_SIZE.impliedFeatures())
+    assertThat(CollectionSize.SUPPORTS_ANY_SIZE.impliedSizes())
         .containsExactly(
             CollectionSize.SUPPORTS_ZERO,
             CollectionSize.SUPPORTS_ONE,

@@ -27,7 +27,7 @@ public class CollectionsSingletonListTests implements ListContract<String> {
 
   @Override
   public Set<Feature<?>> features() {
-    return Feature.allFeaturesRecursively(
+    return Features.allFeaturesRecursively(
         CollectionFeature.SERIALIZABLE,
         CollectionFeature.ALLOWS_NULL_VALUES,
         CollectionSize.SUPPORTS_ONE);

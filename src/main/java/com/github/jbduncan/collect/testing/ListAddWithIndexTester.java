@@ -15,6 +15,7 @@
  */
 package com.github.jbduncan.collect.testing;
 
+import static com.github.jbduncan.collect.testing.Features.allFeaturesRecursively;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizes;
 import static com.github.jbduncan.collect.testing.Helpers.extractConcreteSizesExceptZero;
 import static java.util.Objects.requireNonNull;
@@ -37,9 +38,9 @@ final class ListAddWithIndexTester<E> {
 
   private ListAddWithIndexTester(TestListGenerator<E> testListGenerator, Set<Feature<?>> features) {
     this.testListGenerator = requireNonNull(testListGenerator, "testListGenerator");
-    this.features = requireNonNull(features, "features");
+    this.features = allFeaturesRecursively(requireNonNull(features, "features"));
     this.samples = requireNonNull(testListGenerator.samples(), "samples");
-    this.newElement = samples.e3();
+    this.newElement = samples.missing();
     this.existingElement = samples.e0();
   }
 

@@ -15,14 +15,10 @@
  */
 package com.github.jbduncan.collect.testing;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface TestListGenerator<E> extends TestCollectionGenerator<E> {
   @Override
-  List<E> create(Iterable<E> elements);
-
-  @Override
-  default Iterable<E> order(List<E> insertionOrder) {
-    return insertionOrder;
-  }
+  List<E> create(Collection<E> elements);
 }

@@ -22,6 +22,7 @@ import java.util.List;
 final class ListContractHelpers {
   private ListContractHelpers() {}
 
+  // TODO: Make an instance method of a new base class of all the list testers
   static <E> List<E> newTestList(
       TestListGenerator<E> listGenerator, CollectionSize collectionSize, boolean nullInMiddle) {
     return listGenerator.create(newIterable(listGenerator.samples(), collectionSize, nullInMiddle));

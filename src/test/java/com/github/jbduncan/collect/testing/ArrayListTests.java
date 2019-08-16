@@ -15,26 +15,21 @@
  */
 package com.github.jbduncan.collect.testing;
 
-import static com.github.jbduncan.collect.testing.Helpers.stream;
-import static java.util.stream.Collectors.toCollection;
-
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Arrays;
 
-class ArrayListTests implements ListContract<String> {
+class ArrayListTests implements StringListContract {
   @Override
-  public TestListGenerator<String> generator() {
-    return (TestStringListGenerator)
-        elements -> stream(elements).collect(toCollection(ArrayList::new));
+  public TestStringListGenerator generator() {
+    return elements -> new ArrayList<>(elements);
   }
 
   @Override
-  public Set<Feature<?>> features() {
-    return Feature.allFeaturesRecursively(
+  public Iterable<Feature<?>> features() {
+    return Arrays.asList(
         ListFeature.GENERAL_PURPOSE,
         CollectionFeature.SERIALIZABLE,
         CollectionFeature.ALLOWS_NULL_VALUES,
-        CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION,
-        CollectionSize.SUPPORTS_ANY_SIZE);
+        CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION);
   }
 }
