@@ -68,4 +68,41 @@ class CollectionSizeTests {
             CollectionSize.SUPPORTS_ONE,
             CollectionSize.SUPPORTS_MULTIPLE);
   }
+
+  @Test
+  public void sizeOutputIllegalStateException() {
+
+    // Arrange
+    final CollectionSize collectionSize = CollectionSize.SUPPORTS_ANY_SIZE;
+
+    assertThrows(
+        IllegalStateException.class,
+        () -> {
+          collectionSize.size();
+        });
+
+    // The method is not expected to return due to exception thrown
+  }
+
+  @Test
+  public void sizeOutputZero() {
+
+    // Arrange
+    final CollectionSize collectionSize = CollectionSize.SUPPORTS_ZERO;
+
+    // Act and Assert result
+    assertThat(collectionSize.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void valueOfInputNotNullOutputIllegalArgumentException() {
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          CollectionSize.valueOf("a\'b\'c");
+        });
+
+    // The method is not expected to return due to exception thrown
+  }
 }

@@ -17,6 +17,7 @@ package com.github.jbduncan.collect.testing;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -361,5 +362,18 @@ class ListContractTests {
         .filter(DynamicTest.class::isInstance)
         .map(DynamicTest.class::cast)
         .collect(toImmutableList());
+  }
+
+  @Test
+  public void newTestListInputNullNullFalseOutputNullPointerException() {
+
+    // Act
+    assertThrows(
+        NullPointerException.class,
+        () -> {
+          ListContractHelpers.newTestList(null, null, false);
+        });
+
+    // The method is not expected to return due to exception thrown
   }
 }

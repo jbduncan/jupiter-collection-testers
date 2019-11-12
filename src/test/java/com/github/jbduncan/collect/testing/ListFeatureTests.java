@@ -16,6 +16,7 @@
 package com.github.jbduncan.collect.testing;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -95,5 +96,21 @@ class ListFeatureTests {
             ListFeature.SUPPORTS_REMOVE_WITH_INDEX,
             CollectionFeature.SUPPORTS_REMOVE,
             CollectionFeature.SUPPORTS_ITERATOR_REMOVE);
+  }
+
+  @Test
+  public void valueOfInputNotNullOutputIllegalArgumentException() {
+
+    // Arrange
+    final String name = "/";
+
+    // Act
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          ListFeature.valueOf(name);
+        });
+
+    // The method is not expected to return due to exception thrown
   }
 }

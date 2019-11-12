@@ -7,9 +7,12 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
     implementation("commons-io:commons-io:2.6")
     implementation("net.ltgt.gradle:gradle-errorprone-plugin:0.0.13")
+    testImplementation("com.google.truth:truth:0.44")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
     // TODO: Use gradle-errorprone-javacplugin-plugin for Java 9+, e.g.
     // implementation("net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:0.2")
 }
